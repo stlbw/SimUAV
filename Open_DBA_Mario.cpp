@@ -1,6 +1,6 @@
 #include <iostream>
 
-int main(){
-    std:: void open(const char *filename, ios::openmode mode);
+int getDba(std::string filename){
+    void open(const char *filename, std::ios::openmode mode);
 
 }
