@@ -709,7 +709,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
             //cout << "" << text << "\n"; //prints out the database lines
         }
         chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        cout << "Finished reading database. Time took: " << chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << " ms." << endl;
+        cout << "Finished reading database. Time took: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms." << endl;
         //todo find a way to check if all variables in a struct are initialized
     } else {
         string errorMessage = "Could not open " + filePath;
