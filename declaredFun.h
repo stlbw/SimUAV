@@ -4,6 +4,6 @@
 #include "Open_DBA_Mario.cpp"
 #include "preprocessing/readFile.cpp"
 int getDba();
-void openFile();
+void readData();
 
 #endif
