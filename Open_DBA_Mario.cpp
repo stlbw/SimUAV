@@ -51,7 +51,7 @@ struct {
             double CXOM[106],CYOM[106],CZOM[106],CLOM[106],CMOM[106],CNOM[106];
         }Rotary;
     } Derivate;
-}DBA_0;
+}DBA_0;    //Struct defintion
 
 int getDba(string filename){
     int i=1;
@@ -65,130 +65,128 @@ int getDba(string filename){
     if(myfile.is_open()) {
         while (getline(myfile, line)) {
 
-            if (i==4) {
+                if (i == 4) {
+                    istringstream A(line);
+                    A >> DBA_0.Aircraft_description.Mass;
+                }
+                if (i == 5) {
                 istringstream A(line);
-                A >> DBA_0.Aircraft_description.Mass;
+                A >> DBA_0.Aircraft_description.Wing_spann;
             }
-            if (i==5){
+                if (i == 6) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Wing_spann;
+                A >> DBA_0.Aircraft_description.Wing_area;
             }
-            if (i==6){
+                if (i == 7) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Wing_area;
+                A >> DBA_0.Aircraft_description.Chord;
             }
-            if (i==7){
+                if (i == 8) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Chord;
+                A >> DBA_0.Aircraft_description.Mach_drag_rise;
             }
-            if (i==8){
+                if (i == 9) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Mach_drag_rise;
+                A >> DBA_0.Aircraft_description.Thrust_axis_offset_x;
             }
-            if (i==9){
+                if (i == 10) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Thrust_axis_offset_x;
+                A >> DBA_0.Aircraft_description.Thrust_axis_offset_y;
             }
-            if (i==10){
+                if (i == 11) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Thrust_axis_offset_y;
+                A >> DBA_0.Aircraft_description.Thrust_axis_offset_z;
             }
-            if (i==11){
+                if (i == 12) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Thrust_axis_offset_z;
+                A >> DBA_0.Aircraft_description.Thrust_axis_ang_off_xy;
             }
-            if (i==12){
+                if (i == 13) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Thrust_axis_ang_off_xy;
+                A >> DBA_0.Aircraft_description.Thrust_axis_ang_off_xz;
             }
-            if (i==13){
+                if (i == 14) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Thrust_axis_ang_off_xz;
+                A >> DBA_0.Aircraft_description.numb_aoa;
             }
-            if (i==14){
+                if (i == 15) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.numb_aoa;
+                A >> DBA_0.Aircraft_description.rotary_deriv;
             }
-            if (i==15){
+                if (i == 16) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.rotary_deriv;
+                A >> DBA_0.Aircraft_description.COG;
             }
-            if (i==16){
+                if (i == 17) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.COG;
+                A >> DBA_0.Aircraft_description.Jx;
             }
-            if (i==17){
+                if (i == 18) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Jx;
+                A >> DBA_0.Aircraft_description.Jy;
             }
-            if (i==18){
+                if (i == 19) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.Jy;
+                A >> DBA_0.Aircraft_description.jz;
             }
-            if (i==19){
+                if (i == 20) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.jz;
+                A >> DBA_0.Aircraft_description.jxz;
             }
-            if (i==20){
+                if (i == 21) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.jxz;
+                A >> DBA_0.Aircraft_description.option_cog_update;
             }
-            if (i==21){
+                if (i == 22) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.option_cog_update;
+                A >> DBA_0.Aircraft_description.cog_updated;
             }
-            if (i==22){
+                if (i == 23) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.cog_updated;
+                A >> DBA_0.Aircraft_description.pilot_position_x;
             }
-            if (i==23){
+                if (i == 24) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.pilot_position_x;
+                A >> DBA_0.Aircraft_description.pilot_position_y;
             }
-            if (i==24){
+                if (i == 25) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.pilot_position_y;
+                A >> DBA_0.Aircraft_description.pilot_position_z;
             }
-            if (i==25){
+                if (i == 29) {
                 istringstream A(line);
-                A >>DBA_0.Aircraft_description.pilot_position_z;
+                A >> DBA_0.Deflection_limits.Elevator_max;
             }
-// struttura deflessioni
-            if (i==29){
+                if (i == 30) {
                 istringstream A(line);
-                A >>DBA_0.Deflection_limits.Elevator_max;
+                A >> DBA_0.Deflection_limits.Elevator_min;
             }
-            if (i==30){
+                if (i == 31) {
                 istringstream A(line);
-                A >>DBA_0.Deflection_limits.Elevator_min;
+                A >> DBA_0.Deflection_limits.Ailerons;
             }
-            if (i==31){
+                if (i == 32) {
                 istringstream A(line);
-                A >>DBA_0.Deflection_limits.Ailerons;
+                A >> DBA_0.Deflection_limits.Rudder;
             }
-            if (i==32){
+                if (i == 33) {
                 istringstream A(line);
-                A >>DBA_0.Deflection_limits.Rudder;
+                A >> DBA_0.Deflection_limits.Flap_up;
             }
-            if (i==33){
+                if (i == 34) {
                 istringstream A(line);
-                A >>DBA_0.Deflection_limits.Flap_up;
+                A >> DBA_0.Deflection_limits.Flap_down;
             }
-            if (i==34){
+                if (i == 38) {
                 istringstream A(line);
-                A >>DBA_0.Deflection_limits.Flap_down;
+                A >> DBA_0.Fuel_Mass.Mass_switch;
             }
-// struttura proprietà di massa
-            if (i==38){
+                if (i == 39) {
                 istringstream A(line);
-                A>> DBA_0.Fuel_Mass.Mass_switch;
+                A >> DBA_0.Fuel_Mass.Fuel_weight_fraction;
             }
-            if (i==39){
-                istringstream A(line);
-                A>> DBA_0.Fuel_Mass.Fuel_weight_fraction;
-            }
-            i++;
-// struttura derivate
+                i++;
+
             if (i>44 && i<151){
                 istringstream a(line);
                 a >> DBA_0.Alpha[k]>>DBA_0.Steady_state_Coefficients.CX[k]>>
@@ -263,7 +261,7 @@ int getDba(string filename){
         ::perror("");
     }
     myfile.close();
-   // cout.precision(40);
-   // cout << fixed <<DBA_0.Aircraft_description.jxz<<'\n';
+
+
     return 0;
 }
