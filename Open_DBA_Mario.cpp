@@ -5,12 +5,12 @@
 
 using namespace std;
 struct {
-    struct {               // definzione struttura proprietà generali
-        double Mass, Wing_spann, Wing_area, Chord, Mach_drag_rise,
-                Thrust_axis_offset_x, Thrust_axis_offset_y, Thrust_axis_offset_z,
-                Thrust_axis_ang_off_xy, Thrust_axis_ang_off_xz, numb_aoa,
-                rotary_deriv, COG, Jx, Jy, jz, jxz, option_cog_update,
-                cog_updated, pilot_position_x, pilot_position_y, pilot_position_z;
+    struct {               //define all data description with an irreal value to use it as flag
+        double Mass=-100, Wing_spann=-100, Wing_area=-100, Chord=-100, Mach_drag_rise=-100,
+                Thrust_axis_offset_x=-100, Thrust_axis_offset_y=-100, Thrust_axis_offset_z=-100,
+                Thrust_axis_ang_off_xy=-100, Thrust_axis_ang_off_xz=-100, numb_aoa=-100,
+                rotary_deriv=-100, COG=-100, Jx=-100, Jy=-100, jz=-100, jxz=-100, option_cog_update=-100,
+                cog_updated=-100, pilot_position_x=-100, pilot_position_y=-100, pilot_position_z=-100;
     } Aircraft_description;
     struct {                // definizione struttura deflessioni
         double Elevator_max, Elevator_min, Ailerons, Rudder, Flap_up, Flap_down;
@@ -53,7 +53,7 @@ struct {
     } Derivate;
 }DBA_0;    //Struct defintion
 
-int getDba(string filename){
+int getDba(string  filename){
     int i=1;
     int k=0;
     void open(const char *filename);
@@ -63,125 +63,125 @@ int getDba(string filename){
     ifstream myfile;
     myfile.open(filePath);
     if(myfile.is_open()) {
-        while (getline(myfile, line)) {
-
-                if (i == 4) {
-                    istringstream A(line);
-                    A >> DBA_0.Aircraft_description.Mass;
-                }
-                if (i == 5) {
+        while (!myfile.eof()) {
+            (getline(myfile, line));
+            if (line.find("MASS")!= string::npos & DBA_0.Aircraft_description.Mass==-100){
+                istringstream A(line);
+                A >> DBA_0.Aircraft_description.Mass;
+            }
+            if (line.find("WING SPANN")!= string::npos & DBA_0.Aircraft_description.Wing_spann==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Wing_spann;
             }
-                if (i == 6) {
+            if (line.find("WING AREA")!= string::npos & DBA_0.Aircraft_description.Wing_area==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Wing_area;
             }
-                if (i == 7) {
+            if (line.find("CHORD")!= string::npos & DBA_0.Aircraft_description.Chord==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Chord;
             }
-                if (i == 8) {
+            if (line.find("MACH DRAG RISE")!= string::npos & DBA_0.Aircraft_description.Mach_drag_rise==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Mach_drag_rise;
             }
-                if (i == 9) {
+            if (line.find("THRUST AXIS OFFSET (REF. TO XB ALONG X)")!= string::npos & DBA_0.Aircraft_description.Thrust_axis_offset_x==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Thrust_axis_offset_x;
             }
-                if (i == 10) {
+            if (line.find("THRUST AXIS OFFSET (REF. TO XB ALONG Y)")!= string::npos & DBA_0.Aircraft_description.Thrust_axis_offset_y==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Thrust_axis_offset_y;
             }
-                if (i == 11) {
+            if (line.find("THRUST AXIS OFFSET (REF. TO XB ALONG Z)")!= string::npos & DBA_0.Aircraft_description.Thrust_axis_offset_z==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Thrust_axis_offset_z;
             }
-                if (i == 12) {
+            if (line.find("THRUST AXIS ANGULAR OFFSET (REF. TO XB / X-Y PLANE / POSITIVE RIGHT)")!= string::npos & DBA_0.Aircraft_description.Thrust_axis_ang_off_xy==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Thrust_axis_ang_off_xy;
             }
-                if (i == 13) {
+            if (line.find("THRUST AXIS ANGULAR OFFSET (REF. TO XB / X-Z PLANE / POSITIVE RIGHT)")!= string::npos & DBA_0.Aircraft_description.Thrust_axis_ang_off_xz==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Thrust_axis_ang_off_xz;
             }
-                if (i == 14) {
+            if (line.find("NUMBER OF ANGLES OF ATTACK")!= string::npos & DBA_0.Aircraft_description.numb_aoa==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.numb_aoa;
             }
-                if (i == 15) {
+            if (line.find("ROTARY DERIVATIVES")!= string::npos & DBA_0.Aircraft_description.rotary_deriv==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.rotary_deriv;
             }
-                if (i == 16) {
+            if (line.find("CENTER OF GRAVITY REFERENCE LOCATION REF. TO CMAER")!= string::npos & DBA_0.Aircraft_description.COG==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.COG;
             }
-                if (i == 17) {
+            if (line.find("JX")!= string::npos & DBA_0.Aircraft_description.Jx==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Jx;
             }
-                if (i == 18) {
+            if (line.find("JY")!= string::npos & DBA_0.Aircraft_description.Jy==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.Jy;
             }
-                if (i == 19) {
+            if (line.find("JZ")!= string::npos & DBA_0.Aircraft_description.jz==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.jz;
             }
-                if (i == 20) {
+            if (line.find("JXZ")!= string::npos & DBA_0.Aircraft_description.jxz==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.jxz;
             }
-                if (i == 21) {
+            if (line.find("OPTION FOR C.G. UPDATE (0/NO 1/YES)")!= string::npos & DBA_0.Aircraft_description.option_cog_update==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.option_cog_update;
             }
-                if (i == 22) {
+            if (line.find("CENTER OF GRAVITY REFERENCE LOCATION (UPDATED)")!= string::npos & DBA_0.Aircraft_description.cog_updated==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.cog_updated;
             }
-                if (i == 23) {
+            if (line.find("PILOT POSITION (REF. TO CG ALONG XB)")!= string::npos & DBA_0.Aircraft_description.pilot_position_x==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.pilot_position_x;
             }
-                if (i == 24) {
+            if (line.find("PILOT POSITION (REF. TO CG ALONG YB)")!= string::npos & DBA_0.Aircraft_description.pilot_position_y==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.pilot_position_y;
             }
-                if (i == 25) {
+            if (line.find("PILOT POSITION (REF. TO CG ALONG ZB)")!= string::npos & DBA_0.Aircraft_description.pilot_position_z==-100) {
                 istringstream A(line);
                 A >> DBA_0.Aircraft_description.pilot_position_z;
             }
-                if (i == 29) {
+            if (line.find("ELEVATOR (max)")!= string::npos & DBA_0.Deflection_limits.Elevator_max==-100) {
                 istringstream A(line);
                 A >> DBA_0.Deflection_limits.Elevator_max;
             }
-                if (i == 30) {
+            if (line.find("ELEVATOR (min)")!= string::npos & DBA_0.Deflection_limits.Elevator_min==-100) {
                 istringstream A(line);
                 A >> DBA_0.Deflection_limits.Elevator_min;
             }
-                if (i == 31) {
+            if (line.find("AILERONS")!= string::npos & DBA_0.Deflection_limits.Ailerons==-100) {
                 istringstream A(line);
                 A >> DBA_0.Deflection_limits.Ailerons;
             }
-                if (i == 32) {
+            if (line.find("RUDDER")!= string::npos & DBA_0.Deflection_limits.Rudder==-100) {
                 istringstream A(line);
                 A >> DBA_0.Deflection_limits.Rudder;
             }
-                if (i == 33) {
+            if (line.find("FLAP (up)")!= string::npos & DBA_0.Deflection_limits.Flap_up==-100) {
                 istringstream A(line);
                 A >> DBA_0.Deflection_limits.Flap_up;
             }
-                if (i == 34) {
+            if (line.find("FLAP (down)")!= string::npos & DBA_0.Deflection_limits.Flap_down==-100) {
                 istringstream A(line);
                 A >> DBA_0.Deflection_limits.Flap_down;
             }
-                if (i == 38) {
+            if (line.find("MASS SWITCH")!= string::npos & DBA_0.Fuel_Mass.Mass_switch==-100) {
                 istringstream A(line);
                 A >> DBA_0.Fuel_Mass.Mass_switch;
             }
-                if (i == 39) {
+            if (line.find("FUEL WEIGHT FRACTION")!= string::npos & DBA_0.Fuel_Mass.Fuel_weight_fraction==-100) {
                 istringstream A(line);
                 A >> DBA_0.Fuel_Mass.Fuel_weight_fraction;
             }
@@ -261,7 +261,6 @@ int getDba(string filename){
         ::perror("");
     }
     myfile.close();
-
 
     return 0;
 }
