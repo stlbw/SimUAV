@@ -6,9 +6,22 @@
 #include <chrono>
 #include "../declaredFun.h"
 using namespace std;
-
+//dclare structures to achieved nested structure from the most inner to the most outer for the static database
+struct Aircraft_description {               //define all data description with an irreal value to use it as flag
+    double Mass=-100, Wing_spann=-100, Wing_area=-100, Chord=-100, Mach_drag_rise=-100,
+            Thrust_axis_offset_x=-100, Thrust_axis_offset_y=-100, Thrust_axis_offset_z=-100,
+            Thrust_axis_ang_off_xy=-100, Thrust_axis_ang_off_xz=-100, numb_aoa=-100,
+            rotary_deriv=-100, COG=-100, Jx=-100, Jy=-100, jz=-100, jxz=-100, option_cog_update=-100,
+            cog_updated=-100, pilot_position_x=-100, pilot_position_y=-100, pilot_position_z=-100;
+} ;
+struct Deflection_limits {
+    double Elevator_max=-100, Elevator_min=-100, Ailerons=-100, Rudder=-100, Flap_up=-100, Flap_down=-100;
+} ;
+struct Fuel_Mass {
+    double Mass_switch=-100, Fuel_weight_fraction=-100;
+} ;
 // declare structures to achieved nested structure from the most inner to the most outer for the aerodynamic database
-struct SSCoef {
+struct  SSCoef {
     vector <float> cx;
     vector <float> cy;
     vector <float> cz;
@@ -97,6 +110,9 @@ struct  Rotary {
 struct AeroDB {
     int length;
     vector <float> alpha;
+    Aircraft_description Ad; // Aircraft description
+    Deflection_limits Dl; // Deflection limits
+    Fuel_Mass Fm; //Fuel Mass
     SSCoef ss; // steady state coefficients
     XForce fx; // X Forces (Aerodynamic derivatives)
     YForce fy; // Y Forces (Aerodynamic derivatives)
@@ -200,6 +216,127 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         while (!myfile.eof()) {
             getline(myfile, text);
+            // read and save all aircraft description data
+            if (text.find("MASS")!= string::npos & db->Ad.Mass==-100){
+                istringstream A(text);
+                A >> db->Ad.Mass;
+            }
+            if (text.find("WING SPAN")!= string::npos & db->Ad.Wing_spann==-100) {
+                istringstream A(text);
+                A >> db->Ad.Wing_spann;
+            }
+            if (text.find("WING AREA")!= string::npos & db->Ad.Wing_area==-100) {
+                istringstream A(text);
+                A >> db->Ad.Wing_area;
+            }
+            if (text.find("CHORD")!= string::npos & db->Ad.Chord==-100) {
+                istringstream A(text);
+                A >> db->Ad.Chord;
+            }
+            if (text.find("MACH DRAG RISE")!= string::npos & db->Ad.Mach_drag_rise==-100) {
+                istringstream A(text);
+                A >> db->Ad.Mach_drag_rise;
+            }
+            if (text.find("THRUST AXIS OFFSET (REF. TO XB ALONG X)")!= string::npos & db->Ad.Thrust_axis_offset_x==-100) {
+                istringstream A(text);
+                A >> db->Ad.Thrust_axis_offset_x;
+            }
+            if (text.find("THRUST AXIS OFFSET (REF. TO XB ALONG Y)")!= string::npos & db->Ad.Thrust_axis_offset_y==-100) {
+                istringstream A(text);
+                A >> db->Ad.Thrust_axis_offset_y;
+            }
+            if (text.find("THRUST AXIS OFFSET (REF. TO XB ALONG Z)")!= string::npos & db->Ad.Thrust_axis_offset_z==-100) {
+                istringstream A(text);
+                A >> db->Ad.Thrust_axis_offset_z;
+            }
+            if (text.find("THRUST AXIS ANGULAR OFFSET (REF. TO XB / X-Y PLANE / POSITIVE RIGHT)")!= string::npos & db->Ad.Thrust_axis_ang_off_xy==-100) {
+                istringstream A(text);
+                A >> db->Ad.Thrust_axis_ang_off_xy;
+            }
+            if (text.find("THRUST AXIS ANGULAR OFFSET (REF. TO XB / X-Z PLANE / POSITIVE RIGHT)")!= string::npos & db->Ad.Thrust_axis_ang_off_xz==-100) {
+                istringstream A(text);
+                A >> db->Ad.Thrust_axis_ang_off_xz;
+            }
+            if (text.find("NUMBER OF ANGLES OF ATTACK")!= string::npos & db->Ad.numb_aoa==-100) {
+                istringstream A(text);
+                A >> db->Ad.numb_aoa;
+            }
+            if (text.find("ROTARY DERIVATIVES")!= string::npos & db->Ad.rotary_deriv==-100) {
+                istringstream A(text);
+                A >> db->Ad.rotary_deriv;
+            }
+            if (text.find("CENTER OF GRAVITY REFERENCE LOCATION REF. TO CMAER")!= string::npos & db->Ad.COG==-100) {
+                istringstream A(text);
+                A >> db->Ad.COG;
+            }
+            if (text.find("JX")!= string::npos & db->Ad.Jx==-100) {
+                istringstream A(text);
+                A >> db->Ad.Jx;
+            }
+            if (text.find("JY")!= string::npos & db->Ad.Jy==-100) {
+                istringstream A(text);
+                A >> db->Ad.Jy;
+            }
+            if (text.find("JZ")!= string::npos & db->Ad.jz==-100) {
+                istringstream A(text);
+                A >> db->Ad.jz;
+            }
+            if (text.find("JXZ")!= string::npos & db->Ad.jxz==-100) {
+                istringstream A(text);
+                A >> db->Ad.jxz;
+            }
+            if (text.find("OPTION FOR C.G. UPDATE (0/NO 1/YES)")!= string::npos & db->Ad.option_cog_update==-100) {
+                istringstream A(text);
+                A >> db->Ad.option_cog_update;
+            }
+            if (text.find("CENTER OF GRAVITY REFERENCE LOCATION (UPDATED)")!= string::npos & db->Ad.cog_updated==-100) {
+                istringstream A(text);
+                A >> db->Ad.cog_updated;
+            }
+            if (text.find("PILOT POSITION (REF. TO CG ALONG XB)")!= string::npos & db->Ad.pilot_position_x==-100) {
+                istringstream A(text);
+                A >> db->Ad.pilot_position_x;
+            }
+            if (text.find("PILOT POSITION (REF. TO CG ALONG YB)")!= string::npos & db->Ad.pilot_position_y==-100) {
+                istringstream A(text);
+                A >> db->Ad.pilot_position_y;
+            }
+            if (text.find("PILOT POSITION (REF. TO CG ALONG ZB)")!= string::npos & db->Ad.pilot_position_z==-100) {
+                istringstream A(text);
+                A >> db->Ad.pilot_position_z;
+            }
+            if (text.find("ELEVATOR (max)")!= string::npos & DBA_0.Deflection_limits.Elevator_max==-100) {
+                istringstream A(text);
+                A >> DBA_0.Deflection_limits.Elevator_max;
+            }
+            if (text.find("ELEVATOR (min)")!= string::npos & db->Dl.Elevator_min==-100) {
+                istringstream A(text);
+                A >> db->Dl.Elevator_min;
+            }
+            if (text.find("AILERONS")!= string::npos & db->Dl.Ailerons==-100) {
+                istringstream A(text);
+                A >> db->Dl.Ailerons;
+            }
+            if (text.find("RUDDER")!= string::npos & db->Dl.Rudder==-100) {
+                istringstream A(text);
+                A >> db->Dl.Rudder;
+            }
+            if (text.find("FLAP (up)")!= string::npos & db->Dl.Flap_up==-100) {
+                istringstream A(text);
+                A >> db->Dl.Flap_up;
+            }
+            if (text.find("FLAP (down)")!= string::npos & db->Dl.Flap_down==-100) {
+                istringstream A(text);
+                A >> db->Dl.Flap_down;
+            }
+            if (text.find("MASS SWITCH")!= string::npos &db->Fm.Mass_switch==-100) {
+                istringstream A(text);
+                A >> db->Fm.Mass_switch;
+            }
+            if (text.find("FUEL WEIGHT FRACTION")!= string::npos & db->Fm.Fuel_weight_fraction==-100) {
+                istringstream A(text);
+                A >> db->Fm.Fuel_weight_fraction;
+            }
             updateFlag(f, text); // changes each flag's status to cope with database, giving information on
             // which section is being currently read and saved
             if(f->flag_ss == 1) {
