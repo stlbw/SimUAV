@@ -147,7 +147,7 @@ int getAoALength(string filePath) {
                 int vecLen;
                 stringstream s(text);
                 while (getline(s, token, ' ')) {
-                    if (token != "") {
+                    if (!token.empty()) {
                         vecLen = stoi(token);
                         //db->length = stoi(token);
                         myfile.close(); // close file
@@ -351,7 +351,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -360,7 +360,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -403,7 +403,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -412,7 +412,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -455,7 +455,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -464,7 +464,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -504,7 +504,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -513,7 +513,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -556,7 +556,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -565,7 +565,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -605,7 +605,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -614,7 +614,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -657,7 +657,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -666,7 +666,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -706,7 +706,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -715,7 +715,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -755,7 +755,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -764,7 +764,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
@@ -804,7 +804,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     string textToken;
                     stringstream st(text);
                     while (getline(st, textToken, ' ')) {
-                        if (textToken != "") {
+                        if (!textToken.empty()) {
                             nameVar.push_back(textToken);
                         }
                     }
@@ -813,7 +813,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, ' ')) {
-                        if (token != "") {
+                        if (!token.empty()) {
                             /*if(token.find("\r") != string::npos) {
                                 string lineSkip = "\r";
                                 string::size_type i = token.find(lineSkip);
