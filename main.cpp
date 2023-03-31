@@ -21,5 +21,41 @@ int main() {
     dba2000 = readData("dba_2000.ini");
 
 
+    cout << ">> Finished reading all databases. Please select how should the information be displayed and press ENTER:" << endl;
+    cout << "\t1 - Partial (simplified) version" << endl;
+    cout << "\t2 - Print full database to screen" << endl;
+    cout << "\t3 - Save database to file" << endl;
+    cout << ">> ";
+    char dataCheckSwitch = '3'; // used to store the user's choice
+    string fileDBCheck; //file name to save variables
+    bool flagCaseFound = false;
+    while(!flagCaseFound) {
+        //cin >> dataCheckSwitch;
+        switch (dataCheckSwitch) {
+            case '1':
+                cout << "Printing partial version to screen..." << endl;
+                flagCaseFound = true;
+                break;
+            case '2':
+                cout << "Printing full database to screen..." << endl;
+                flagCaseFound = true;
+                break;
+            case '3':
+                cout << "Saving database to file..." << endl;
+                cout << "Please add the file name (no extensions or paths allowed):" << endl;
+                cout << ">> ";
+                cin >> fileDBCheck;
+                flagCaseFound = true;
+                break;
+            default:
+                cerr << "Could not read the input. Please make sure to add a number from 1 to 3 and press ENTER." << endl;
+                break;
+        }
+    }
+
+
+
+
+
     return 0;
 }
