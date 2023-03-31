@@ -222,7 +222,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
         f->flag_roll = f->flag_pitch = f->flag_yaw = f->flag_cf = 0;
         f->flag_cm = f->flag_rotary = 0;
         std::vector<std::string> nameVar {""}; // declare vector to store variables
-        cout << "Reading database" << filePath << endl;
+        cout << "Reading database " << filePath << endl;
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         // read line by line and based on the keyword save variables accordingly
         while (!myfile.eof()) {
