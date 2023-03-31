@@ -107,6 +107,11 @@ struct  Rotary {
     vector <float> cm_om;
     vector <float> cn_om;
 };
+
+/**
+ * Contains nested struct for each topic contained in the aerodynamic database
+ *
+ */
 struct AeroDB {
     int length;
     vector <float> alpha;
@@ -852,7 +857,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
             //cout << "" << text << "\n"; //prints out the database lines
         }
         chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        cout << "Finished reading database. Time took: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms." << endl;
+        cout << "\tFinished reading database. Time took: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms." << endl;
         //todo find a way to check if all variables in a struct are initialized
     } else {
         string errorMessage = "Could not open " + filePath;
