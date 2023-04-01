@@ -22,90 +22,90 @@ struct Fuel_Mass {
 } ;
 // declare structures to achieved nested structure from the most inner to the most outer for the aerodynamic database
 struct  SSCoef {
-    vector <float> cx;
-    vector <float> cy;
-    vector <float> cz;
-    vector <float> cl;
-    vector <float> cm;
-    vector <float> cn;
+    vector <double> cx;
+    vector <double> cy;
+    vector <double> cz;
+    vector <double> cl;
+    vector <double> cm;
+    vector <double> cn;
 };
 struct  XForce {
-    vector <float> cx_a;
-    vector <float> cx_ap;
-    vector <float> cx_u;
-    vector <float> cx_q;
-    vector <float> cx_b;
-    vector <float> cx_p;
-    vector <float> cx_r;
+    vector <double> cx_a;
+    vector <double> cx_ap;
+    vector <double> cx_u;
+    vector <double> cx_q;
+    vector <double> cx_b;
+    vector <double> cx_p;
+    vector <double> cx_r;
 };
 struct  YForce {
-    vector <float> cy_b;
-    vector <float> cy_bp;
-    vector <float> cy_p;
-    vector <float> cy_r;
-    vector <float> cy_a;
-    vector <float> cy_q;
+    vector <double> cy_b;
+    vector <double> cy_bp;
+    vector <double> cy_p;
+    vector <double> cy_r;
+    vector <double> cy_a;
+    vector <double> cy_q;
 };
 struct  ZForce {
-    vector <float> cz_a;
-    vector <float> cz_ap;
-    vector <float> cz_u;
-    vector <float> cz_q;
-    vector <float> cz_b;
-    vector <float> cz_p;
-    vector <float> cz_r;
+    vector <double> cz_a;
+    vector <double> cz_ap;
+    vector <double> cz_u;
+    vector <double> cz_q;
+    vector <double> cz_b;
+    vector <double> cz_p;
+    vector <double> cz_r;
 
 };
 struct  RollMoment {
-    vector <float> cl_b;
-    vector <float> cl_bp;
-    vector <float> cl_p;
-    vector <float> cl_r;
-    vector <float> cl_a;
-    vector <float> cl_q;
+    vector <double> cl_b;
+    vector <double> cl_bp;
+    vector <double> cl_p;
+    vector <double> cl_r;
+    vector <double> cl_a;
+    vector <double> cl_q;
 
 };
 struct  PitchMoment {
-    vector <float> cm_a;
-    vector <float> cm_ap;
-    vector <float> cm_u;
-    vector <float> cm_q;
-    vector <float> cm_b;
-    vector <float> cm_p;
-    vector <float> cm_r;
+    vector <double> cm_a;
+    vector <double> cm_ap;
+    vector <double> cm_u;
+    vector <double> cm_q;
+    vector <double> cm_b;
+    vector <double> cm_p;
+    vector <double> cm_r;
 
 };
 struct  YawMoment {
-    vector <float> cn_b;
-    vector <float> cn_bp;
-    vector <float> cn_p;
-    vector <float> cn_r;
-    vector <float> cn_a;
-    vector <float> cn_q;
+    vector <double> cn_b;
+    vector <double> cn_bp;
+    vector <double> cn_p;
+    vector <double> cn_r;
+    vector <double> cn_a;
+    vector <double> cn_q;
 };
 struct  ControlForce {
-    vector <float> cx_de;
-    vector <float> cx_dle;
-    vector <float> cz_de;
-    vector <float> cz_dle;
-    vector <float> cy_da;
-    vector <float> cy_dr;
+    vector <double> cx_de;
+    vector <double> cx_dle;
+    vector <double> cz_de;
+    vector <double> cz_dle;
+    vector <double> cy_da;
+    vector <double> cy_dr;
 };
 struct  ControlMoment {
-    vector <float> cl_da;
-    vector <float> cl_dr;
-    vector <float> cm_de;
-    vector <float> cm_dle;
-    vector <float> cn_da;
-    vector <float> cn_dr;
+    vector <double> cl_da;
+    vector <double> cl_dr;
+    vector <double> cm_de;
+    vector <double> cm_dle;
+    vector <double> cn_da;
+    vector <double> cn_dr;
 };
 struct  Rotary {
-    vector <float> cx_om;
-    vector <float> cy_om;
-    vector <float> cz_om;
-    vector <float> cl_om;
-    vector <float> cm_om;
-    vector <float> cn_om;
+    vector <double> cx_om;
+    vector <double> cy_om;
+    vector <double> cz_om;
+    vector <double> cl_om;
+    vector <double> cm_om;
+    vector <double> cn_om;
 };
 
 /**
@@ -114,7 +114,7 @@ struct  Rotary {
  */
 struct AeroDB {
     int length;
-    vector <float> alpha;
+    vector <double> alpha;
     Aircraft_description Ad; // Aircraft description
     Deflection_limits Dl; // Deflection limits
     Fuel_Mass Fm; //Fuel Mass
