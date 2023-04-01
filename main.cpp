@@ -19,14 +19,14 @@ int main() {
     dba100 = readData("dba_100.ini");
     dba1000 = readData("dba_1000.ini");
     dba2000 = readData("dba_2000.ini");
-
+    // todo: add missing databases
 
     cout << ">> Finished reading all databases. Please select how should the information be displayed and press ENTER:" << endl;
     cout << "\t1 - Partial (simplified) version" << endl;
     cout << "\t2 - Print full database to screen" << endl;
     cout << "\t3 - Save database to file" << endl;
     cout << ">> ";
-    char dataCheckSwitch = '3'; // used to store the user's choice
+    char dataCheckSwitch = '1'; // used to store the user's choice
     string fileDBCheck; //file name to save variables
     bool flagCaseFound = false;
     while(!flagCaseFound) {
@@ -35,6 +35,7 @@ int main() {
             case '1':
                 cout << "Printing partial version to screen..." << endl;
                 flagCaseFound = true;
+                printSimplifiedDba(dba0, "SEA LEVEL");
                 break;
             case '2':
                 cout << "Printing full database to screen..." << endl;
