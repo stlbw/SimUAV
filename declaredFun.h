@@ -3,6 +3,7 @@
 
 #include "Open_DBA_Mario.cpp"
 #include "preprocessing/readFile.cpp"
+#include "preprocessing/printDatabase.cpp"
 int getDba();
 void readData();
 
