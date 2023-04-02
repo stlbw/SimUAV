@@ -2,8 +2,9 @@
 // Created by Matheus Padilha on 01/04/23.
 //
 #include <iostream>
-#include <fstream>
+#include <string>
 #include <iomanip>
+#include <fstream>
 #include "../declaredFun.h"
 
 using namespace std;
@@ -11,14 +12,15 @@ using namespace std;
 /**
  * Prints the simplified version of an aerodynamic database
  * For variables of type vector prints the first 5 and last 5 elements
- * @param db 
- * @param dbName 
- * @param switchCase 
+ * @param db
+ * @param dbName
+ * @param switchCase
+ * @param printToFile
  */
 void printDba(AeroDB db, string dbName, char switchCase) {
     int displayData; //qty of elements to be displayed for first and last elements
-    if(switchCase == '1') {displayData = 3;}
-    else {displayData = db.length;}
+    if(switchCase == '1') {displayData = 3;} else {displayData = db.length;} // set size of vectors to be printed
+
 
     cout << "" << endl;
     cout << "--------------------------------- AERODYNAMIC DATABASE @" << dbName << " ---------------------------------"
@@ -292,4 +294,5 @@ void printDba(AeroDB db, string dbName, char switchCase) {
     }
     cout << "" << endl;
     cout << "---------------------------------END OF AERODYNAMIC DATABASE @" << dbName << " ---------------------------------" << endl;
+
 }

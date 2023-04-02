@@ -26,45 +26,51 @@ int main() {
     cout << "\t2 - Print full database to screen" << endl;
     cout << "\t3 - Save database to file" << endl;
     cout << ">> ";
-    char dataCheckSwitch = '1'; // used to store the user's choice
-    string fileDBCheck; //file name to save variables
+    char dataCheckSwitch; // used to store the user's choice
     bool flagCaseFound = false;
+    bool printToFile;
     while(!flagCaseFound) {
-        //cin >> dataCheckSwitch; // get user input
+        cin >> dataCheckSwitch; // get user input
         switch (dataCheckSwitch) {
             case '1':
                 cout << "Printing partial version to screen..." << endl;
                 flagCaseFound = true;
-                //try to take the functions out of switch case
-                printDba(dba0, "SEA LEVEL", dataCheckSwitch);
-                printDba(dba100, "100 m", dataCheckSwitch);
-                printDba(dba1000, "1000 m", dataCheckSwitch);
-                printDba(dba2000, "2000 m", dataCheckSwitch);
+                printToFile = false;
                 break;
             case '2':
                 cout << "Printing full database to screen..." << endl;
                 flagCaseFound = true;
-                printDba(dba0, "SEA LEVEL", dataCheckSwitch);
-                printDba(dba100, "100 m", dataCheckSwitch);
-                printDba(dba1000, "1000 m", dataCheckSwitch);
-                printDba(dba2000, "2000 m", dataCheckSwitch);
+                printToFile = false;
                 break;
             case '3':
-                cout << "Saving database to file..." << endl;
-                cout << "Please add the file name (no extensions or paths allowed):" << endl;
-                cout << ">> ";
-                cin >> fileDBCheck;
+                cout << "Saving databases to file..." << endl;
                 flagCaseFound = true;
+                printToFile = true;
                 break;
             default:
                 cerr << "Could not read the input. Please make sure to add a number from 1 to 3 and press ENTER." << endl;
                 break;
         }
     }
-
-
-
-
+    // print dba
+    if(!printToFile) {
+        printDba(dba0, "SEA LEVEL", dataCheckSwitch);
+        printDba(dba100, "100 m", dataCheckSwitch);
+        printDba(dba1000, "1000 m", dataCheckSwitch);
+        printDba(dba2000, "2000 m", dataCheckSwitch);
+    } else {
+        string filePath = "../output/aeroDb.txt";
+        cout << ">> Saving files to output directory. Path: " << filePath << endl;
+        streambuf *coutbuf;
+        ofstream out(filePath);
+        coutbuf = cout.rdbuf();
+        cout.rdbuf(out.rdbuf());
+        printDba(dba0, "SEA LEVEL", dataCheckSwitch);
+        printDba(dba100, "100 m", dataCheckSwitch);
+        printDba(dba1000, "1000 m", dataCheckSwitch);
+        printDba(dba2000, "2000 m", dataCheckSwitch);
+        cout.rdbuf(coutbuf); //reset to standard output again
+    }
 
     return 0;
 }
