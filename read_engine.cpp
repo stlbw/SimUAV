@@ -12,10 +12,6 @@ struct {
     }engine_description;
 }En;
 
-//struct enginedb {
-    //engine_description En;
-//};
-
 inline void save_engine(string filePath) {
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
@@ -56,17 +52,4 @@ inline void save_engine(string filePath) {
         ::perror("");
     }
     myfile.close();
-
 }
-
-//void printengine(enginedb db, const string& engine_Name) {
-    //cout << left << setw(50) << "NUMERO DI GIRI MINIMO DEL MOTORE" << left << setw(25) << db.En.laps_min << endl;
-//}
-
-//enginedb readData_en(const string& fileName) {
-    //string rootPath = "../database/";
-    //string filePath = rootPath + fileName;
-    //enginedb db; // create db object
-    //save_engine(&db, filePath);
-    //return db;
-//}
