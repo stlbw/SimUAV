@@ -1,4 +1,4 @@
-/#include <iostream>
+#include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -22,6 +22,7 @@ struct enginedb{
 };
 
 int get_engine(enginedb *db, string filePath){
+    int a=0;
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
     myfile.open(filePath); // to open the file
