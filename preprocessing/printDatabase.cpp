@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
-#include <fstream>
 #include "../declaredFun.h"
 
 using namespace std;
