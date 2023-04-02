@@ -7,8 +7,8 @@ using namespace std;
 
 struct {
     struct {
-        double laps_min = -100, laps_max = -100, reduction_rate = -100, nominal_voltage = -100,
-                no_load_current = -100, stall_current = -100, stall_torque = -100;
+        double laps_min, laps_max, reduction_rate, nominal_voltage,
+                no_load_current, stall_current, stall_torque;
     }engine_description;
 }En;
 
@@ -23,25 +23,25 @@ inline void save_engine(string filePath) {
         while (!myfile.eof()) {
             getline(myfile, text);
             // read and save all aircraft description data
-            if (text.find("NUMERO DI GIRI MINIMO DEL MOTORE  [rpm]") != string::npos & En.engine_description.laps_min == -100) {
+            if (text.find("NUMERO DI GIRI MINIMO DEL MOTORE  [rpm]") != string::npos) {
                 istringstream A(text);
                 A >> En.engine_description.laps_min;
-            } else if (text.find("NUMERO DI GIRI MASSIMO DEL MOTORE [rpm] SENZA CARICO") != string::npos & En.engine_description.laps_max == -100) {
+            } else if (text.find("NUMERO DI GIRI MASSIMO DEL MOTORE [rpm] SENZA CARICO") != string::npos) {
                 istringstream A(text);
                 A >> En.engine_description.laps_max;
-            } else if (text.find("RAPPORTO DI RIDUZIONE (<1)/MOLTIPLICAZIONE (>1)") != string::npos & En.engine_description.reduction_rate == -100) {
+            } else if (text.find("RAPPORTO DI RIDUZIONE (<1)/MOLTIPLICAZIONE (>1)") != string::npos) {
                 istringstream A(text);
                 A >> En.engine_description.reduction_rate;
-            } else if (text.find("NOMINAL VOLTAGE") != string::npos & En.engine_description.nominal_voltage == -100) {
+            } else if (text.find("NOMINAL VOLTAGE") != string::npos) {
                 istringstream A(text);
                 A >> En.engine_description.nominal_voltage;
-            } else if (text.find("NO LOAD CURRENT") != string::npos & En.engine_description.no_load_current == -100) {
+            } else if (text.find("NO LOAD CURRENT") != string::npos) {
                 istringstream A(text);
                 A >> En.engine_description.no_load_current;
-            } else if (text.find("STALL CURRENT") != string::npos & En.engine_description.stall_current == -100) {
+            } else if (text.find("STALL CURRENT") != string::npos) {
                 istringstream A(text);
                 A >> En.engine_description.stall_current;
-            } else if (text.find("STALL TORQUE") != string::npos & En.engine_description.stall_torque == -100) {
+            } else if (text.find("STALL TORQUE") != string::npos) {
                 istringstream A(text);
                 A >> En.engine_description.stall_torque;
             }

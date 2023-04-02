@@ -11,7 +11,7 @@ struct  {
     float C, mu; // Capacità nominale e Rendimento di scarica
 }Battery;
 
- void save_battery(string filePath) {
+ inline void save_battery(string filePath) {
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
     myfile.open(filePath); // to open the file
@@ -19,15 +19,14 @@ struct  {
     if(myfile.is_open()) {
         cout << "Reading database " << filePath << endl; // print what the program is reading
         // read line by line and based on the keyword save variables accordingly
-        while (getline(myfile, line)) {
-
-            if (i == 5) {
-                istringstream A(line);
+        while (!myfile.eof()) {
+            getline(myfile, text);
+            // read and save all aircraft description data
+            if (text.find("CAPACITA' NOMINALE \t[mAh]") != string::npos) {
+                istringstream A(text);
                 A >> Battery.C;
-                cout << "" << line << "\n";
-            }
-            if (i == 6) {
-                istringstream A(line);
+            } else if (text.find("RENDIMENTO DI SCARICA") != string::npos) {
+                istringstream A(text);
                 A >> Battery.mu;
             }
         }
@@ -37,9 +36,7 @@ struct  {
     cerr << "Could not open " << filePath << endl;
     ::perror("");
     }
-    cout<< k<<'\n';
     myfile.close();
 
-return 0;
 }
 
