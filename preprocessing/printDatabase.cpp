@@ -11,10 +11,15 @@ using namespace std;
 /**
  * Prints the simplified version of an aerodynamic database
  * For variables of type vector prints the first 5 and last 5 elements
- * @param db
+ * @param db 
+ * @param dbName 
+ * @param switchCase 
  */
-void printSimplifiedDba(AeroDB db, string dbName) {
-    int displayData = 3; // qty of elements to be displayed for first and last elements
+void printDba(AeroDB db, string dbName, char switchCase) {
+    int displayData; //qty of elements to be displayed for first and last elements
+    if(switchCase == '1') {displayData = 3;}
+    else {displayData = db.length;}
+
     cout << "" << endl;
     cout << "--------------------------------- AERODYNAMIC DATABASE @" << dbName << " ---------------------------------"
          << endl;
@@ -25,7 +30,17 @@ void printSimplifiedDba(AeroDB db, string dbName) {
     cout << left << setw(50) << "WING AREA" << left << setw(25) << db.Ad.Wing_area << endl;
     cout << left << setw(50) << "CHORD" << left << setw(25) << db.Ad.Chord << endl;
     cout << left << setw(50) << "MACH DRAG RISE" << left << setw(25) << db.Ad.Mach_drag_rise << endl;
-    //skiped some variables
+
+    cout << left << setw(50) << "THRUST AXIS OFFSET (REF. TO XB ALONG X)" << left << setw(25) << db.Ad.Thrust_axis_offset_x << endl;
+    cout << left << setw(50) << "THRUST AXIS OFFSET (REF. TO XB ALONG Y)" << left << setw(25) << db.Ad.Thrust_axis_offset_y << endl;
+    cout << left << setw(50) << "THRUST AXIS OFFSET (REF. TO XB ALONG Z)" << left << setw(25) << db.Ad.Thrust_axis_offset_z << endl;
+    cout << left << setw(50) << "THRUST AXIS ANGULAR OFFSET" << left << setw(25) << db.Ad.Thrust_axis_ang_off_xy << endl;
+    cout << left << setw(50) << "(REF. TO XB / X-Y PLANE / POSITIVE RIGHT)" << endl;
+    cout << left << setw(50) << "THRUST AXIS ANGULAR OFFSET" << left << setw(25) << db.Ad.Thrust_axis_ang_off_xz << endl;
+    cout << left << setw(50) << "(REF. TO XB / X-Z PLANE / POSITIVE RIGHT)" << endl;
+
+    cout << left << setw(50) << "NUMBER OF ANGLES OF ATTACK" << left << setw(25) << db.length << endl;
+
     if (db.Ad.rotary_deriv == 1) {
         cout << left << setw(50) << "ROTARY DERIVATIVES" << left << setw(25) << "PRESENT" << endl;
     }
@@ -37,6 +52,15 @@ void printSimplifiedDba(AeroDB db, string dbName) {
     cout << left << setw(50) << "JZ" << left << setw(25) << db.Ad.jz << endl;
     cout << left << setw(50) << "JXZ" << left << setw(25) << db.Ad.jxz << endl;
     // skipped some variables
+
+    if (db.Ad.option_cog_update == 1) {
+        cout << left << setw(50) << "OPTION FOR C.G. UPDATE" << left << setw(25) << "YES" << endl;
+    }
+    else { cout << left << setw(50) << "OPTION FOR C.G. UPDATE" << left << setw(25) << "NO" << endl; }
+    cout << left << setw(50) << "CENTER OF GRAVITY REFERENCE LOCATION (UPDATED)" << left << setw(25) << db.Ad.cog_updated << endl;
+    cout << left << setw(50) << "PILOT POSITION (REF. TO CG ALONG XB)" << left << setw(25) << db.Ad.pilot_position_x << endl;
+    cout << left << setw(50) << "PILOT POSITION (REF. TO CG ALONG YB)" << left << setw(25) << db.Ad.pilot_position_y << endl;
+    cout << left << setw(50) << "PILOT POSITION (REF. TO CG ALONG ZB)" << left << setw(25) << db.Ad.pilot_position_z << endl;
 
     cout << "" << endl;
     cout << "\t\tDEFLECTION LIMITS" << endl;
@@ -64,15 +88,19 @@ void printSimplifiedDba(AeroDB db, string dbName) {
              << setw(20) << db.ss.cz[i] << left << setw(20) << db.ss.cl[i] << left << setw(20) << db.ss.cm[i] << left << setw(20)
              << db.ss.cn[i] << endl;
     }
-    cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
-         << setw(20) << "..."<< left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
-         << "..." << endl;
-    for (int i = db.alpha.size() - displayData ; i < db.alpha.size() ; i++) {
-        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.ss.cx[i] << left << setw(20) << db.ss.cy[i] << left
-             << setw(20) << db.ss.cz[i] << left << setw(20) << db.ss.cl[i] << left << setw(20) << db.ss.cm[i] << left << setw(20)
-             << db.ss.cn[i] << endl;
-    }
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
 
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.ss.cx[i] << left << setw(20)
+                 << db.ss.cy[i] << left
+                 << setw(20) << db.ss.cz[i] << left << setw(20) << db.ss.cl[i] << left << setw(20) << db.ss.cm[i]
+                 << left << setw(20)
+                 << db.ss.cn[i] << endl;
+        }
+    }
     cout << "" << endl;
     cout << "" << endl;
     cout << "\t\tAERODYNAMIC DERIVATIVES" << endl;
@@ -86,13 +114,18 @@ void printSimplifiedDba(AeroDB db, string dbName) {
              << setw(20) << db.fx.cx_u[i] << left << setw(20) << db.fx.cx_q[i] << left << setw(20) << db.fx.cx_b[i] << left << setw(20)
              << db.fx.cx_p[i] << left << setw(20) << db.fx.cx_r[i] << endl;
     }
-    cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
-         << setw(20) << "..."<< left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
-         << "..." << left << setw(20) << "..." << endl;
-    for (int i = db.alpha.size() - displayData ; i < db.alpha.size() ; i++) {
-        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.fx.cx_a[i] << left << setw(20) << db.fx.cx_ap[i] << left
-             << setw(20) << db.fx.cx_u[i] << left << setw(20) << db.fx.cx_q[i] << left << setw(20) << db.fx.cx_b[i] << left << setw(20)
-             << db.fx.cx_p[i] << left << setw(20) << db.fx.cx_r[i] << endl;
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
+
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.fx.cx_a[i] << left << setw(20)
+                 << db.fx.cx_ap[i] << left
+                 << setw(20) << db.fx.cx_u[i] << left << setw(20) << db.fx.cx_q[i] << left << setw(20) << db.fx.cx_b[i]
+                 << left << setw(20)
+                 << db.fx.cx_p[i] << left << setw(20) << db.fx.cx_r[i] << endl;
+        }
     }
 
     cout << "" << endl;
@@ -105,12 +138,158 @@ void printSimplifiedDba(AeroDB db, string dbName) {
              << setw(20) << db.fy.cy_p[i] << left << setw(20) << db.fy.cy_r[i] << left << setw(20) << db.fy.cy_a[i] << left << setw(20)
              << db.fy.cy_q[i] << endl;
     }
-    cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
-         << setw(20) << "..."<< left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
-         << "..." << endl;
-    for (int i = db.alpha.size() - displayData ; i < db.alpha.size() ; i++) {
-        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.fy.cy_b[i] << left << setw(20) << db.fy.cy_bp[i] << left
-             << setw(20) << db.fy.cy_p[i] << left << setw(20) << db.fy.cy_r[i] << left << setw(20) << db.fy.cy_a[i] << left << setw(20)
-             << db.fy.cy_q[i] << endl;
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
+
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.fy.cy_b[i] << left << setw(20)
+                 << db.fy.cy_bp[i] << left
+                 << setw(20) << db.fy.cy_p[i] << left << setw(20) << db.fy.cy_r[i] << left << setw(20) << db.fy.cy_a[i]
+                 << left << setw(20)
+                 << db.fy.cy_q[i] << endl;
+        }
     }
+    cout << "" << endl;
+    cout << "\t\tZ  FORCE DERIVATIVES" << endl;
+    cout << left << setw(20) << "ALPHA (deg)" << left << setw(20) << "CZA" << left << setw(20) << "CZAP" << left
+         << setw(20) << "CZU" << left << setw(20) << "CZQ" << left << setw(20) << "CZB" << left << setw(20)
+         << "CZP" << left << setw(20) << "CZR" << endl;
+    for (int i = 0; i < displayData; i++) {
+        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.fz.cz_a[i] << left << setw(20) << db.fz.cz_ap[i] << left
+             << setw(20) << db.fz.cz_u[i] << left << setw(20) << db.fz.cz_q[i] << left << setw(20) << db.fz.cz_b[i] << left << setw(20)
+             << db.fz.cz_p[i] << left << setw(20) << db.fz.cz_r[i] << endl;
+    }
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
+
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.fz.cz_a[i] << left << setw(20)
+                 << db.fz.cz_ap[i] << left
+                 << setw(20) << db.fz.cz_u[i] << left << setw(20) << db.fz.cz_q[i] << left << setw(20) << db.fz.cz_b[i]
+                 << left << setw(20)
+                 << db.fz.cz_p[i] << left << setw(20) << db.fz.cz_r[i] << endl;
+        }
+    }
+    cout << "" << endl;
+    cout << "\t\tROLLING MOMENT DERIVATIVES" << endl;
+    cout << left << setw(20) << "ALPHA (deg)" << left << setw(20) << "CLB" << left << setw(20) << "CLBP" << left
+         << setw(20) << "CLP" << left << setw(20) << "CLR" << left << setw(20) << "CLA" << left << setw(20)
+         << "CLQ" <<endl;
+    for (int i = 0; i < displayData; i++) {
+        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.rm.cl_b[i] << left << setw(20) << db.rm.cl_bp[i] << left
+             << setw(20) << db.rm.cl_p[i] << left << setw(20) << db.rm.cl_r[i] << left << setw(20) << db.rm.cl_a[i] << left << setw(20)
+             << db.rm.cl_q[i] << endl;
+    }
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
+
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.rm.cl_b[i] << left << setw(20)
+                 << db.rm.cl_bp[i] << left
+                 << setw(20) << db.rm.cl_p[i] << left << setw(20) << db.rm.cl_r[i] << left << setw(20) << db.rm.cl_a[i]
+                 << left << setw(20)
+                 << db.rm.cl_q[i] << endl;
+        }
+    }
+
+    cout << "" << endl;
+    cout << "\t\tPITCHING MOMENT DERIVATIVES" << endl;
+    cout << left << setw(20) << "ALPHA (deg)" << left << setw(20) << "CMA" << left << setw(20) << "CMAP" << left
+         << setw(20) << "CMU" << left << setw(20) << "CMQ" << left << setw(20) << "CMB" << left << setw(20)
+         << "CMP" << left << setw(20) << "CMR" << endl;
+    for (int i = 0; i < displayData; i++) {
+        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.pm.cm_a[i] << left << setw(20) << db.pm.cm_ap[i] << left
+             << setw(20) << db.pm.cm_u[i] << left << setw(20) << db.pm.cm_q[i] << left << setw(20) << db.pm.cm_b[i] << left << setw(20)
+             << db.pm.cm_p[i] << left << setw(20) << db.pm.cm_r[i] << endl;
+    }
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
+
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.pm.cm_a[i] << left << setw(20)
+                 << db.pm.cm_ap[i] << left
+                 << setw(20) << db.pm.cm_u[i] << left << setw(20) << db.pm.cm_q[i] << left << setw(20) << db.pm.cm_b[i]
+                 << left << setw(20)
+                 << db.pm.cm_p[i] << left << setw(20) << db.pm.cm_r[i] << endl;
+        }
+    }
+    cout << "" << endl;
+    cout << "\t\tYAWING MOMENT DERIVATIVES" << endl;
+    cout << left << setw(20) << "ALPHA (deg)" << left << setw(20) << "CNB" << left << setw(20) << "CNBP" << left
+         << setw(20) << "CNP" << left << setw(20) << "CNR" << left << setw(20) << "CNA" << left << setw(20)
+         << "CNQ" <<endl;
+    for (int i = 0; i < displayData; i++) {
+        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.ym.cn_b[i] << left << setw(20) << db.ym.cn_bp[i] << left
+             << setw(20) << db.ym.cn_p[i] << left << setw(20) << db.ym.cn_r[i] << left << setw(20) << db.ym.cn_a[i] << left << setw(20)
+             << db.ym.cn_q[i] << endl;
+    }
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
+
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.ym.cn_b[i] << left << setw(20)
+                 << db.ym.cn_bp[i] << left
+                 << setw(20) << db.ym.cn_p[i] << left << setw(20) << db.ym.cn_r[i] << left << setw(20) << db.ym.cn_a[i]
+                 << left << setw(20)
+                 << db.ym.cn_q[i] << endl;
+        }
+    }
+    cout << "" << endl;
+    cout << "\t\tCONTROL FORCE DERIVATIVES" << endl;
+    cout << left << setw(20) << "ALPHA (deg)" << left << setw(20) << "CXDE" << left << setw(20) << "CXDLE" << left
+         << setw(20) << "CZDE" << left << setw(20) << "CZDLE" << left << setw(20) << "CYDA" << left << setw(20)
+         << "CYDR" <<endl;
+    for (int i = 0; i < displayData; i++) {
+        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.cf.cx_de[i] << left << setw(20) << db.cf.cx_dle[i] << left
+             << setw(20) << db.cf.cz_de[i] << left << setw(20) << db.cf.cz_dle[i] << left << setw(20) << db.cf.cy_da[i] << left << setw(20)
+             << db.cf.cy_dr[i] << endl;
+    }
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
+
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.cf.cx_de[i] << left << setw(20)
+                 << db.cf.cx_dle[i] << left
+                 << setw(20) << db.cf.cz_de[i] << left << setw(20) << db.cf.cz_dle[i] << left << setw(20)
+                 << db.cf.cy_da[i] << left << setw(20)
+                 << db.cf.cy_dr[i] << endl;
+        }
+    }
+    cout << "" << endl;
+    cout << "\t\tCONTROL MOMENT DERIVATIVES" << endl;
+    cout << left << setw(20) << "ALPHA (deg)" << left << setw(20) << "CLDA" << left << setw(20) << "CLDR" << left
+         << setw(20) << "CMDE" << left << setw(20) << "CMDLE" << left << setw(20) << "CNDA" << left << setw(20)
+         << "CNDR" <<endl;
+    for (int i = 0; i < displayData; i++) {
+        cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.cm.cl_da[i] << left << setw(20) << db.cm.cl_dr[i] << left
+             << setw(20) << db.cm.cm_de[i] << left << setw(20) << db.cm.cm_dle[i] << left << setw(20) << db.cm.cn_da[i] << left << setw(20)
+             << db.cm.cn_dr[i] << endl;
+    }
+    if(switchCase == '1') {
+        cout << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left
+             << setw(20) << "..." << left << setw(20) << "..." << left << setw(20) << "..." << left << setw(20)
+             << "..." << endl;
+
+        for (int i = db.alpha.size() - displayData; i < db.alpha.size(); i++) {
+            cout << left << setw(20) << db.alpha[i] << left << setw(20) << db.cm.cl_da[i] << left << setw(20)
+                 << db.cm.cl_dr[i] << left
+                 << setw(20) << db.cm.cm_de[i] << left << setw(20) << db.cm.cm_dle[i] << left << setw(20)
+                 << db.cm.cn_da[i] << left << setw(20)
+                 << db.cm.cn_dr[i] << endl;
+        }
+    }
+    cout << "" << endl;
+    cout << "---------------------------------END OF AERODYNAMIC DATABASE @" << dbName << " ---------------------------------" << endl;
 }

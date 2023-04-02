@@ -15,7 +15,7 @@ int main() {
     AeroDB dba0, dba100, dba1000, dba2000; // create dba objects from struct type
 
     // read aerodynamic database for different altitudes
-    dba0 = readData("dba.ini"); // Open database
+    dba0 = readData("dba.ini"); // Open database, read it and save data to struct of type AeroDB
     dba100 = readData("dba_100.ini");
     dba1000 = readData("dba_1000.ini");
     dba2000 = readData("dba_2000.ini");
@@ -30,16 +30,24 @@ int main() {
     string fileDBCheck; //file name to save variables
     bool flagCaseFound = false;
     while(!flagCaseFound) {
-        //cin >> dataCheckSwitch;
+        //cin >> dataCheckSwitch; // get user input
         switch (dataCheckSwitch) {
             case '1':
                 cout << "Printing partial version to screen..." << endl;
                 flagCaseFound = true;
-                printSimplifiedDba(dba0, "SEA LEVEL");
+                //try to take the functions out of switch case
+                printDba(dba0, "SEA LEVEL", dataCheckSwitch);
+                printDba(dba100, "100 m", dataCheckSwitch);
+                printDba(dba1000, "1000 m", dataCheckSwitch);
+                printDba(dba2000, "2000 m", dataCheckSwitch);
                 break;
             case '2':
                 cout << "Printing full database to screen..." << endl;
                 flagCaseFound = true;
+                printDba(dba0, "SEA LEVEL", dataCheckSwitch);
+                printDba(dba100, "100 m", dataCheckSwitch);
+                printDba(dba1000, "1000 m", dataCheckSwitch);
+                printDba(dba2000, "2000 m", dataCheckSwitch);
                 break;
             case '3':
                 cout << "Saving database to file..." << endl;
