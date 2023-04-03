@@ -6,6 +6,8 @@
 #include "preprocessing/printDatabase.cpp"
 #include "read_engine.cpp"
 #include "Open_Battery.cpp"
+#include "read_propeller.cpp"
+
 int getDba();
 void readData();
 
