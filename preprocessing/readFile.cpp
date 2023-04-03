@@ -264,7 +264,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                 istringstream A(text);
                 A >> db->Ad.Thrust_axis_ang_off_xy;
             }
-            else if (text.find("THRUST AXIS ANGULAR OFFSET (REF. TO XB / X-Z PLANE / POSITIVE RIGHT)")!= string::npos & db->Ad.Thrust_axis_ang_off_xz==-100) {
+            else if (text.find("THRUST AXIS ANGULAR OFFSET (REF. TO XB / X-Z PLANE / POSITIVE DOWN)")!= string::npos & db->Ad.Thrust_axis_ang_off_xz==-100) {
                 istringstream A(text);
                 A >> db->Ad.Thrust_axis_ang_off_xz;
             }
@@ -316,9 +316,9 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                 istringstream A(text);
                 A >> db->Ad.pilot_position_z;
             }
-            else if (text.find("ELEVATOR (max)")!= string::npos & DBA_0.Deflection_limits.Elevator_max==-100) {
+            else if (text.find("ELEVATOR (max)")!= string::npos & db->Dl.Elevator_max==-100) {
                 istringstream A(text);
-                A >> DBA_0.Deflection_limits.Elevator_max;
+                A >> db->Dl.Elevator_max;
             }
             else if (text.find("ELEVATOR (min)")!= string::npos & db->Dl.Elevator_min==-100) {
                 istringstream A(text);
