@@ -4,9 +4,11 @@
 #include "Open_DBA_Mario.cpp"
 #include "preprocessing/readFile.cpp"
 #include "preprocessing/printDatabase.cpp"
-#include "read_engine.cpp"
-#include "Open_Battery.cpp"
-#include "read_propeller.cpp"
+#include "preprocessing/readingBatEnProp.cpp"
+
+//#include "Separated_reading_function/read_engine.cpp"
+//#include "Separated_reading_function/Open_Battery.cpp"
+//#include "Separated_reading_function/read_propeller.cpp"
 
 int getDba();
 void readData();

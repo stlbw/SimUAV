@@ -19,7 +19,15 @@ int main() {
     dba100 = readData("dba_100.ini");
     dba1000 = readData("dba_1000.ini");
     dba2000 = readData("dba_2000.ini");
-    // todo: add missing databases
+
+    Not_AerodB bat0, en0; // create dba objects from struct type
+    PropDB prop0; // create dba objects from struct type
+
+    // read not aerodynamic database
+    bat0 = readBat("battery.ini"); // Open database, read it and save data to struct of type Not_Aerodb
+    en0 = readEn("engine.ini"); // Open database, read it and save data to struct of type Not_Aerodb
+    prop0 = readProp("propeller.ini"); // Open database, read it and save data to struct of type PropDB
+
 
     cout << ">> Finished reading all databases. Please select how should the information be displayed and press ENTER:" << endl;
     cout << "\t1 - Partial (simplified) version" << endl;
@@ -58,6 +66,8 @@ int main() {
         printDba(dba100, "100 m", dataCheckSwitch);
         printDba(dba1000, "1000 m", dataCheckSwitch);
         printDba(dba2000, "2000 m", dataCheckSwitch);
+        printBat(bat0, "battery",dataCheckSwitch);
+        printEn(en0,"engine",dataCheckSwitch);
     } else {
         string filePath = "../output/aeroDb.txt";
         cout << ">> Saving files to output directory. Path: " << filePath << endl;
