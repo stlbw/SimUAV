@@ -19,7 +19,7 @@ struct Engine{
 };
 
 // Contains nested struct for each topic contained in the battery and engine files
-struct Not_AerodB{
+struct GeneralDB{
     Battery Bat;
     Engine En;
 };
@@ -49,7 +49,7 @@ struct PropDB {
 };
 
 // Function for saving variable from the file: battery
-inline void save_battery(Not_AerodB *db, string filePath) {
+void save_battery(GeneralDB *db, string filePath) {
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
     myfile.open(filePath); // to open the file
@@ -78,7 +78,7 @@ inline void save_battery(Not_AerodB *db, string filePath) {
 }
 
 // Function for saving variable from the file: engine
-inline void save_engine(Not_AerodB *db,string filePath) {
+void save_engine(GeneralDB *db,string filePath) {
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
     myfile.open(filePath); // to open the file
@@ -121,7 +121,7 @@ inline void save_engine(Not_AerodB *db,string filePath) {
 }
 
 // Function for saving variable from the file: propeller
-inline void save_propeller(PropDB *db, string filePath) {
+void save_propeller(PropDB *db, string filePath) {
     int flag_ps = 0;
     string text;
     ifstream myfile;
@@ -221,26 +221,26 @@ inline void save_propeller(PropDB *db, string filePath) {
 }
 
 // Function for reading the file: battery
-inline Not_AerodB readBat(string fileName) {
+GeneralDB readBat(string fileName) {
     string rootPath = "../database/";
     string filePath = rootPath + fileName;
-    Not_AerodB db; // create db object
+    GeneralDB db; // create db object
     save_battery(&db, filePath);
     return db;
 }
 
 
 // Function for reading the file: engine
-inline Not_AerodB readEn(string fileName) {
+GeneralDB readEn(string fileName) {
     string rootPath = "../database/";
     string filePath = rootPath + fileName;
-    Not_AerodB db; // create db object
+    GeneralDB db; // create db object
     save_engine(&db, filePath);
     return db;
 }
 
 // Function for reading the file: propeller
-inline PropDB readProp(string fileName) {
+PropDB readProp(string fileName) {
     string rootPath = "../database/";
     string filePath = rootPath + fileName;
     PropDB db; // create db object

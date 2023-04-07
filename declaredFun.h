@@ -5,6 +5,7 @@
 #include "preprocessing/readFile.cpp"
 #include "preprocessing/printDatabase.cpp"
 #include "preprocessing/readingBatEnProp.cpp"
+#include "interpolation.cpp"
 
 //#include "Separated_reading_function/read_engine.cpp"
 //#include "Separated_reading_function/Open_Battery.cpp"

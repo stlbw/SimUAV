@@ -20,7 +20,7 @@ int main() {
     dba1000 = readData("dba_1000.ini");
     dba2000 = readData("dba_2000.ini");
 
-    Not_AerodB bat0, en0; // create dba objects from struct type
+    GeneralDB bat0, en0; // create dba objects from struct type
     PropDB prop0; // create dba objects from struct type
 
     // read not aerodynamic database
@@ -61,13 +61,14 @@ int main() {
         }
     }
     // print dba
+    //todo: implement print feature to all db
     if(!printToFile) {
         printDba(dba0, "SEA LEVEL", dataCheckSwitch);
         printDba(dba100, "100 m", dataCheckSwitch);
         printDba(dba1000, "1000 m", dataCheckSwitch);
         printDba(dba2000, "2000 m", dataCheckSwitch);
-        printBat(bat0, "battery",dataCheckSwitch);
-        printEn(en0,"engine",dataCheckSwitch);
+        //printBat(bat0, "battery",dataCheckSwitch);
+        //printEn(en0,"engine",dataCheckSwitch);
     } else {
         string filePath = "../output/aeroDb.txt";
         cout << ">> Saving files to output directory. Path: " << filePath << endl;
@@ -82,5 +83,6 @@ int main() {
         cout.rdbuf(coutbuf); //reset to standard output again
     }
 
+    linearIntepolation(dba0.alpha, dba0.fx.cx_a, 3.6);
     return 0;
 }
