@@ -67,8 +67,8 @@ int main() {
         printDba(dba100, "100 m", dataCheckSwitch);
         printDba(dba1000, "1000 m", dataCheckSwitch);
         printDba(dba2000, "2000 m", dataCheckSwitch);
-        //printBat(bat0, "battery",dataCheckSwitch);
-        //printEn(en0,"engine",dataCheckSwitch);
+        printBat(bat0, "battery",dataCheckSwitch);
+        printEn(en0,"engine",dataCheckSwitch);
     } else {
         string filePath = "../output/aeroDb.txt";
         cout << ">> Saving files to output directory. Path: " << filePath << endl;

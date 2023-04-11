@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-
+#include "../declaredFun.h"
 using namespace std;
 
 // Definition of the variables for reading the file: battery
@@ -168,21 +168,23 @@ void save_propeller(PropDB *db, string filePath) {
                 istringstream A(text);
                 A >> db->Pc.Cd0;
             }
+            // Sto continuando a leggere le righe dal file
+            // Se trovo CARATTERISCTICHE DELL'ELICA...
             if (text.find("CARATTERISTICHE DELL' ELICA") != string::npos) {
-                flag_ps = 1;
-            }
-            if (flag_ps == 1) {
+                //flag_ps = 1;
+            //}
+            //if (flag_ps == 1) {
+            // Se trovo CSI (quindi la prima riga, di intestazione)...
                 if (text.find("CSI") != string::npos) {
                     nameVar = {}; // clean variable to receive new values
                     string textToken;
                     stringstream st(text);
-                    while (getline(st, textToken, ' ')) {
-                        if (!textToken.empty()) {
-                            nameVar.push_back(textToken);
+                    while (getline(st, textToken, ' ')) { // leggo st (quindi text) fino al primo spazio, salvo il valore in textToken
+                        if (!textToken.empty()) { // se textToken contiene qualcosa...
+                            nameVar.push_back(textToken); // ...metto il textToken al fondo di nameVar
                         }
                     }
-                } else if (text.find("********************************") == string::npos &&
-                           text.find("CSI") == string::npos) {
+                } else if (text.find("********************************") == string::npos && text.find("CSI") == string::npos) {
                     string token;
                     stringstream s(text);
                     int i = 0;
