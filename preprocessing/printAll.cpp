@@ -77,4 +77,5 @@ void printProp(PropDB db, string dbName, char switchCase) {
     }
 
 }
+;
 
