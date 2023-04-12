@@ -1,16 +1,9 @@
 #ifndef DECLAREDFUN_H
 #define DECLAREDFUN_H
 
-#include "Open_DBA_Mario.cpp"
-#include "preprocessing/readFile.cpp"
-#include "preprocessing/readingBatEnProp.cpp"
+#include "preprocessing/readAeroDb.cpp"
+#include "preprocessing/readBatEnPropDb.cpp"
 #include "interpolation.cpp"
 #include "preprocessing/printAll.cpp"
-//#include "Separated_reading_function/read_engine.cpp"
-//#include "Separated_reading_function/Open_Battery.cpp"
-//#include "Separated_reading_function/read_propeller.cpp"
-
-int getDba();
-void readData();
 
 #endif
