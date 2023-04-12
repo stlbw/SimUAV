@@ -3,4 +3,4 @@ project(SimUAV)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(SimUAV main.cpp declaredFun.h)
+add_executable(SimUAV src/main.cpp declaredFun.h)
