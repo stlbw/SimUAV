@@ -217,7 +217,7 @@ void save_propeller(PropDB *db, string filePath) {
         }
             cout << "\tFinished reading database.";
         }
-    }else {
+    else {
         string errorMessage = "Could not open " + filePath;
         cerr << "Could not open " << filePath << endl;
         ::perror("");
