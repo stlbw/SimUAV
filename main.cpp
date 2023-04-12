@@ -69,6 +69,7 @@ int main() {
         printDba(dba2000, "2000 m", dataCheckSwitch);
         printBat(bat0, "battery",dataCheckSwitch);
         printEn(en0,"engine",dataCheckSwitch);
+        printProp(prop0,"propeller",dataCheckSwitch);
     } else {
         string filePath = "../output/aeroDb.txt";
         cout << ">> Saving files to output directory. Path: " << filePath << endl;
@@ -86,3 +87,5 @@ int main() {
     linearIntepolation(dba0.alpha, dba0.fx.cx_a, 3.6);
     return 0;
 }
+
+

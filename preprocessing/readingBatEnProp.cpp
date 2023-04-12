@@ -172,46 +172,49 @@ void save_propeller(PropDB *db, string filePath) {
             // Se trovo CARATTERISCTICHE DELL'ELICA...
             if (text.find("CARATTERISTICHE DELL' ELICA") != string::npos) {
                 //flag_ps = 1;
-            //}
-            //if (flag_ps == 1) {
-            // Se trovo CSI (quindi la prima riga, di intestazione)...
+                //}
+                //if (flag_ps == 1) {
+                // Se trovo CSI (quindi la prima riga, di intestazione)...
                 if (text.find("CSI") != string::npos) {
                     nameVar = {}; // clean variable to receive new values
                     string textToken;
                     stringstream st(text);
-                    while (getline(st, textToken, ' ')) { // leggo st (quindi text) fino al primo spazio, salvo il valore in textToken
+                    while (getline(st, textToken,
+                                   ' ')) { // leggo st (quindi text) fino al primo spazio, salvo il valore in textToken
                         if (!textToken.empty()) { // se textToken contiene qualcosa...
                             nameVar.push_back(textToken); // ...metto il textToken al fondo di nameVar
-                        }
-                    }
-                } else if (text.find("********************************") == string::npos && text.find("CSI") == string::npos) {
-                    string token;
-                    stringstream s(text);
-                    int i = 0;
-                    while (getline(s, token, ' ')) {
-                        if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
-                            if (nameVar[i].find("CSI") != string::npos) {
-                                db->Ps.CSI.push_back(stof(token));
-                                i++;
-                            } else if (nameVar[i].find("RD [m]") != string::npos) {
-                                db->Ps.RD.push_back(stof(token));
-                                i++;
-                            } else if (nameVar[i].find("CH AD") != string::npos) {
-                                db->Ps.CH_AD.push_back(stof(token));
-                                i++;
-                            } else if (nameVar[i].find("BA") != string::npos) {
-                                db->Ps.BA.push_back(stof(token));
-                                i++;
+                        } else if (text.find("CSI") == string::npos &&
+                                   text.find("********************************") == string::npos) {
+                            string token;
+                            stringstream s(text);
+                            int i = 0;
+                            while (getline(s, token, ' ')) {
+                                if (!token.empty()) {
+                                    /*if(token.find("\r") != string::npos) {
+                                        string lineSkip = "\r";
+                                        string::size_type i = token.find(lineSkip);
+                                        token.erase(i, lineSkip.length());
+                                    }*/
+                                    if (nameVar[i].find("CSI") != string::npos) {
+                                        db->Ps.CSI.push_back(stof(token));
+                                        i++;
+                                    } else if (nameVar[i].find("RD [m]") != string::npos) {
+                                        db->Ps.RD.push_back(stof(token));
+                                        i++;
+                                    } else if (nameVar[i].find("CH AD") != string::npos) {
+                                        db->Ps.CH_AD.push_back(stof(token));
+                                        i++;
+                                    } else if (nameVar[i].find("BA") != string::npos) {
+                                        db->Ps.BA.push_back(stof(token));
+                                        i++;
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
+        }
             cout << "\tFinished reading database.";
         }
     }else {
