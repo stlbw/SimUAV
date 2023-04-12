@@ -95,9 +95,6 @@ void save_engine(GeneralDB *db,string filePath) {
             } else if (text.find("NUMERO DI GIRI MASSIMO DEL MOTORE [rpm] SENZA CARICO") != string::npos) {
                 istringstream A(text);
                 A >> db->En.laps_max;
-            //} else if (text.find("RAPPORTO DI RIDUZIONE (<1)/MOLTIPLICAZIONE (>1)") != string::npos) {
-                //istringstream A(text);
-                //A >> db->En.reduction_rate;
             } else if (text.find("NOMINAL VOLTAGE") != string::npos) {
                 istringstream A(text);
                 A >> db->En.nominal_voltage;
@@ -168,23 +165,19 @@ void save_propeller(PropDB *db, string filePath) {
                 istringstream A(text);
                 A >> db->Pc.Cd0;
             }
-            // Sto continuando a leggere le righe dal file
-            // Se trovo CARATTERISCTICHE DELL'ELICA...
-
             if (text.find("CARATTERISTICHE DELL' ELICA") != string::npos) {
                 flag_ps = 1;
             }
             if (flag_ps == 1) {
-            // Se trovo CSI (quindi la prima riga, di intestazione)...
                 if (text.find("********************************") != string::npos) { flag_ps = 0;}
                 // we change the state of the flag, in this way we save only useful data
                 if (text.find("CSI") != string::npos) {
                     nameVar = {"CSI", "RD", "CH AD", "BA"}; // clean variable to receive new values
                     /*string textToken;
                     stringstream st(text);
-                    while (getline(st, textToken, ' ')) { // leggo st (quindi text) fino al primo spazio, salvo il valore in textToken
-                        if (!textToken.empty()) { // se textToken contiene qualcosa...
-                            nameVar.push_back(textToken); // ...metto il textToken al fondo di nameVar
+                    while (getline(st, textToken, ' ')) {
+                        if (!textToken.empty()) {
+                            nameVar.push_back(textToken);
                         }
                     }*/
                 } else if (text.find("********************************") == string::npos && text.find("CSI") == string::npos) {
