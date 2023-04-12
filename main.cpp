@@ -34,7 +34,7 @@ int main() {
     cout << "\t2 - Print full database to screen" << endl;
     cout << "\t3 - Save database to file" << endl;
     cout << ">> ";
-    char dataCheckSwitch = '1'; // used to store the user's choice
+    char dataCheckSwitch = '3'; // used to store the user's choice
     bool flagCaseFound = false;
     bool printToFile;
     while(!flagCaseFound) {
@@ -60,8 +60,7 @@ int main() {
                 break;
         }
     }
-    // print dba
-    //todo: implement print feature to all db
+    // print database
     if(!printToFile) {
         printDba(dba0, "SEA LEVEL", dataCheckSwitch);
         printDba(dba100, "100 m", dataCheckSwitch);
@@ -71,7 +70,7 @@ int main() {
         printEn(en0,"engine",dataCheckSwitch);
         printProp(prop0,"propeller",dataCheckSwitch);
     } else {
-        string filePath = "../output/aeroDb.txt";
+        string filePath = "../output/logDatabaseData.txt";
         cout << ">> Saving files to output directory. Path: " << filePath << endl;
         streambuf *coutbuf;
         ofstream out(filePath);
@@ -81,6 +80,9 @@ int main() {
         printDba(dba100, "100 m", dataCheckSwitch);
         printDba(dba1000, "1000 m", dataCheckSwitch);
         printDba(dba2000, "2000 m", dataCheckSwitch);
+        printBat(bat0, "battery",dataCheckSwitch);
+        printEn(en0,"engine",dataCheckSwitch);
+        printProp(prop0,"propeller",dataCheckSwitch);
         cout.rdbuf(coutbuf); //reset to standard output again
     }
 
