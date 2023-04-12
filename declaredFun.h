@@ -3,7 +3,6 @@
 
 #include "Open_DBA_Mario.cpp"
 #include "preprocessing/readFile.cpp"
-#include "preprocessing/printDatabase.cpp"
 #include "preprocessing/readingBatEnProp.cpp"
 #include "interpolation.cpp"
 #include "preprocessing/printAll.cpp"
