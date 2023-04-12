@@ -1,5 +1,5 @@
 #include <iostream>
-#include "declaredFun.h"
+#include "../declaredFun.h"
 int main() {
     cout << "---------------------------------------------------------------" << endl;
     cout << "\t\t\t Flight Simulator - MH850-3" << endl;
@@ -34,11 +34,11 @@ int main() {
     cout << "\t2 - Print full database to screen" << endl;
     cout << "\t3 - Save database to file" << endl;
     cout << ">> ";
-    char dataCheckSwitch = '3'; // used to store the user's choice
+    char dataCheckSwitch = '1'; // used to store the user's choice
     bool flagCaseFound = false;
     bool printToFile;
     while(!flagCaseFound) {
-        //cin >> dataCheckSwitch; // get user input
+        cin >> dataCheckSwitch; // get user input
         switch (dataCheckSwitch) {
             case '1':
                 cout << "Printing partial version to screen..." << endl;

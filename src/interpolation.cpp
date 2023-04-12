@@ -2,7 +2,7 @@
 // Created by Matheus Padilha on 05/04/23.
 //
 #include <vector>
-#include "declaredFun.h"
+#include "../declaredFun.h"
 using namespace std;
 /**
  *  Returns the variable value as a result of a linear interpolation of the angle of attack (alpha) for
