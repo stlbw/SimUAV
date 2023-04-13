@@ -52,10 +52,10 @@ RM = "C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe"
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\giaca\CLionProjects\SimUAV1
+CMAKE_SOURCE_DIR = C:\Users\stefa\CLionProjects\SimUAV
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug
 
 # Include any dependencies generated for this target.
 include Google_tests/CMakeFiles/Google_Tests_run.dir/depend.make
@@ -70,18 +70,18 @@ include Google_tests/CMakeFiles/Google_Tests_run.dir/flags.make
 
 Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj: Google_tests/CMakeFiles/Google_Tests_run.dir/flags.make
 Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj: Google_tests/CMakeFiles/Google_Tests_run.dir/includes_CXX.rsp
-Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj: C:/Users/giaca/CLionProjects/SimUAV1/Google_tests/tests/testInterpolation.cpp
+Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj: C:/Users/stefa/CLionProjects/SimUAV/Google_tests/tests/testInterpolation.cpp
 Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj: Google_tests/CMakeFiles/Google_Tests_run.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj"
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj -MF CMakeFiles\Google_Tests_run.dir\tests\testInterpolation.cpp.obj.d -o CMakeFiles\Google_Tests_run.dir\tests\testInterpolation.cpp.obj -c C:\Users\giaca\CLionProjects\SimUAV1\Google_tests\tests\testInterpolation.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj"
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.obj -MF CMakeFiles\Google_Tests_run.dir\tests\testInterpolation.cpp.obj.d -o CMakeFiles\Google_Tests_run.dir\tests\testInterpolation.cpp.obj -c C:\Users\stefa\CLionProjects\SimUAV\Google_tests\tests\testInterpolation.cpp
 
 Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.i"
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\giaca\CLionProjects\SimUAV1\Google_tests\tests\testInterpolation.cpp > CMakeFiles\Google_Tests_run.dir\tests\testInterpolation.cpp.i
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\stefa\CLionProjects\SimUAV\Google_tests\tests\testInterpolation.cpp > CMakeFiles\Google_Tests_run.dir\tests\testInterpolation.cpp.i
 
 Google_tests/CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Google_Tests_run.dir/tests/testInterpolation.cpp.s"
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\giaca\CLionProjects\SimUAV1\Google_tests\tests\testInterpolation.cpp -o CMakeFiles\Google_Tests_run.dir\tests\testInterpolation.cpp.s
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\stefa\CLionProjects\SimUAV\Google_tests\tests\testInterpolation.cpp -o CMakeFiles\Google_Tests_run.dir\tests\testInterpolation.cpp.s
 
 # Object files for target Google_Tests_run
 Google_Tests_run_OBJECTS = \
@@ -98,18 +98,18 @@ Google_tests/Google_Tests_run.exe: lib/libgtest.a
 Google_tests/Google_Tests_run.exe: Google_tests/CMakeFiles/Google_Tests_run.dir/linklibs.rsp
 Google_tests/Google_Tests_run.exe: Google_tests/CMakeFiles/Google_Tests_run.dir/objects1.rsp
 Google_tests/Google_Tests_run.exe: Google_tests/CMakeFiles/Google_Tests_run.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable Google_Tests_run.exe"
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\Google_Tests_run.dir\link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable Google_Tests_run.exe"
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\Google_Tests_run.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 Google_tests/CMakeFiles/Google_Tests_run.dir/build: Google_tests/Google_Tests_run.exe
 .PHONY : Google_tests/CMakeFiles/Google_Tests_run.dir/build
 
 Google_tests/CMakeFiles/Google_Tests_run.dir/clean:
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests && $(CMAKE_COMMAND) -P CMakeFiles\Google_Tests_run.dir\cmake_clean.cmake
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests && $(CMAKE_COMMAND) -P CMakeFiles\Google_Tests_run.dir\cmake_clean.cmake
 .PHONY : Google_tests/CMakeFiles/Google_Tests_run.dir/clean
 
 Google_tests/CMakeFiles/Google_Tests_run.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\giaca\CLionProjects\SimUAV1 C:\Users\giaca\CLionProjects\SimUAV1\Google_tests C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\CMakeFiles\Google_Tests_run.dir\DependInfo.cmake --color=$(COLOR)
+	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\stefa\CLionProjects\SimUAV C:\Users\stefa\CLionProjects\SimUAV\Google_tests C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\CMakeFiles\Google_Tests_run.dir\DependInfo.cmake --color=$(COLOR)
 .PHONY : Google_tests/CMakeFiles/Google_Tests_run.dir/depend
 

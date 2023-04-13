@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/giaca/CLionProjects/SimUAV1/Google_tests/lib/googlemock
+# Install script for directory: C:/Users/stefa/CLionProjects/SimUAV/Google_tests/lib/googlemock
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -38,28 +38,28 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "C:/Users/giaca/CLionProjects/SimUAV1/Google_tests/lib/googlemock/include/")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/include" TYPE DIRECTORY FILES "C:/Users/stefa/CLionProjects/SimUAV/Google_tests/lib/googlemock/include/")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/giaca/CLionProjects/SimUAV1/cmake-build-debug/lib/libgmock.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/stefa/CLionProjects/SimUAV/cmake-build-debug/lib/libgmock.a")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/giaca/CLionProjects/SimUAV1/cmake-build-debug/lib/libgmock_main.a")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib" TYPE STATIC_LIBRARY FILES "C:/Users/stefa/CLionProjects/SimUAV/cmake-build-debug/lib/libgmock_main.a")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "C:/Users/giaca/CLionProjects/SimUAV1/cmake-build-debug/Google_tests/lib/googletest/generated/gmock.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "C:/Users/stefa/CLionProjects/SimUAV/cmake-build-debug/Google_tests/lib/googletest/generated/gmock.pc")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "C:/Users/giaca/CLionProjects/SimUAV1/cmake-build-debug/Google_tests/lib/googletest/generated/gmock_main.pc")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig" TYPE FILE FILES "C:/Users/stefa/CLionProjects/SimUAV/cmake-build-debug/Google_tests/lib/googletest/generated/gmock_main.pc")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/giaca/CLionProjects/SimUAV1/cmake-build-debug/Google_tests/lib/googletest/cmake_install.cmake")
+  include("C:/Users/stefa/CLionProjects/SimUAV/cmake-build-debug/Google_tests/lib/googletest/cmake_install.cmake")
 
 endif()
 

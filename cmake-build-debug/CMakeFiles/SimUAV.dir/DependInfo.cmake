@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "C:/Users/giaca/CLionProjects/SimUAV1/src/main.cpp" "CMakeFiles/SimUAV.dir/src/main.cpp.obj" "gcc" "CMakeFiles/SimUAV.dir/src/main.cpp.obj.d"
+  "C:/Users/stefa/CLionProjects/SimUAV/src/main.cpp" "CMakeFiles/SimUAV.dir/src/main.cpp.obj" "gcc" "CMakeFiles/SimUAV.dir/src/main.cpp.obj.d"
   )
 
 # Targets to which this target links.

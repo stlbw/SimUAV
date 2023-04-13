@@ -1,4 +1,4 @@
-"C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" -S C:\Users\giaca\CLionProjects\SimUAV1 -B C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug
+"C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" -S C:\Users\stefa\CLionProjects\SimUAV -B C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug
 -- The C compiler identification is GNU 11.2.0
 -- The CXX compiler identification is GNU 11.2.0
 -- Detecting C compiler ABI info
@@ -14,4 +14,4 @@
 -- Could NOT find Python (missing: Python_EXECUTABLE Interpreter) 
 -- Configuring done
 -- Generating done
--- Build files have been written to: C:/Users/giaca/CLionProjects/SimUAV1/cmake-build-debug
+-- Build files have been written to: C:/Users/stefa/CLionProjects/SimUAV/cmake-build-debug

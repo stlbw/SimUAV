@@ -10,15 +10,48 @@ using namespace std;
 
 // Prima approssimazione
 double trim1(AeroDB db) {
+    // Primo tentativo gamma_0=0 --> alpha = theta
 
-    double V = 15; // velocity
-    double h = 100; // height
-    double alpha_int = 3.58, beta = 0, delta_e = 0, delta_a = 0, gamma_0 = 0;
-    double p = 0, q = 0, r = 0;
+    double alpha_min, alpha_max;
+    alpha_min = db.alpha.front();
+    alpha_max = db.alpha.back();
 
-    double rho_SL = 1.226, grad = 0.0065, m = 4.2561, T_0 = 288.15;
-    double ans = ((T_0 - grad * h) / T_0), rho = rho_SL * pow(ans, m);
-    double X_trim, Y_trim, Z_trim, L_trim, M_trim, N_trim;
+    double deltae_min, deltae_max;
+    deltae_min = db.Dl.Elevator_min;
+    deltae_max = db.Dl.Elevator_max;
+
+    double V = 15,h = 100; // velocità e altezza che poi saranno definite da utente
+    double beta = 0, delta_a = 0, gamma_0 = 0, p = 0, q = 0, r = 0;
+    double rho = 1.226, grad = 0.0065, m = 4.2561, T_0 = 288.15, ans, g = 9.81;
+    ans = ((T_0 - grad * h) / T_0);
+    rho = rho * pow(ans, m);
+    double alpha_int = alpha_min, deltae_int = deltae_min, incr_alpha = 0.2, alpha_trim, deltae_trim;
+    double Cz_tot, Cz_ss, Cz_alpha, Cz_deltae;
+    double Cm_ss, Cm_alpha, Cm_deltae;
+
+    while (alpha_int <= alpha_max){
+        while(deltae_int <= deltae_max){
+            Cz_ss = linearInterpolation(db.alpha,db.ss.cz, alpha_int);
+            Cz_alpha = linearInterpolation(db.alpha,db.fz.cz_a, alpha_int);
+            Cz_deltae = linearInterpolation(db.alpha,db.cf.cz_de, alpha_int);
+            Cz_tot = Cz_ss+Cz_alpha*alpha_int+Cz_deltae*deltae_int;
+            Cm_ss = linearInterpolation(db.alpha,db.ss.cm, alpha_int);
+            Cm_alpha = linearInterpolation(db.alpha,db.pm.cm_a, alpha_int);
+            Cm_deltae = linearInterpolation(db.alpha,db.cm.cm_de, alpha_int);
+            if(abs(db.Ad.Mass*g*cos(alpha_int)+0.5*Cz_tot*rho*db.Ad.Wing_area* pow(V,2)) < 1){
+                alpha_trim = alpha_int;
+                deltae_trim = -(Cm_ss+Cm_alpha*alpha_int)/Cm_deltae;
+                alpha_int = alpha_int+incr_alpha;
+                deltae_int = deltae_int+incr_alpha;
+            }
+            else{
+                alpha_int = alpha_int+incr_alpha;
+                deltae_int = deltae_int+incr_alpha;
+            }
+        }
+    }
+
+    /*double X_trim, Y_trim, Z_trim, L_trim, M_trim, N_trim;
     double cx_alfa, cx_beta, cx_p, cx_q, cx_r;
     double cy_alfa, cy_beta, cy_p, cy_q, cy_r;
     double cx_de, cy_da;
@@ -52,19 +85,7 @@ double trim1(AeroDB db) {
               db.c_da * delta_a);
     // donde sta c_de
 
-// Primo tentativo gamma_0=0 --> alpha = theta
-// Calcolo alpha trim
-    double alpha_min, alpha_max;
-    alpha_min = db.alpha[0];
-    alpha_max = db.alpha[0];
-    alpha_max = db.alpha[0];
-    int i;
-    for (i = 0; i < std::size(db.alpha); i++) {
-        if (db.alpha[i] < alpha_min)
-            alpha_min = db.alpha[i];
-        else if (db.alpha[i] > alpha_max)
-            alpha_max = db.alpha[i];
     }*/
-    return X_trim;
+    return alpha_trim;
 }
 

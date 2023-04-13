@@ -56,10 +56,10 @@ RM = "C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe"
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\giaca\CLionProjects\SimUAV1
+CMAKE_SOURCE_DIR = C:\Users\stefa\CLionProjects\SimUAV
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -131,9 +131,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\\CMakeFiles\progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\\CMakeFiles\progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 0
 .PHONY : all
 
 # The main clean target

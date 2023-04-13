@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/giaca/CLionProjects/SimUAV1/Google_tests
+# Install script for directory: C:/Users/stefa/CLionProjects/SimUAV/Google_tests
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,6 +39,6 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for the subdirectory.
-  include("C:/Users/giaca/CLionProjects/SimUAV1/cmake-build-debug/Google_tests/lib/cmake_install.cmake")
+  include("C:/Users/stefa/CLionProjects/SimUAV/cmake-build-debug/Google_tests/lib/cmake_install.cmake")
 endif()
 

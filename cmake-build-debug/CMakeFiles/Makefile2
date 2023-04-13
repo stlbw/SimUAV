@@ -53,10 +53,10 @@ RM = "C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe"
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\giaca\CLionProjects\SimUAV1
+CMAKE_SOURCE_DIR = C:\Users\stefa\CLionProjects\SimUAV
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -150,14 +150,14 @@ Google_tests/lib/googletest/clean: Google_tests/lib/googletest/CMakeFiles/gtest_
 CMakeFiles/SimUAV.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\SimUAV.dir\build.make CMakeFiles/SimUAV.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\SimUAV.dir\build.make CMakeFiles/SimUAV.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=3,4 "Built target SimUAV"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=3,4 "Built target SimUAV"
 .PHONY : CMakeFiles/SimUAV.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/SimUAV.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 CMakeFiles/SimUAV.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 0
 .PHONY : CMakeFiles/SimUAV.dir/rule
 
 # Convenience name for target.
@@ -173,18 +173,18 @@ CMakeFiles/SimUAV.dir/clean:
 # Target rules for target Google_tests/CMakeFiles/Google_Tests_run.dir
 
 # All Build rule for target.
-Google_tests/CMakeFiles/Google_Tests_run.dir/all: Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/all
 Google_tests/CMakeFiles/Google_Tests_run.dir/all: Google_tests/lib/googletest/CMakeFiles/gtest.dir/all
+Google_tests/CMakeFiles/Google_Tests_run.dir/all: Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/all
 	$(MAKE) $(MAKESILENT) -f Google_tests\CMakeFiles\Google_Tests_run.dir\build.make Google_tests/CMakeFiles/Google_Tests_run.dir/depend
 	$(MAKE) $(MAKESILENT) -f Google_tests\CMakeFiles\Google_Tests_run.dir\build.make Google_tests/CMakeFiles/Google_Tests_run.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=1,2 "Built target Google_Tests_run"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=1,2 "Built target Google_Tests_run"
 .PHONY : Google_tests/CMakeFiles/Google_Tests_run.dir/all
 
 # Build rule for subdir invocation for target.
 Google_tests/CMakeFiles/Google_Tests_run.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Google_tests/CMakeFiles/Google_Tests_run.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 0
 .PHONY : Google_tests/CMakeFiles/Google_Tests_run.dir/rule
 
 # Convenience name for target.
@@ -203,14 +203,14 @@ Google_tests/CMakeFiles/Google_Tests_run.dir/clean:
 Google_tests/lib/googlemock/CMakeFiles/gmock.dir/all: Google_tests/lib/googletest/CMakeFiles/gtest.dir/all
 	$(MAKE) $(MAKESILENT) -f Google_tests\lib\googlemock\CMakeFiles\gmock.dir\build.make Google_tests/lib/googlemock/CMakeFiles/gmock.dir/depend
 	$(MAKE) $(MAKESILENT) -f Google_tests\lib\googlemock\CMakeFiles\gmock.dir\build.make Google_tests/lib/googlemock/CMakeFiles/gmock.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=5,6 "Built target gmock"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=5,6 "Built target gmock"
 .PHONY : Google_tests/lib/googlemock/CMakeFiles/gmock.dir/all
 
 # Build rule for subdir invocation for target.
 Google_tests/lib/googlemock/CMakeFiles/gmock.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Google_tests/lib/googlemock/CMakeFiles/gmock.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 0
 .PHONY : Google_tests/lib/googlemock/CMakeFiles/gmock.dir/rule
 
 # Convenience name for target.
@@ -226,18 +226,18 @@ Google_tests/lib/googlemock/CMakeFiles/gmock.dir/clean:
 # Target rules for target Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir
 
 # All Build rule for target.
-Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/all: Google_tests/lib/googlemock/CMakeFiles/gmock.dir/all
 Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/all: Google_tests/lib/googletest/CMakeFiles/gtest.dir/all
+Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/all: Google_tests/lib/googlemock/CMakeFiles/gmock.dir/all
 	$(MAKE) $(MAKESILENT) -f Google_tests\lib\googlemock\CMakeFiles\gmock_main.dir\build.make Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/depend
 	$(MAKE) $(MAKESILENT) -f Google_tests\lib\googlemock\CMakeFiles\gmock_main.dir\build.make Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=7,8 "Built target gmock_main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=7,8 "Built target gmock_main"
 .PHONY : Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/all
 
 # Build rule for subdir invocation for target.
 Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 6
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 0
 .PHONY : Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/rule
 
 # Convenience name for target.
@@ -256,14 +256,14 @@ Google_tests/lib/googlemock/CMakeFiles/gmock_main.dir/clean:
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/all:
 	$(MAKE) $(MAKESILENT) -f Google_tests\lib\googletest\CMakeFiles\gtest.dir\build.make Google_tests/lib/googletest/CMakeFiles/gtest.dir/depend
 	$(MAKE) $(MAKESILENT) -f Google_tests\lib\googletest\CMakeFiles\gtest.dir\build.make Google_tests/lib/googletest/CMakeFiles/gtest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=9,10 "Built target gtest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=9,10 "Built target gtest"
 .PHONY : Google_tests/lib/googletest/CMakeFiles/gtest.dir/all
 
 # Build rule for subdir invocation for target.
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Google_tests/lib/googletest/CMakeFiles/gtest.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 0
 .PHONY : Google_tests/lib/googletest/CMakeFiles/gtest.dir/rule
 
 # Convenience name for target.
@@ -282,14 +282,14 @@ Google_tests/lib/googletest/CMakeFiles/gtest.dir/clean:
 Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/all: Google_tests/lib/googletest/CMakeFiles/gtest.dir/all
 	$(MAKE) $(MAKESILENT) -f Google_tests\lib\googletest\CMakeFiles\gtest_main.dir\build.make Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/depend
 	$(MAKE) $(MAKESILENT) -f Google_tests\lib\googletest\CMakeFiles\gtest_main.dir\build.make Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=11,12 "Built target gtest_main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=11,12 "Built target gtest_main"
 .PHONY : Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/all
 
 # Build rule for subdir invocation for target.
 Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 4
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles 0
 .PHONY : Google_tests/lib/googletest/CMakeFiles/gtest_main.dir/rule
 
 # Convenience name for target.

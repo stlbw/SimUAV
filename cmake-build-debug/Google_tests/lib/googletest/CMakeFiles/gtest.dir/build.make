@@ -52,10 +52,10 @@ RM = "C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe"
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = C:\Users\giaca\CLionProjects\SimUAV1
+CMAKE_SOURCE_DIR = C:\Users\stefa\CLionProjects\SimUAV
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug
+CMAKE_BINARY_DIR = C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug
 
 # Include any dependencies generated for this target.
 include Google_tests/lib/googletest/CMakeFiles/gtest.dir/depend.make
@@ -70,18 +70,18 @@ include Google_tests/lib/googletest/CMakeFiles/gtest.dir/flags.make
 
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj: Google_tests/lib/googletest/CMakeFiles/gtest.dir/flags.make
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj: Google_tests/lib/googletest/CMakeFiles/gtest.dir/includes_CXX.rsp
-Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj: C:/Users/giaca/CLionProjects/SimUAV1/Google_tests/lib/googletest/src/gtest-all.cc
+Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj: C:/Users/stefa/CLionProjects/SimUAV/Google_tests/lib/googletest/src/gtest-all.cc
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj: Google_tests/lib/googletest/CMakeFiles/gtest.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj"
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\lib\googletest && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj -MF CMakeFiles\gtest.dir\src\gtest-all.cc.obj.d -o CMakeFiles\gtest.dir\src\gtest-all.cc.obj -c C:\Users\giaca\CLionProjects\SimUAV1\Google_tests\lib\googletest\src\gtest-all.cc
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj"
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\lib\googletest && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj -MF CMakeFiles\gtest.dir\src\gtest-all.cc.obj.d -o CMakeFiles\gtest.dir\src\gtest-all.cc.obj -c C:\Users\stefa\CLionProjects\SimUAV\Google_tests\lib\googletest\src\gtest-all.cc
 
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/gtest.dir/src/gtest-all.cc.i"
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\lib\googletest && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\giaca\CLionProjects\SimUAV1\Google_tests\lib\googletest\src\gtest-all.cc > CMakeFiles\gtest.dir\src\gtest-all.cc.i
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\lib\googletest && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E C:\Users\stefa\CLionProjects\SimUAV\Google_tests\lib\googletest\src\gtest-all.cc > CMakeFiles\gtest.dir\src\gtest-all.cc.i
 
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/gtest.dir/src/gtest-all.cc.s"
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\lib\googletest && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\giaca\CLionProjects\SimUAV1\Google_tests\lib\googletest\src\gtest-all.cc -o CMakeFiles\gtest.dir\src\gtest-all.cc.s
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\lib\googletest && C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S C:\Users\stefa\CLionProjects\SimUAV\Google_tests\lib\googletest\src\gtest-all.cc -o CMakeFiles\gtest.dir\src\gtest-all.cc.s
 
 # Object files for target gtest
 gtest_OBJECTS = \
@@ -93,19 +93,19 @@ gtest_EXTERNAL_OBJECTS =
 lib/libgtest.a: Google_tests/lib/googletest/CMakeFiles/gtest.dir/src/gtest-all.cc.obj
 lib/libgtest.a: Google_tests/lib/googletest/CMakeFiles/gtest.dir/build.make
 lib/libgtest.a: Google_tests/lib/googletest/CMakeFiles/gtest.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library ..\..\..\lib\libgtest.a"
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\lib\googletest && $(CMAKE_COMMAND) -P CMakeFiles\gtest.dir\cmake_clean_target.cmake
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\lib\googletest && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\gtest.dir\link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX static library ..\..\..\lib\libgtest.a"
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\lib\googletest && $(CMAKE_COMMAND) -P CMakeFiles\gtest.dir\cmake_clean_target.cmake
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\lib\googletest && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\gtest.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/build: lib/libgtest.a
 .PHONY : Google_tests/lib/googletest/CMakeFiles/gtest.dir/build
 
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/clean:
-	cd /d C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\lib\googletest && $(CMAKE_COMMAND) -P CMakeFiles\gtest.dir\cmake_clean.cmake
+	cd /d C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\lib\googletest && $(CMAKE_COMMAND) -P CMakeFiles\gtest.dir\cmake_clean.cmake
 .PHONY : Google_tests/lib/googletest/CMakeFiles/gtest.dir/clean
 
 Google_tests/lib/googletest/CMakeFiles/gtest.dir/depend:
-	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\giaca\CLionProjects\SimUAV1 C:\Users\giaca\CLionProjects\SimUAV1\Google_tests\lib\googletest C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\lib\googletest C:\Users\giaca\CLionProjects\SimUAV1\cmake-build-debug\Google_tests\lib\googletest\CMakeFiles\gtest.dir\DependInfo.cmake --color=$(COLOR)
+	$(CMAKE_COMMAND) -E cmake_depends "MinGW Makefiles" C:\Users\stefa\CLionProjects\SimUAV C:\Users\stefa\CLionProjects\SimUAV\Google_tests\lib\googletest C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\lib\googletest C:\Users\stefa\CLionProjects\SimUAV\cmake-build-debug\Google_tests\lib\googletest\CMakeFiles\gtest.dir\DependInfo.cmake --color=$(COLOR)
 .PHONY : Google_tests/lib/googletest/CMakeFiles/gtest.dir/depend
 
