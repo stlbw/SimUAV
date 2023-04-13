@@ -89,6 +89,7 @@ int main() {
 
     double x;
     x = trim1(dba100);
+    cout << x << endl;
     return 0;
 }
 

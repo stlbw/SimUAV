@@ -25,31 +25,29 @@ double trim1(AeroDB db) {
     double rho = 1.226, grad = 0.0065, m = 4.2561, T_0 = 288.15, ans, g = 9.81;
     ans = ((T_0 - grad * h) / T_0);
     rho = rho * pow(ans, m);
-    double alpha_int = alpha_min, deltae_int = deltae_min, incr_alpha = 0.2, alpha_trim, deltae_trim;
+    double alpha_int = alpha_min, deltae_int = deltae_min, incr_alpha = 0.2, alpha_trim, deltae_trim, incr_deltae = 0.2;
     double Cz_tot, Cz_ss, Cz_alpha, Cz_deltae;
-    double Cm_ss, Cm_alpha, Cm_deltae;
 
-    while (alpha_int <= alpha_max){
-        while(deltae_int <= deltae_max){
-            Cz_ss = linearInterpolation(db.alpha,db.ss.cz, alpha_int);
-            Cz_alpha = linearInterpolation(db.alpha,db.fz.cz_a, alpha_int);
-            Cz_deltae = linearInterpolation(db.alpha,db.cf.cz_de, alpha_int);
-            Cz_tot = Cz_ss+Cz_alpha*alpha_int+Cz_deltae*deltae_int;
-            Cm_ss = linearInterpolation(db.alpha,db.ss.cm, alpha_int);
-            Cm_alpha = linearInterpolation(db.alpha,db.pm.cm_a, alpha_int);
-            Cm_deltae = linearInterpolation(db.alpha,db.cm.cm_de, alpha_int);
-            if(abs(db.Ad.Mass*g*cos(alpha_int)+0.5*Cz_tot*rho*db.Ad.Wing_area* pow(V,2)) < 1){
+    while (alpha_int <= alpha_max) {
+            Cz_ss = linearInterpolation(db.alpha, db.ss.cz, alpha_int);
+            Cz_alpha = linearInterpolation(db.alpha, db.fz.cz_a, alpha_int);
+            Cz_deltae = linearInterpolation(db.alpha, db.cf.cz_de, alpha_int);
+            Cz_tot = Cz_ss + Cz_alpha * alpha_int/180*M_PI + Cz_deltae * deltae_int/180*M_PI;
+            if (abs(db.Ad.Mass * g * cos(alpha_int/180*M_PI) + 0.5 * Cz_tot * rho * db.Ad.Wing_area * pow(V, 2)) < 1) {
                 alpha_trim = alpha_int;
-                deltae_trim = -(Cm_ss+Cm_alpha*alpha_int)/Cm_deltae;
-                alpha_int = alpha_int+incr_alpha;
-                deltae_int = deltae_int+incr_alpha;
-            }
-            else{
-                alpha_int = alpha_int+incr_alpha;
-                deltae_int = deltae_int+incr_alpha;
+                alpha_int = alpha_int + incr_alpha;
+                deltae_int = deltae_int + incr_deltae;
+            } else {
+                alpha_int = alpha_int + incr_alpha;
+                deltae_int = deltae_int + incr_alpha;
             }
         }
-    }
+
+    double Cm_ss, Cm_alpha, Cm_deltae;
+    Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_trim);
+    Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_trim);
+    Cm_deltae = linearInterpolation(db.alpha, db.cm.cm_de, alpha_trim);
+    deltae_trim = -(Cm_ss + Cm_alpha * alpha_trim) / Cm_deltae;
 
     /*double X_trim, Y_trim, Z_trim, L_trim, M_trim, N_trim;
     double cx_alfa, cx_beta, cx_p, cx_q, cx_r;
@@ -84,8 +82,8 @@ double trim1(AeroDB db) {
              (db.ym.cn_a * alpha_int + db.ym.cn_b * beta + db.ym.cn_p * p + db.ym.cn_q * q + db.ym.cn_r * r +
               db.c_da * delta_a);
     // donde sta c_de
-
     }*/
+
     return alpha_trim;
 }
 
