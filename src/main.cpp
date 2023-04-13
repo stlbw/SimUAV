@@ -29,7 +29,8 @@ int main() {
     prop0 = readProp("propeller.ini"); // Open database, read it and save data to struct of type PropDB
 
 
-    cout << ">> Finished reading all databases. Please select how should the information be displayed and press ENTER:" << endl;
+    cout << ">> Finished reading all databases."<<endl;
+    cout <<'\n'<<" Please select how should the information be displayed and press ENTER:" << endl;
     cout << "\t1 - Partial (simplified) version" << endl;
     cout << "\t2 - Print full database to screen" << endl;
     cout << "\t3 - Save database to file" << endl;
