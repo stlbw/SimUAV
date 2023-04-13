@@ -9,4 +9,4 @@
 ### [CLion documentation](https://www.jetbrains.com/help/clion/installation-guide.html)
 * [Documentation on version control for CLion](https://www.jetbrains.com/help/clion/version-control-integration.html)
 ### [How to clone a GitHub repository to my PC](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository?tool=cli&platform=windows)
-
+### [How to use the Google Test suite](https://google.github.io/googletest/primer.html)
