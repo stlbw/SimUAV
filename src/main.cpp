@@ -86,7 +86,8 @@ int main() {
         cout.rdbuf(coutbuf); //reset to standard output again
     }
 
-    linearInterpolation(dba0.alpha, dba0.fx.cx_a, 3.58);
+    double x;
+    x = trim1(dba100);
     return 0;
 }
 

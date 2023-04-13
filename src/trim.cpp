@@ -3,3 +3,7 @@
 //
 
 #include "../declaredFun.h"
+#include <cmath>
+#include<iostream>
+
+using namespace std;
