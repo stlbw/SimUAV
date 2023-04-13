@@ -1,3 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe" -E rm -f CMakeFiles\Google_Tests_run.dir/objects.a
-C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\ar.exe qc CMakeFiles\Google_Tests_run.dir/objects.a @CMakeFiles\Google_Tests_run.dir\objects1.rsp
-C:\PROGRA~1\JETBRA~1\CLION2~1.3\bin\mingw\bin\G__~1.EXE -g -Wl,--whole-archive CMakeFiles\Google_Tests_run.dir/objects.a -Wl,--no-whole-archive -o Google_Tests_run.exe -Wl,--out-implib,libGoogle_Tests_run.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\Google_Tests_run.dir\linklibs.rsp
