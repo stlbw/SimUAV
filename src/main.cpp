@@ -20,7 +20,8 @@ int main() {
     dba1000 = readData("dba_1000.ini");
     dba2000 = readData("dba_2000.ini");
 
-    GeneralDB bat0, en0; // create dba objects from struct type
+    BatteryDB bat0;
+    EngineDB en0; // create dba objects from struct type
     PropDB prop0; // create dba objects from struct type
 
     // read not aerodynamic database
@@ -88,7 +89,7 @@ int main() {
     }
 
     double x;
-    x = trim1(dba100);
+    //x = trim1(dba100, );
     cout << x << endl;
     return 0;
 }

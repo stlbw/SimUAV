@@ -7,22 +7,24 @@
 using namespace std;
 
 // Definition of the variables for reading the file: battery
-struct Battery{
+struct BatteryDB{
     double C, mu;
 };
 
 // Definition of the variables for reading the file: engine
-struct Engine{
+struct EngineDB{
     double laps_min, laps_max, nominal_voltage,
             no_load_current, stall_current, stall_torque;
     // reduction_rate is not considered
 };
 
 // Contains nested struct for each topic contained in the battery and engine files
-struct GeneralDB{
+/*
+ * DEPRECATED
+ * struct GeneralDB{
     Battery Bat;
     Engine En;
-};
+};*/
 
 // Definition of the variables for reading the file: propeller
 struct Propeller_Geometry{
@@ -49,7 +51,7 @@ struct PropDB {
 };
 
 // Function for saving variable from the file: battery
-void save_battery(GeneralDB *db, string filePath) {
+void save_battery(BatteryDB *db, string filePath) {
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
     myfile.open(filePath); // to open the file
@@ -62,10 +64,10 @@ void save_battery(GeneralDB *db, string filePath) {
             // read and save all aircraft description data
             if (text.find("CAPACITA' NOMINALE \t[mAh]") != string::npos) {
                 istringstream A(text);
-                A >> db->Bat.C;
+                A >> db->C;
             } else if (text.find("RENDIMENTO DI SCARICA") != string::npos) {
                 istringstream A(text);
-                A >> db->Bat.mu;
+                A >> db->mu;
             }
         }
     }
@@ -78,7 +80,7 @@ void save_battery(GeneralDB *db, string filePath) {
 }
 
 // Function for saving variable from the file: engine
-void save_engine(GeneralDB *db,string filePath) {
+void save_engine(EngineDB *db,string filePath) {
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
     myfile.open(filePath); // to open the file
@@ -91,22 +93,22 @@ void save_engine(GeneralDB *db,string filePath) {
             // read and save all aircraft description data
             if (text.find("NUMERO DI GIRI MINIMO DEL MOTORE  [rpm]") != string::npos) {
                 istringstream A(text);
-                A >> db->En.laps_min;
+                A >> db->laps_min;
             } else if (text.find("NUMERO DI GIRI MASSIMO DEL MOTORE [rpm] SENZA CARICO") != string::npos) {
                 istringstream A(text);
-                A >> db->En.laps_max;
+                A >> db->laps_max;
             } else if (text.find("NOMINAL VOLTAGE") != string::npos) {
                 istringstream A(text);
-                A >> db->En.nominal_voltage;
+                A >> db->nominal_voltage;
             } else if (text.find("NO LOAD CURRENT") != string::npos) {
                 istringstream A(text);
-                A >> db->En.no_load_current;
+                A >> db->no_load_current;
             } else if (text.find("STALL CURRENT") != string::npos) {
                 istringstream A(text);
-                A >> db->En.stall_current;
+                A >> db->stall_current;
             } else if (text.find("STALL TORQUE") != string::npos) {
                 istringstream A(text);
-                A >> db->En.stall_torque;
+                A >> db->stall_torque;
             }
         }
     }else {
@@ -221,20 +223,20 @@ void save_propeller(PropDB *db, string filePath) {
 }
 
 // Function for reading the file: battery
-GeneralDB readBat(string fileName) {
+BatteryDB readBat(string fileName) {
     string rootPath = "../database/";
     string filePath = rootPath + fileName;
-    GeneralDB db; // create db object
+    BatteryDB db; // create db object
     save_battery(&db, filePath);
     return db;
 }
 
 
 // Function for reading the file: engine
-GeneralDB readEn(string fileName) {
+EngineDB readEn(string fileName) {
     string rootPath = "../database/";
     string filePath = rootPath + fileName;
-    GeneralDB db; // create db object
+    EngineDB db; // create db object
     save_engine(&db, filePath);
     return db;
 }
