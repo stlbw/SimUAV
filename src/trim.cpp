@@ -9,7 +9,7 @@
 using namespace std;
 
 // Prima approssimazione
-double trim1(AeroDB db) {
+double trim1(AeroDB db, GeneralDB gdb, PropDB pdb) {
     // Primo tentativo gamma_0=0 --> alpha = theta
 
     double alpha_min, alpha_max;
@@ -20,7 +20,7 @@ double trim1(AeroDB db) {
     deltae_min = db.Dl.Elevator_min;
     deltae_max = db.Dl.Elevator_max;
 
-    double V = 15,h = 100; // velocità e altezza che poi saranno definite da utente
+    double V = 15, h = 100; // velocità e altezza che poi saranno definite da utente
     double beta = 0, delta_a = 0, gamma_0 = 0, p = 0, q = 0, r = 0;
     double rho = 1.226, grad = 0.0065, m = 4.2561, T_0 = 288.15, ans, g = 9.81;
     ans = ((T_0 - grad * h) / T_0);
@@ -28,25 +28,29 @@ double trim1(AeroDB db) {
     double alpha_int, deltae_int, incr_alpha = 0.2, alpha_trim, deltae_trim;
     double Cz_tot, Cz_ss, Cz_alpha, Cz_deltae;
     double Cm_ss, Cm_alpha, Cm_deltae;
+    // Per il calcolo degli RPM
+    double rpm_min = gdb.En.laps_min, rpm_max = gdb.En.laps_max;
+    double radius = (pdb.Pg.diameter)/2, nBlade = pdb.Pg.np;
+    int tip =pdb.Ps.BA.front();
+    int hub =pdb.Ps.BA.back();
 
-
-    for(alpha_int = alpha_min; alpha_int <= alpha_max; alpha_int += incr_alpha){
+    for (alpha_int = alpha_min; alpha_int <= alpha_max; alpha_int += incr_alpha) {
+        Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_int);
+        Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_int);
+        Cm_deltae = linearInterpolation(db.alpha, db.cm.cm_de, alpha_int);
+        deltae_int = -(Cm_ss + Cm_alpha * alpha_int) / Cm_deltae;
+        Cz_ss = linearInterpolation(db.alpha, db.ss.cz, alpha_int);
+        Cz_alpha = linearInterpolation(db.alpha, db.fz.cz_a, alpha_int);
+        Cz_deltae = linearInterpolation(db.alpha, db.cf.cz_de, alpha_int);
+        Cz_tot = Cz_ss + Cz_alpha * alpha_int / 180 * M_PI + Cz_deltae * deltae_int / 180 * M_PI;
+        if (abs(db.Ad.Mass * g * cos(alpha_int / 180 * M_PI) + 0.5 * Cz_tot * rho * db.Ad.Wing_area * pow(V, 2)) <
+            1) {
+            alpha_trim = alpha_int;
             Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_int);
             Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_int);
             Cm_deltae = linearInterpolation(db.alpha, db.cm.cm_de, alpha_int);
-            deltae_int = -(Cm_ss + Cm_alpha * alpha_int) / Cm_deltae;
-            Cz_ss = linearInterpolation(db.alpha, db.ss.cz, alpha_int);
-            Cz_alpha = linearInterpolation(db.alpha, db.fz.cz_a, alpha_int);
-            Cz_deltae = linearInterpolation(db.alpha, db.cf.cz_de, alpha_int);
-            Cz_tot = Cz_ss + Cz_alpha * alpha_int / 180 * M_PI + Cz_deltae * deltae_int / 180 * M_PI;
-            if (abs(db.Ad.Mass * g * cos(alpha_int / 180 * M_PI) + 0.5 * Cz_tot * rho * db.Ad.Wing_area * pow(V, 2)) <
-                1) {
-                alpha_trim = alpha_int;
-                Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_int);
-                Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_int);
-                Cm_deltae = linearInterpolation(db.alpha, db.cm.cm_de, alpha_int);
-                deltae_trim = -(Cm_ss + Cm_alpha * alpha_trim) / Cm_deltae;
-            }
+            deltae_trim = -(Cm_ss + Cm_alpha * alpha_trim) / Cm_deltae;
+        }
     }
 
     /*double X_trim, Y_trim, Z_trim, L_trim, M_trim, N_trim;
@@ -84,6 +88,11 @@ double trim1(AeroDB db) {
     // donde sta c_de
     }*/
 
-    return deltae_trim;
+   return deltae_trim;
+
+
+
+
+
 }
 
