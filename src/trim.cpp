@@ -264,5 +264,5 @@ Modes PH_SP (AeroDB db, GeneralDB gdb, PropDB pdb, Trim_Angles angles) {
     //**************************************************
 
 
-     return md ;
+     return md;
 }
