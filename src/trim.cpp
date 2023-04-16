@@ -29,14 +29,14 @@ Trim_Angles trim1(AeroDB db) {
     double V = 15;
     double h = 100; // velocità e altezza che poi saranno definite da utente
     double beta = 0, delta_a = 0, gamma_0 = 0, p = 0, q = 0, r = 0;
-    double rho = 1.226;
+    double rho_SL = 1.226;
     double grad = 0.0065;
     double m = 4.2561;
     double T_0 = 288.15;
     double ans;
     double g = 9.81;
     ans = ((T_0 - grad * h) / T_0);
-    rho = rho * pow(ans, m);
+    double rho = rho_SL * pow(ans, m);
 
     double alpha_int;
     double deltae_int;
@@ -74,19 +74,19 @@ Trim_Angles trim1(AeroDB db) {
 }
 
 
-double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles a){
+double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
     double V = 15;
-    double alpha_trim = a.alpha_trim;
-    double deltae_trim= a.deltae_trim;
+    double alpha_trim = angles.alpha_trim;
+    double deltae_trim= angles.deltae_trim;
     double h = 100; // velocità e altezza che poi saranno definite da utente
-    double rho = 1.226;
+    double rho_SL = 1.226;
     double grad = 0.0065;
     double m = 4.2561;
     double T_0 = 288.15;
     double ans;
     double g = 9.81;
     ans = ((T_0 - grad * h) / T_0);
-    rho = rho * pow(ans, m);
+    double rho = rho_SL * pow(ans, m);
     double gamma_0 = 0;
 
 
@@ -144,11 +144,11 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles a){
             cd = cd0+cd_alpha*alpha1+cd_alpha_2*pow(alpha1,2); // CD coefficiente di resistenza CD = CD0+CD1*CL+CD2*CL^2 (NB nel nostro caso, CD = CD0+CD_alpha*alpha+CD_alpha2*alpha^2 -> slide lezione 2)
             Vlocal = sqrt(V0*V0+V2*V2); // velocità locale del flusso
             CT = cl*cos(phi1)-cd*sin(phi1); //CT coefficiente di spinta adimensionale
-            DtDr = 0.5*rho*Vlocal*Vlocal*nBlade*chord*CT; //contributo di spinta della j-esima sezione
+            DtDr = 0.5*rho_SL*Vlocal*Vlocal*nBlade*chord*CT; //contributo di spinta della j-esima sezione
             CQ = cd*cos(phi1)+cl*sin(phi1); //CQ coefficiente di coppia adimensionale
-            DqDr = 0.5*rho*Vlocal*Vlocal*nBlade*chord *M_PI*CSI[j]*CQ; //contributo di coppia della j-esima sezione
-            tem1=DtDr/(4.0*M_PI*CSI[j]*rho*V*V*(1+a)); //fattore correttivo del coefficiente "a"
-            tem2 = DqDr/(4.0*M_PI*CSI[j]*CSI[j]*CSI[j]*rho*V*(1+a)*omega); //fattore correttivo del coefficiente "b"
+            DqDr = 0.5*rho_SL*Vlocal*Vlocal*nBlade*chord *M_PI*CSI[j]*CQ; //contributo di coppia della j-esima sezione
+            tem1=DtDr/(4.0*M_PI*CSI[j]*rho_SL*V*V*(1+a)); //fattore correttivo del coefficiente "a"
+            tem2 = DqDr/(4.0*M_PI*CSI[j]*CSI[j]*CSI[j]*rho_SL*V*(1+a)*omega); //fattore correttivo del coefficiente "b"
             anew = 0.5*(a+tem1); //nuovo valore coefficiente "a"
             bnew = 0.5*(b+tem2); //nuovo valore coefficiente "b"
             //processo iterativo per arrivare a convergenza
@@ -170,8 +170,8 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles a){
         Torque = Torque+DqDr*n_step; //sommatoria dei contributi di coppia dalla stazione 1 alla stazione j
     }
 
-    double t = T/(rho*n*n*diam*diam*diam*diam); //coefficiente di spinta adimensionale
-    double q_torque= Torque/(rho*n*n*diam*diam*diam*diam*diam); //coefficiente di coppia adimensionale
+    double t = T/(rho_SL*n*n*diam*diam*diam*diam); //coefficiente di spinta adimensionale
+    double q_torque= Torque/(rho_SL*n*n*diam*diam*diam*diam*diam); //coefficiente di coppia adimensionale
     double J = V/(n*diam); //rapporto di avanzamento;
     if (t < 0){
         eff = 0.0; //efficienza elica
@@ -186,7 +186,7 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles a){
     double cx_de = linearInterpolation(db.alpha, db.cf.cx_de, alpha_trim);
     double cx_ss = linearInterpolation(db.alpha, db.ss.cx, alpha_trim);
     double Cx_tot= cx_ss+cx_alpha*alpha_trim+ cx_de*deltae_trim;
-    double T_trim = m*g*sin(alpha_trim+gamma_0)-0.5*Cx_tot*rho*S*V*V;
+    double T_trim = m*g*sin(alpha_trim+gamma_0)-0.5*Cx_tot*rho_SL*S*V*V;
     for(double rpm = rpm_min; rpm <= rpm_max; rpm += delta_rpm){
         if(abs(T_trim-T) < 1){
             rpm_trim = rpm;
@@ -197,3 +197,72 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles a){
 
 }
 
+// Da fare: far inserire le velocità e la quota di volo all'utente
+// Slide 50 3 opzioni per il deltae
+
+// MODO FUGOIDE E CORTO PERIODO
+
+// We have a subsonic vehicle
+struct Modes{
+    double omega_ph_n, zeta_ph, T_ph, t_dim_ph ;
+    double omega_sp_n,zeta_sp,T_sp, t_dim_sp ;
+};
+Modes md;
+Modes PH_SP (AeroDB db, GeneralDB gdb, PropDB pdb, Trim_Angles angles) {
+    double C_Du = 0, C_mu = 0, C_Lu = 0;
+    double C_We = 0.2842;
+    double C_Le = C_We;
+    double C_Xe = 0.0127;
+    double C_De = -C_Xe;
+    double k= 0.0382; //every flight condition
+    double Cl1_alpha = 3.25; // discordanza valori tra slide 53 e 57
+    double C_Tu = -3* C_De;
+    double Cz_alpha = linearInterpolation(db.alpha, db.fz.cz_a, angles.alpha_trim);
+    double cx_alpha = linearInterpolation(db.alpha, db.fx.cx_a, angles.alpha_trim);
+    double Cl_alpha = cx_alpha * sin(angles.alpha_trim) - Cz_alpha * cos(angles.alpha_trim) ;
+    double C_Dalpha = 2*k*Cl_alpha*C_Le;
+
+    // Approximated Solution
+
+    //**************************************************
+    double rho_SL = 1.225;
+    double grad = 0.0065;
+    double m = 4.2561;
+    double T_0 = 288.15;
+    double ans;
+    double g = 9.81;
+    double h = 100;
+    double V = 15;
+    ans = ((T_0 - grad * h) / T_0);
+    double rho = rho_SL * pow(ans, m);
+    double chord= 0.1;
+    double Iy = 8*db.Ad.Jy/rho*db.Ad.Wing_area*chord*chord*chord;
+    //**************************************************
+    // PHUGOID
+    double mu = 2 * db.Ad.Mass/rho * db.Ad.Wing_area * chord;
+    double omega_ph_ad = (sqrt(2)*g/mu);
+    md.omega_ph_n = omega_ph_ad*(2*V/chord);
+    md.zeta_ph = -C_Tu/(2*sqrt(2) * C_Le);
+    double ph_Re = -md.zeta_ph*md.omega_ph_n;
+    double ph_Im = md.omega_ph_n * sqrt(fabs(md.zeta_ph * md.zeta_ph - 1));
+    double t_dim_ph = log(0.5)/ph_Re * ph_Im;
+    double T_ph= 2*M_PI/ph_Im;
+
+    //**************************************************
+    // SHORT PERIOD
+    double Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, angles.alpha_trim);
+    md.omega_sp_n = sqrt(- Cm_alpha/ Iy);
+    double omega_sp = md.omega_sp_n * 2 * V/ chord;
+    double Cm_q = linearInterpolation(db.alpha, db.pm.cm_q, angles.alpha_trim);
+    double Cm1_alpha = linearInterpolation(db.alpha, db.pm.cm_ap, angles.alpha_trim) ;
+    md.zeta_sp = (Iy*Cl_alpha-2*mu*(Cm_q+Cm1_alpha))/(2*sqrt(-2*mu*Iy*(2*mu*Cm_alpha+Cm_q*Cl_alpha)));
+    double sp_Re = -md.zeta_sp*md.omega_sp_n;
+    double sp_Im = md.omega_sp_n * sqrt(fabs(md.zeta_sp * md.zeta_sp - 1));
+    double t_dim_sp = log(0.5)/sp_Re * sp_Im;
+    double T_sp= 2*M_PI/sp_Im;
+
+    //**************************************************
+
+
+     return md ;
+}
