@@ -19,12 +19,12 @@ struct EngineDB{
 };
 
 // Contains nested struct for each topic contained in the battery and engine files
-/*
- * DEPRECATED
- * struct GeneralDB{
-    Battery Bat;
-    Engine En;
-};*/
+
+ //DEPRECATED
+  struct GeneralDB{
+    BatteryDB Bat;
+    EngineDB En;
+};
 
 // Definition of the variables for reading the file: propeller
 struct Propeller_Geometry{
