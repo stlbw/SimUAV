@@ -88,9 +88,12 @@ int main() {
         cout.rdbuf(coutbuf); //reset to standard output again
     }
 
-    double x;
-    //x = trim1(dba100, );
-    cout << x << endl;
+    Trim_Angles a = trim1(dba100);
+    cout << a.alpha_trim << endl;
+    cout << a.deltae_trim << endl;
+
+    double rpm = trim2(dba100,en0,prop0,a);
+
     return 0;
 }
 
