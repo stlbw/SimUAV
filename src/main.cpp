@@ -93,6 +93,9 @@ int main() {
     cout << a.deltae_trim << endl;
 
     double rpm = trim2(dba100,en0,prop0,a);
+    cout << rpm << endl;
+
+    Modes md = PH_SP(dba100);
 
     return 0;
 }
