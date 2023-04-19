@@ -205,7 +205,7 @@ struct Modes{
     double omega_sp_n,zeta_sp,T_sp, t_dim_sp ;
 };
 Modes md;
-Modes PH_SP (AeroDB db, GeneralDB gdb, PropDB pdb, Trim_Angles angles) {
+Modes PH_SP (AeroDB db, PropDB pdb, Trim_Angles angles) {
     double C_Du = 0, C_mu = 0, C_Lu = 0;
     double C_We = 0.2842;
     double C_Le = C_We;

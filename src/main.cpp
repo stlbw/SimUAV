@@ -92,12 +92,21 @@ int main() {
     cout << a.alpha_trim << endl;
     cout << a.deltae_trim << endl;
 
-    double rpm = trim2(dba100,en0,prop0,a);
-    cout << rpm << endl;
+   cout << trim2 (dba100,en0,prop0,a)<< endl;
 
-    Modes md = PH_SP(dba100);
+   // Modes md = PH_SP (dba100);
+   // cout << "ho fatto bene "<< md.zeta_sp<<endl;
+
+
+    //Modes md = PH_SP(dba100);
 
     return 0;
-}
+};
 
-
+// Trim Control
+//int main{
+        //cout << '\n' << " Please select the input Velocity:" <<;
+        //cin >> V;
+        //cout << '\n' << " Please select the input Height:" <<;
+        //cin>> h;
+//};
