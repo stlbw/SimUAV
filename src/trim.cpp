@@ -61,12 +61,12 @@ Trim_Angles trim1(AeroDB db) {
         Cz_deltae = linearInterpolation(db.alpha, db.cf.cz_de, alpha_int);
         Cz_tot = Cz_ss + Cz_alpha * alpha_int / 180 * M_PI + Cz_deltae * deltae_int / 180 * M_PI;
         if (abs(db.Ad.Mass * g * cos(alpha_int / 180 * M_PI) + 0.5 * Cz_tot * rho * db.Ad.Wing_area * pow(V, 2)) <
-            1) {
+            1){
             angles.alpha_trim = alpha_int;
             Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_int);
             Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_int);
             Cm_deltae = linearInterpolation(db.alpha, db.cm.cm_de, alpha_int);
-            angles.deltae_trim = -(Cm_ss + Cm_alpha * angles.alpha_trim) / Cm_deltae;
+            angles.deltae_trim = (-(Cm_ss + Cm_alpha * angles.alpha_trim* M_PI /180) / Cm_deltae) *180 / M_PI;
         }
     }
 
