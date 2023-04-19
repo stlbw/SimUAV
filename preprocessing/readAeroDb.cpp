@@ -870,8 +870,9 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
 /* Read a string containing a file name and its extension and check for its existence on the database directory.
  If the file is contained in database, print its content to the screen.
  */
-AeroDB readData(string fileName) {
-    string rootPath = "../database/";
+AeroDB readData(string fileName, bool t = false) {
+    string rootPath;
+    if (t) {rootPath = "../../database/";} else {rootPath = "../database/";}
     string filePath = rootPath + fileName;
     AeroDB db; // create db object
     Flags check; // create check object from struct Flag

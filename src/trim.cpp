@@ -3,6 +3,7 @@
 //
 
 #include "../declaredFun.h"
+#include "aerodyn_std_fun.cpp" // contains function to compute density
 #include <cmath>
 #include<iostream>
 
@@ -29,14 +30,9 @@ Trim_Angles trim1(AeroDB db) {
     double V = 15;
     double h = 100; // velocità e altezza che poi saranno definite da utente
     double beta = 0, delta_a = 0, gamma_0 = 0, p = 0, q = 0, r = 0;
-    double rho_SL = 1.225;
-    double grad = 0.0065;
-    double m = 4.2561;
-    double T_0 = 288.15;
-    double ans;
     double g = 9.81;
-    ans = ((T_0 - grad * h) / T_0);
-    double rho = rho_SL * pow(ans, m);
+
+    double rho = computeDensity(h);
 
     double alpha_int;
     double deltae_int;
@@ -79,15 +75,10 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
     double alpha_trim = angles.alpha_trim;
     double deltae_trim= angles.deltae_trim;
     double h = 100; // velocità e altezza che poi saranno definite da utente
-    double rho_SL = 1.225;
-    double grad = 0.0065;
-    double m = 4.2561;
-    double T_0 = 288.15;
-    double ans;
     double g = 9.81;
-    ans = ((T_0 - grad * h) / T_0);
-    double rho = rho_SL * pow(ans, m);
     double gamma_0 = 0;
+
+    double rho = computeDensity(h);
 
     // Per il calcolo degli RPM
     double rpm_trim;
