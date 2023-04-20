@@ -207,15 +207,16 @@ Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles) {
     //double C_We = 0.2842;
     double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
     double C_Le = C_We;
-    double C_Xe = 0.0127;
+    //double C_Xe = 0.0127;
+    double C_Xe = linearInterpolation(db.alpha, db.ss.cx, angles.alpha_trim); // CX coef in steady-state for the trim condition
     double C_De = -C_Xe;
-    double k= 0.0382; //every flight condition
-    double Cl1_alpha = 3.25; // discordanza valori tra slide 53 e 57
-    double C_Tu = -3* C_De;
+    double k = 0.0382; //every flight condition
+    //double Cl1_alpha = 3.25; // discordanza valori tra slide 53 e 57
+    double C_Tu = -3 * C_De;
     double Cz_alpha = linearInterpolation(db.alpha, db.fz.cz_a, angles.alpha_trim);
-    double cx_alpha = linearInterpolation(db.alpha, db.fx.cx_a, angles.alpha_trim);
-    double Cl_alpha = cx_alpha * sin(angles.alpha_trim) - Cz_alpha * cos(angles.alpha_trim) ;
-    double C_Dalpha = 2*k*Cl_alpha*C_Le;
+    double Cx_alpha = linearInterpolation(db.alpha, db.fx.cx_a, angles.alpha_trim);
+    double Cl_alpha = Cx_alpha * sin(angles.alpha_trim) - Cz_alpha * cos(angles.alpha_trim) ;
+    double Cd_alpha = 2 * k * Cl_alpha * C_Le;
 
     // Approximated Solution
 
