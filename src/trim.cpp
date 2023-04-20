@@ -147,8 +147,8 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
                 anew = 0.5*(a+tem1); //nuovo valore coefficiente "a"
                 bnew = 0.5*(b+tem2); //nuovo valore coefficiente "b"
                 //processo iterativo per arrivare a convergenza
-                if (fabs(anew-a)<1/100000){
-                    if (fabs(bnew-b)<1/100000){
+                if (fabs(anew-a)<1.0/100000){
+                    if (fabs(bnew-b)<1.0/100000){
                         finished = 1;
                     }
                 }
