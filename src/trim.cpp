@@ -196,10 +196,16 @@ struct Modes{
     double omega_ph_n, zeta_ph, T_ph, t_dim_ph ;
     double omega_sp_n,zeta_sp,T_sp, t_dim_sp ;
 };
-Modes md;
-Modes PH_SP (AeroDB db, PropDB pdb, Trim_Angles angles) {
-    double C_Du = 0, C_mu = 0, C_Lu = 0;
-    double C_We = 0.2842;
+Modes md; // initialize the struct of type Modes
+
+Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles) {
+    double C_Du = 0, C_mu = 0, C_Lu = 0; // these derivatives are 0 because it is a subsonic vehicle
+    double g = 9.81;
+    double V = 15;
+    double h = 100;
+    double rho = computeDensity(h);
+    //double C_We = 0.2842;
+    double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
     double C_Le = C_We;
     double C_Xe = 0.0127;
     double C_De = -C_Xe;
