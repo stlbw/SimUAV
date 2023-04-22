@@ -94,8 +94,17 @@ int main() {
 
    cout << trim2 (dba100,en0,prop0,a)<< endl;
 
-   // Modes md = PH_SP (dba100);
-   // cout << "ho fatto bene "<< md.zeta_sp<<endl;
+   Modes md = phugoidShortPeriod(dba100,prop0,a);
+   cout << "FUGOIDE:" << endl;
+   cout <<  md.omega_ph <<endl;
+   cout <<  md.zeta_ph <<endl;
+   cout <<  md.t_dim_ph <<endl;
+   cout <<  md.T_ph <<endl;
+   cout << "CORTO PERIODO:" << endl;
+   cout <<  md.omega_sp <<endl;
+   cout <<  md.zeta_sp <<endl;
+   cout <<  md.t_dim_sp <<endl;
+   cout <<  md.T_sp <<endl;
 
 
     //Modes md = PH_SP(dba100);

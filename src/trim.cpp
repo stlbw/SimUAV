@@ -205,8 +205,8 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
 
 // We have a subsonic vehicle
 struct Modes{
-    double omega_ph_n, zeta_ph, T_ph, t_dim_ph ;
-    double omega_sp_n,zeta_sp,T_sp, t_dim_sp ;
+    double omega_ph, zeta_ph, T_ph, t_dim_ph ;
+    double omega_sp,zeta_sp,T_sp, t_dim_sp ;
 };
 Modes md; // initialize the struct of type Modes
 
@@ -217,8 +217,8 @@ Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles) {
     double h = 100;
     double rho = computeDensity(h);
     double C_We = 0.2842;
-    //double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
     double C_Le = C_We;
+    //double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
     double C_Xe = 0.0127;
     //double C_Xe = linearInterpolation(db.alpha, db.ss.cx, angles.alpha_trim); // CX coef in steady-state for the trim condition
     double C_De = -C_Xe;
@@ -236,33 +236,32 @@ Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles) {
 
     //**************************************************
     double chord = db.Ad.Chord;
-
-    double Iy = 8 * db.Ad.Jy / rho * db.Ad.Wing_area * pow(chord, 3);
+    double Iy = 8 * db.Ad.Jy / (rho * db.Ad.Wing_area * pow(chord, 3));
     //**************************************************
     // PHUGOID
-    double mu = 2 * db.Ad.Mass / rho * db.Ad.Wing_area * chord; //dimensionless mass parameter
-    //double t = chord / (2 * V);
+    double mu = 2 * db.Ad.Mass / (rho * db.Ad.Wing_area * chord); //dimensionless mass parameter
+    double t_car = chord / (2 * V);
     double omega_ph_ad = C_We / (sqrt(2) * mu); // dimensionless omega - phugoid mode
-    md.omega_ph_n = omega_ph_ad * (2 * V / chord); // natural frequency - phugoid mode
+    double omega_ph_n = omega_ph_ad / t_car; // natural frequency - phugoid mode
     md.zeta_ph = -C_Tu / (2 * sqrt(2) * C_We);
-    double ph_Re = -md.zeta_ph * md.omega_ph_n;
-    double ph_Im = md.omega_ph_n * sqrt(fabs(md.zeta_ph * md.zeta_ph - 1));
+    double ph_Re = -md.zeta_ph * omega_ph_n;
+    md.omega_ph = omega_ph_n * sqrt(fabs(md.zeta_ph * md.zeta_ph - 1));
 
-    double t_dim_ph = abs(log(0.5) / ph_Re);
-    double T_ph= 2 * M_PI / ph_Im;
+    md.t_dim_ph = abs(log(0.5) / ph_Re);
+    md.T_ph = 2 * M_PI / md.omega_ph;
 
     //**************************************************
     // SHORT PERIOD
     double Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, angles.alpha_trim);
-    md.omega_sp_n = sqrt(- Cm_alpha/ Iy);
-    double omega_sp = md.omega_sp_n * 2 * V/ chord;
+    double omega_sp_ad = sqrt(- Cm_alpha/ Iy);
+    double omega_sp_n = omega_sp_ad / t_car;
     double Cm_q = linearInterpolation(db.alpha, db.pm.cm_q, angles.alpha_trim);
     double Cm1_alpha = linearInterpolation(db.alpha, db.pm.cm_ap, angles.alpha_trim) ;
     md.zeta_sp = (Iy*Cl_alpha-2*mu*(Cm_q+Cm1_alpha))/(2*sqrt(-2*mu*Iy*(2*mu*Cm_alpha+Cm_q*Cl_alpha)));
-    double sp_Re = -md.zeta_sp*md.omega_sp_n;
-    double sp_Im = md.omega_sp_n * sqrt(fabs(md.zeta_sp * md.zeta_sp - 1));
-    double t_dim_sp = log(0.5)/sp_Re * sp_Im;
-    double T_sp= 2*M_PI/sp_Im;
+    double sp_Re = -md.zeta_sp * omega_sp_n;
+    md.omega_sp = omega_sp_n * sqrt(fabs(md.zeta_sp * md.zeta_sp - 1));
+    md.t_dim_sp = log(0.5)/sp_Re;
+    md.T_sp= 2*M_PI/md.omega_sp;
 
     //**************************************************
 
