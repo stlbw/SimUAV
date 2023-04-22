@@ -72,78 +72,89 @@ Trim_Angles trim1(AeroDB db) {
 
 
 double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
-    double V = 15;
-    double alpha_trim = angles.alpha_trim;
-    double deltae_trim= angles.deltae_trim;
-    double h = 100; // velocità e altezza che poi saranno definite da utente
-    double g = 9.81;
-    double gamma_0 = 0;
-
-    double rho = computeDensity(h);
-
-    // Per il calcolo degli RPM
-    double rpm_trim;
-    double delta_rpm = 100;
-    double rpm_min = endb.laps_min;
-    double rpm = rpm_min;
-    double rpm_max = endb.laps_max;
-    double diam = pdb.Pg.diameter;
-    double xt = diam/2;
-    double radius = diam/2;
-    double chord= 0.1*radius;
-    double xs = pdb.Ps.RD.front();
-    double nBlade = pdb.Pg.np;
-    double pitch_tip = pdb.Ps.BA.back();
-    double pitch_hub = pdb.Ps.BA.front();
+    int lenVec = pdb.Pg.nstation; // [-]
+    double diam = pdb.Pg.diameter; // [m]
+    double radius = diam/2; // [m]
+    // double chord = db.Ad.Chord; // [m]
+    vector<double> chord;
+    chord.assign(lenVec+1,0);
+    for (int i = 0; i < lenVec+1; ++i) {
+        chord[i] = pdb.Ps.CH_AD[i]*radius; // [m]
+    }
     double pitch_propeller = 0;
-
-    double coef1 = (pitch_tip-pitch_hub)/(xt-xs);
-    double coef2 = pitch_hub-coef1*xs+pitch_propeller;
-    int lenVec = pdb.Pg.nstation;
-    vector<double> CSI = pdb.Ps.CSI;
-    vector<double> t2 = pdb.Ps.BA;
-    double cl0 = pdb.Pc.Cl0;
-    double cd0 = pdb.Pc.Cd0;
-    double cl_alpha = pdb.Pc.Clalpha;
-    double cd_alpha = pdb.Pc.Cdalpha;
-    double cd_alpha_2 = pdb.Pc.Cdalpha2;
+    double rpm_trim, rpm;
+    double delta_rpm = 100; // [giri/min]
+    double rpm_min = endb.laps_min; // [giri/min]
+    double rpm_max = endb.laps_max; // [giri/min]
+    double pitch_tip = pdb.Ps.BA.back(); // [deg]
+    double pitch_hub = pdb.Ps.BA.front(); // [deg]
+    double xt = radius; // [m]
+    vector<double> CSI = pdb.Ps.CSI; // [-]
+    double xs = CSI[0]*radius; // [m]
+    double h = 100; // [m]
+    double rho = computeDensity(h); // [kg/m^3]
+    double coef1 = (pitch_tip-pitch_hub)/(xt-xs); // [deg/m]
+    double coef2 = pitch_hub-coef1*xs+pitch_propeller; // [deg]
     double r_step = (xt-xs)/lenVec; //calcolo step
+    vector<double> r1;
+    r1.assign(lenVec+1,0);
+    for (int i = 0; i < lenVec+1; ++i) {
+        r1[i] = CSI[i]*radius; // [m]
+    }
     double alpha1;
+    vector<double> t2 = pdb.Ps.BA; // [deg]
     vector<double> a2;
     a2.assign(lenVec+1,0);
     vector <double> b2;
     b2.assign(lenVec+1,0);
-    double th, phi1, eff, DtDr, DqDr, cl, cd, CT, CQ, tem1, tem2;
+    double th, theta1, phi1, eff, DtDr, DqDr, cl, cd, CT, CQ, tem1, tem2;
     double a, anew;
     double b, bnew;
     int finished = 0;
+    double rad;
+    double V = 15; // [m/s]
     double Vlocal,V0,V2;
-    double T = 0.0; //inizializzazione vettore spinta
-    double Torque = 0.0;//inizializzazione vettore coppia
+    double T = 0.0; // inizializzazione vettore spinta
+    double Torque = 0.0;// inizializzazione vettore coppia
+
+    double alpha_trim = angles.alpha_trim; // [deg]
+    double deltae_trim= angles.deltae_trim; // [deg]
+    double g = 9.81; // [m/s^2]
+    double gamma_0 = 0;
+    double nBlade = pdb.Pg.np; // [-]
+    double cl0 = pdb.Pc.Cl0; // [-]
+    double cd0 = pdb.Pc.Cd0; // [-]
+    double cl_alpha = pdb.Pc.Clalpha; // [rad^-1]
+    double cd_alpha = pdb.Pc.Cdalpha; // [rad^-1]
+    double cd_alpha_2 = pdb.Pc.Cdalpha2; // [rad^-2]
 
     for(rpm = rpm_min; rpm <= rpm_max; rpm += delta_rpm){
-        double n = rpm/60;
-        double omega = n*2*M_PI;
-        for(int j=0; j<lenVec; j++){
-            th = t2[j]/180.0*M_PI; //angolo di svergolamento [rad]
-            a = 0.1; //inizializzazione axial inflow factor (vedi pag.4 PROPEL.pdf)
-            b = 0.01; //inizializzazione angular inflow (swirl) factor (vedi pag.4 PROPEL.pdf)
-            finished=0; //inizializzione flag
-            int sum = 1; //inizializzione variabile di supporto
+        double n = rpm/60; // [giri/s]
+        double omega = n*2*M_PI; // [rad/s]
+        for(int j=0; j<lenVec+1; j++){
+            rad = r1[j]; // [m] distanza da hub j-esima stazione
+            th = t2[j]/180.0*M_PI; // [rad] angolo di svergolamento
+            //theta1 = coef1*rad+coef2; //calcolo angolo di svergolamento della j-esima stazione
+            //t2[j] = theta1; //angolo di svergolamento della j-esima stazione (-> BA su propeller.txt)
+            //th = theta1/180.0*M_PI; //angolo di svergolamento [rad]
+            a = 0.1; // [-] inizializzazione axial inflow factor (vedi pag.4 PROPEL.pdf)
+            b = 0.01; // [-] inizializzazione angular inflow (swirl) factor (vedi pag.4 PROPEL.pdf)
+            finished=0; // inizializzione flag
+            int sum = 1; // inizializzione variabile di supporto
             while (finished == 0){
-                V0 = V*(1+a); //componente del flusso all'incirca uguale alla velocità di avanzamento del velivolo (Vinf), aumentata tramite l'axial inflow factor
-                V2 = omega*CSI[j]*radius*(1-b); //componente del flusso all'incirca uguale alla velocità angolare della sezione della pala (omega*rad), ridotta tramite l'angular inflow factor
-                phi1 = atan2(V0,V2); //angolo tra le due componenti del flusso V0 e V2
-                alpha1 = th-phi1; //angolo di attacco raltivo alla j-esima sezione della pala
-                cl = cl0+cl_alpha*alpha1; //L coefficiente di portanza
-                cd = cd0+cd_alpha*alpha1+cd_alpha_2*pow(alpha1,2); // CD coefficiente di resistenza CD = CD0+CD1*CL+CD2*CL^2 (NB nel nostro caso, CD = CD0+CD_alpha*alpha+CD_alpha2*alpha^2 -> slide lezione 2)
-                Vlocal = sqrt(V0*V0+V2*V2); // velocità locale del flusso
-                CT = cl*cos(phi1)-cd*sin(phi1); //CT coefficiente di spinta adimensionale
-                DtDr = 0.5*rho*Vlocal*Vlocal*nBlade*chord*CT; //contributo di spinta della j-esima sezione
-                CQ = cd*cos(phi1)+cl*sin(phi1); //CQ coefficiente di coppia adimensionale
-                DqDr = 0.5*rho*Vlocal*Vlocal*nBlade*chord*M_PI*CSI[j]*radius*CQ; //contributo di coppia della j-esima sezione
-                tem1= DtDr/(4.0*M_PI*CSI[j]*radius*rho*V*V*(1+a)); //fattore correttivo del coefficiente "a"
-                tem2 = DqDr/(4.0*M_PI*CSI[j]*CSI[j]*CSI[j]*pow(radius,3)*rho*V*(1+a)*omega); //fattore correttivo del coefficiente "b"
+                V0 = V*(1+a); // [m/s] componente del flusso all'incirca uguale alla velocità di avanzamento del velivolo (Vinf), aumentata tramite l'axial inflow factor
+                V2 = omega*rad*(1-b); // [m/s] componente del flusso all'incirca uguale alla velocità angolare della sezione della pala (omega*rad), ridotta tramite l'angular inflow factor
+                phi1 = atan2(V0,V2); // [rad] angolo tra le due componenti del flusso V0 e V2
+                alpha1 = th-phi1; // [rad] angolo di attacco raltivo alla j-esima sezione della pala
+                cl = cl0+cl_alpha*alpha1; // [-] CL coefficiente di portanza
+                cd = cd0+cd_alpha*alpha1+cd_alpha_2*alpha1*alpha1; // [-] CD coefficiente di resistenza CD = CD0+CD1*CL+CD2*CL^2 (NB nel nostro caso, CD = CD0+CD_alpha*alpha+CD_alpha2*alpha^2 -> slide lezione 2)
+                Vlocal = sqrt(V0*V0+V2*V2); // [m/s] velocità locale del flusso
+                CT = cl*cos(phi1)-cd*sin(phi1); // [-] CT coefficiente di spinta adimensionale
+                DtDr = 0.5*rho*Vlocal*Vlocal*nBlade*chord[j]*CT; // [N/m]=[kg/s^2] contributo di spinta della j-esima sezione
+                CQ = cd*cos(phi1)+cl*sin(phi1); // [-] CQ coefficiente di coppia adimensionale
+                DqDr = 0.5*rho*Vlocal*Vlocal*nBlade*chord[j]*rad*CQ; // [N]=[kg*m/s^2] contributo di coppia della j-esima sezione
+                tem1= DtDr/(4.0*M_PI*rad*rho*V*V*(1+a)); // [-] fattore correttivo del coefficiente "a"
+                tem2 = DqDr/(4.0*M_PI*rad*rad*rad*rho*V*(1+a)*omega); // [-] però sono [rad^-1] fattore correttivo del coefficiente "b"
                 anew = 0.5*(a+tem1); //nuovo valore coefficiente "a"
                 bnew = 0.5*(b+tem2); //nuovo valore coefficiente "b"
                 //processo iterativo per arrivare a convergenza
@@ -161,8 +172,8 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
             }
             a2[j] = a; //definizione valore finale coefficiente "a" per la j-esima stazione
             b2[j] = b; //definizione valore finale coefficiente "b" per la j-esima stazione
-            T = T+DtDr*r_step; //sommatoria dei contributi di spinta dalla stazione 1 alla stazione j
-            Torque = Torque+DqDr*r_step; //sommatoria dei contributi di coppia dalla stazione 1 alla stazione j
+            T = T+DtDr*r_step; // [N] sommatoria dei contributi di spinta dalla stazione 1 alla stazione j
+            Torque = Torque+DqDr*r_step; //[N*m] sommatoria dei contributi di coppia dalla stazione 1 alla stazione j
         }
 
         double t = T/(rho*n*n*diam*diam*diam*diam); //coefficiente di spinta adimensionale
@@ -226,11 +237,11 @@ Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles) {
     double m = 4.2561;
     double T_0 = 288.15;
     double ans;
-    double g = 9.81;
-    double h = 100;
-    double V = 15;
+    //double g = 9.81;
+    //double h = 100;
+    //double V = 15;
     ans = ((T_0 - grad * h) / T_0);
-    double rho = rho_SL * pow(ans, m);
+    //double rho = rho_SL * pow(ans, m);
     double chord= 0.1;
     double Iy = 8*db.Ad.Jy/rho*db.Ad.Wing_area*chord*chord*chord;
     //**************************************************
