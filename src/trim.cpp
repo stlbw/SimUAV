@@ -5,6 +5,7 @@
 #include "../declaredFun.h"
 #include "aerodyn_std_fun.cpp" // contains function to compute density
 #include <cmath>
+#include <math.h>
 #include<iostream>
 
 using namespace std;
@@ -215,45 +216,40 @@ Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles) {
     double V = 15;
     double h = 100;
     double rho = computeDensity(h);
-    //double C_We = 0.2842;
-    double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
+    double C_We = 0.2842;
+    //double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
     double C_Le = C_We;
-    //double C_Xe = 0.0127;
-    double C_Xe = linearInterpolation(db.alpha, db.ss.cx, angles.alpha_trim); // CX coef in steady-state for the trim condition
+    double C_Xe = 0.0127;
+    //double C_Xe = linearInterpolation(db.alpha, db.ss.cx, angles.alpha_trim); // CX coef in steady-state for the trim condition
     double C_De = -C_Xe;
     double k = 0.0382; //every flight condition
-    //double Cl1_alpha = 3.25; // discordanza valori tra slide 53 e 57
-    double C_Tu = -3 * C_De;
+    double Cl1_alpha = 3.25; // discordanza valori tra slide 53 e 57
+    double C_Tu = -0.0382;
+    //double C_Tu = -3 * C_De;
     double Cz_alpha = linearInterpolation(db.alpha, db.fz.cz_a, angles.alpha_trim);
     double Cx_alpha = linearInterpolation(db.alpha, db.fx.cx_a, angles.alpha_trim);
-    double Cl_alpha = Cx_alpha * sin(angles.alpha_trim) - Cz_alpha * cos(angles.alpha_trim) ;
+    double Cl_alpha = Cx_alpha * sin(angles.alpha_trim * M_PI / 180.0) - Cz_alpha * cos(angles.alpha_trim * M_PI / 180.0) ;
     double Cd_alpha = 2 * k * Cl_alpha * C_Le;
+    double Cz1_alpha = linearInterpolation(db.alpha, db.fz.cz_ap, angles.alpha_trim);
 
     // Approximated Solution
 
     //**************************************************
-    double rho_SL = 1.225;
-    double grad = 0.0065;
-    double m = 4.2561;
-    double T_0 = 288.15;
-    double ans;
-    //double g = 9.81;
-    //double h = 100;
-    //double V = 15;
-    ans = ((T_0 - grad * h) / T_0);
-    //double rho = rho_SL * pow(ans, m);
-    double chord= 0.1;
-    double Iy = 8*db.Ad.Jy/rho*db.Ad.Wing_area*chord*chord*chord;
+    double chord = db.Ad.Chord;
+
+    double Iy = 8 * db.Ad.Jy / rho * db.Ad.Wing_area * pow(chord, 3);
     //**************************************************
     // PHUGOID
-    double mu = 2 * db.Ad.Mass/rho * db.Ad.Wing_area * chord;
-    double omega_ph_ad = (sqrt(2)*g/mu);
-    md.omega_ph_n = omega_ph_ad*(2*V/chord);
-    md.zeta_ph = -C_Tu/(2*sqrt(2) * C_Le);
-    double ph_Re = -md.zeta_ph*md.omega_ph_n;
+    double mu = 2 * db.Ad.Mass / rho * db.Ad.Wing_area * chord; //dimensionless mass parameter
+    //double t = chord / (2 * V);
+    double omega_ph_ad = C_We / (sqrt(2) * mu); // dimensionless omega - phugoid mode
+    md.omega_ph_n = omega_ph_ad * (2 * V / chord); // natural frequency - phugoid mode
+    md.zeta_ph = -C_Tu / (2 * sqrt(2) * C_We);
+    double ph_Re = -md.zeta_ph * md.omega_ph_n;
     double ph_Im = md.omega_ph_n * sqrt(fabs(md.zeta_ph * md.zeta_ph - 1));
-    double t_dim_ph = log(0.5)/ph_Re * ph_Im;
-    double T_ph= 2*M_PI/ph_Im;
+
+    double t_dim_ph = abs(log(0.5) / ph_Re);
+    double T_ph= 2 * M_PI / ph_Im;
 
     //**************************************************
     // SHORT PERIOD
