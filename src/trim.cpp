@@ -11,11 +11,11 @@
 using namespace std;
 
 struct Trim_Angles{
-    double alpha_trim, deltae_trim;
+    double alpha_trim, deltae_trim, u, w;
 };
 
 // Prima approssimazione
-Trim_Angles trim1(AeroDB db) {
+Trim_Angles trim1(AeroDB db, double V, double h) {
     // Primo tentativo gamma_0=0 --> alpha = theta
 
     double alpha_min;
@@ -28,8 +28,8 @@ Trim_Angles trim1(AeroDB db) {
     deltae_min = db.Dl.Elevator_min;
     deltae_max = db.Dl.Elevator_max;
 
-    double V = 15;
-    double h = 100; // velocità e altezza che poi saranno definite da utente
+    //double V = 15;
+    //double h = 100; // velocità e altezza che poi saranno definite da utente
     double beta = 0, delta_a = 0, gamma_0 = 0, p = 0, q = 0, r = 0;
     double g = 9.81;
 
@@ -68,11 +68,18 @@ Trim_Angles trim1(AeroDB db) {
         }
     }
 
+    angles.u = V*cos(angles.alpha_trim);
+    angles.w = V*sin(angles.alpha_trim);
+
     return angles;
 }
 
+struct  Trim2{
+    double rpm_trim, T_trim, Throttle;
+};
 
-double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
+Trim2 trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
+    Trim2 y;
     int lenVec = pdb.Pg.nstation; // [-]
     double diam = pdb.Pg.diameter; // [m]
     double radius = diam/2; // [m]
@@ -83,7 +90,7 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
         chord[i] = pdb.Ps.CH_AD[i]*radius; // [m]
     }
     double pitch_propeller = 0;
-    double rpm_trim, rpm;
+    double rpm;
     double delta_rpm = 100; // [giri/min]
     double rpm_min = endb.laps_min; // [giri/min]
     double rpm_max = endb.laps_max; // [giri/min]
@@ -92,7 +99,7 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
     double xt = radius; // [m]
     vector<double> CSI = pdb.Ps.CSI; // [-]
     double xs = CSI[0]*radius; // [m]
-    double h = 100; // [m]
+    //double h = 100; // [m]
     double rho = computeDensity(h); // [kg/m^3]
     double coef1 = (pitch_tip-pitch_hub)/(xt-xs); // [deg/m]
     double coef2 = pitch_hub-coef1*xs+pitch_propeller; // [deg]
@@ -113,7 +120,7 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
     double b, bnew;
     int finished = 0;
     double rad;
-    double V = 15; // [m/s]
+    //double V = 15; // [m/s]
     double Vlocal,V0,V2;
     double T = 0.0; // inizializzazione vettore spinta
     double Torque = 0.0;// inizializzazione vettore coppia
@@ -128,10 +135,12 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
     double cl_alpha = pdb.Pc.Clalpha; // [rad^-1]
     double cd_alpha = pdb.Pc.Cdalpha; // [rad^-1]
     double cd_alpha_2 = pdb.Pc.Cdalpha2; // [rad^-2]
+    double res = 1; // [N]
+    double omega;
 
     for(rpm = rpm_min; rpm <= rpm_max; rpm += delta_rpm){
         double n = rpm/60; // [giri/s]
-        double omega = n*2*M_PI; // [rad/s]
+        omega = n*2*M_PI; // [rad/s]
         for(int j=0; j<lenVec+1; j++){
             rad = r1[j]; // [m] distanza da hub j-esima stazione
             th = t2[j]/180.0*M_PI; // [rad] angolo di svergolamento
@@ -190,12 +199,20 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
         double cx_de = linearInterpolation(db.alpha, db.cf.cx_de, alpha_trim);
         double cx_ss = linearInterpolation(db.alpha, db.ss.cx, alpha_trim);
         double Cx_tot= cx_ss+cx_alpha*alpha_trim/180*M_PI+ cx_de*deltae_trim/180*M_PI;
-        double T_trim = db.Ad.Mass*g*sin(alpha_trim/180*M_PI+gamma_0/180*M_PI)-0.5*Cx_tot*rho*S*V*V;
-        if(abs(T_trim-T) < 1){
-            rpm_trim = rpm;
+        y.T_trim = db.Ad.Mass*g*sin(alpha_trim/180*M_PI+gamma_0/180*M_PI)-0.5*Cx_tot*rho*S*V*V;
+        if(abs(y.T_trim-T) < res){
+            y.rpm_trim = rpm;
         }
     }
-   return T;
+
+    double P_max = 160; // [W]
+    double P_d = Torque*omega/1000; // [W]
+
+    if (P_d < P_max){
+        y.Throttle = P_d/P_max;
+    }
+
+   return y;
 }
 
 // Da fare: far inserire le velocità e la quota di volo all'utente
@@ -210,11 +227,11 @@ struct Modes{
 };
 Modes md; // initialize the struct of type Modes
 
-Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles) {
+Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles, double V, double h) {
     double C_Du = 0, C_mu = 0, C_Lu = 0; // these derivatives are 0 because it is a subsonic vehicle
     double g = 9.81;
-    double V = 15;
-    double h = 100;
+    //double V = 15;
+    //double h = 100;
     double rho = computeDensity(h);
     //double C_We = 0.2842;
     double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);

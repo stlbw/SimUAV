@@ -88,26 +88,52 @@ int main() {
         cout.rdbuf(coutbuf); //reset to standard output again
     }
 
-    Trim_Angles a = trim1(dba100);
-    cout << a.alpha_trim << endl;
-    cout << a.deltae_trim << endl;
+    cout << "" << endl;
+    cout << "---------------------------------------------------------------" << endl;
+    cout << "" << endl;
+    // TRIM SECTION:
+    double V, h;
+    cout << "Insert velocity [m/s]: ";
+    cin >> V;
+    cout << "" << endl;
+    cout << "Insert altitude [m]: ";
+    cin >> h;
+    cout <<""<<endl;
+    cout << "TRIM PARAMETERS: " << endl;
+    cout <<""<<endl;
+    Trim_Angles a = trim1(dba100, V, h);
+    cout << "Alpha trim: " << a.alpha_trim << endl;
+    cout << "Elevator delta trim: " << a.deltae_trim << endl;
+    cout << "Velocity component u [m/s]" << a.u << endl;
+    cout << "Velocity component w [m/s]" << a.w << endl;
 
-   cout << trim2 (dba100,en0,prop0,a)<< endl;
+    cout << "" << endl;
+    Trim2 y = trim2(dba100, en0, prop0, a, V, h);
+    cout << "RPM trim: " << y.rpm_trim  << endl;
+    cout << "Thrust trim: " << y.T_trim  << endl;
+    cout << "Throttle: " << y.Throttle  << endl;
 
-   Modes md = phugoidShortPeriod(dba100,prop0,a);
-   cout << "FUGOIDE:" << endl;
-   cout <<  md.omega_ph <<endl;
-   cout <<  md.zeta_ph <<endl;
-   cout <<  md.t_dim_ph <<endl;
-   cout <<  md.T_ph <<endl;
-   cout << "CORTO PERIODO:" << endl;
-   cout <<  md.omega_sp <<endl;
-   cout <<  md.zeta_sp <<endl;
-   cout <<  md.t_dim_sp <<endl;
-   cout <<  md.T_sp <<endl;
+    cout << "" << endl;
+    cout << "---------------------------------------------------------------" << endl;
+    cout << "" << endl;
 
+    Modes md = phugoidShortPeriod(dba100,prop0,a,V,h);
+    cout << "PHUGOID: " << endl;
+    cout << "Frequency [rad/s]: " << md.omega_ph <<endl;
+    cout << "Damping ratio: " << md.zeta_ph <<endl;
+    cout << "Time to half the amplitude [s]: " << md.t_dim_ph <<endl;
+    cout << "Period [s]: " << md.T_ph <<endl;
+    cout << "" << endl;
+    cout << "SHORT PERIOD:" << endl;
+    cout << "Frequency [rad/s]: " << md.omega_sp <<endl;
+    cout << "Damping ratio: " << md.zeta_sp <<endl;
+    cout << "Time to half the amplitude [s]: " << md.t_dim_sp <<endl;
+    cout << "Period [s]: " << md.T_sp <<endl;
 
-    //Modes md = PH_SP(dba100);
+    cout << "" << endl;
+    cout << "---------------------------------------------------------------" << endl;
+    cout << "" << endl;
+
 
     return 0;
 };
