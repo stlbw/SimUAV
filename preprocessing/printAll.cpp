@@ -294,7 +294,7 @@ void printDba(AeroDB db, string dbName, char switchCase) {
 }
 
 void printBat(BatteryDB db, string dbName, char switchCase) {
-    if (switchCase == '1' || switchCase == '2' || switchCase == 3) {
+    if (switchCase == '1' || switchCase == '2' || switchCase == '3') {
         cout << "" << endl;
         cout << "--------------------------------- BATTERY FILE @" << dbName << " ---------------------------------"
              << endl;
@@ -309,7 +309,7 @@ void printBat(BatteryDB db, string dbName, char switchCase) {
 }
 
 void printEn(EngineDB db, string dbName, char switchCase) {
-    if (switchCase == '1' || switchCase == '2'|| switchCase == 3) {
+    if (switchCase == '1' || switchCase == '2'|| switchCase == '3') {
         cout << "" << endl;
         cout << "--------------------------------- ENGINE FILE @" << dbName << " ---------------------------------"
              << endl;
@@ -330,7 +330,7 @@ void printEn(EngineDB db, string dbName, char switchCase) {
     }
 }
 void printProp(PropDB db, string dbName, char switchCase) {
-    if (switchCase == '2'|| switchCase == 3) {
+    if (switchCase == '2'|| switchCase == '3') {
         cout << "" << endl;
         cout << "--------------------------------- Propeller FILE @" << dbName << " ---------------------------------"
              << endl;
