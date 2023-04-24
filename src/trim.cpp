@@ -195,7 +195,7 @@ double trim2(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles){
             rpm_trim = rpm;
         }
     }
-   return rpm_trim;
+   return T;
 }
 
 // Da fare: far inserire le velocità e la quota di volo all'utente
@@ -216,11 +216,10 @@ Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles) {
     double V = 15;
     double h = 100;
     double rho = computeDensity(h);
-    double C_We = 0.2842;
+    //double C_We = 0.2842;
+    double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
     double C_Le = C_We;
-    //double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
-    double C_Xe = 0.0127;
-    //double C_Xe = linearInterpolation(db.alpha, db.ss.cx, angles.alpha_trim); // CX coef in steady-state for the trim condition
+    double C_Xe = linearInterpolation(db.alpha, db.ss.cx, angles.alpha_trim); // CX coef in steady-state for the trim condition
     double C_De = -C_Xe;
     double k = 0.0382; //every flight condition
     double Cl1_alpha = 3.25; // discordanza valori tra slide 53 e 57
