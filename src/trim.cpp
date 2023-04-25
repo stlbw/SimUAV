@@ -331,14 +331,6 @@ void routhCriteria(double Iy, double rho, double mu, double V, double chord, dou
 
     }
 
-
-
-
-
-
-
-
-
 }
 
 Modes phugoidShortPeriod (AeroDB db, PropDB pdb, Trim_Angles angles, double V, double h) {
