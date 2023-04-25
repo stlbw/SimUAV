@@ -104,8 +104,8 @@ int main() {
     Trim_Angles a = trim1(dba100, V, h);
     cout << "Alpha trim: " << a.alpha_trim << endl;
     cout << "Elevator delta trim: " << a.deltae_trim << endl;
-    cout << "Velocity component u [m/s]" << a.u << endl;
-    cout << "Velocity component w [m/s]" << a.w << endl;
+    cout << "Velocity component u [m/s]: " << a.u << endl;
+    cout << "Velocity component w [m/s]: " << a.w << endl;
 
     cout << "" << endl;
     Trim2 y = trim2(dba100, en0, prop0, a, V, h);
