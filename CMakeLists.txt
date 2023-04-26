@@ -4,3 +4,9 @@ project(SimUAV)
 set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(Google_tests)
 add_executable(SimUAV src/main.cpp declaredFun.h)
+
+# Get the absolute path to the "database" directory
+set(DATABASE_DIR "${CMAKE_SOURCE_DIR}/database")
+
+# Add a compile-time definition for the database directory path
+target_compile_definitions(SimUAV PRIVATE DATABASE_DIR="${DATABASE_DIR}")
