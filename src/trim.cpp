@@ -49,6 +49,8 @@ Trim_Angles trim1(AeroDB db, double V, double h) {
     double Cm_alpha;
     double Cm_deltae;
 
+    bool foundAlpha = false;
+
     for (alpha_int = alpha_min; alpha_int <= alpha_max; alpha_int += incr_alpha) {
         Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_int);
         Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_int);
@@ -61,11 +63,27 @@ Trim_Angles trim1(AeroDB db, double V, double h) {
         if (abs(db.Ad.Mass * g * cos(alpha_int / 180 * M_PI) + 0.5 * Cz_tot * rho * db.Ad.Wing_area * pow(V, 2)) <
             res){
             angles.alpha_trim = alpha_int;
+            foundAlpha = true; // change the flag's state once a possible trim condition is found
+
             Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_int);
             Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_int);
             Cm_deltae = linearInterpolation(db.alpha, db.cm.cm_de, alpha_int);
             angles.deltae_trim = (-(Cm_ss + Cm_alpha * angles.alpha_trim* M_PI /180) / Cm_deltae) *180 / M_PI;
         }
+    }
+    //throw error if alpha_trim cannot be found
+    if(!foundAlpha) {
+        string error = "Could not find alpha between alpha_min = " + to_string(alpha_min) + " [deg] and alpha_max = " +
+                                                                                            to_string(alpha_max) +
+                                                  " [deg] respecting the trim condition with V = "+ to_string(V) + " [m/s] and h = "+
+                                                                                                                   to_string(h) +" [m]";
+        throw range_error(error);
+    }
+    // if alpha is correct, check if delta_trim respects its boundaries, otherwise throw error.
+    if(angles.deltae_trim > deltae_max || angles.deltae_trim < deltae_min) {
+        string error = "Delta_trim is out of bounds [" + to_string(deltae_min) + ", " + to_string(deltae_max) + "]. Delta_trim = " +
+                to_string(angles.deltae_trim) + " [deg].";
+        throw range_error(error);
     }
 
     angles.u = V*cos(angles.alpha_trim);
