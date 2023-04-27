@@ -73,8 +73,7 @@ void save_battery(BatteryDB *db, string filePath) {
     }
     else {
         string errorMessage = "Could not open " + filePath;
-        cerr << "Could not open " << filePath << endl;
-        ::perror("");
+        throw runtime_error(errorMessage);
     }
     myfile.close();
 }
@@ -113,8 +112,7 @@ void save_engine(EngineDB *db,string filePath) {
         }
     }else {
         string errorMessage = "Could not open " + filePath;
-        cerr << "Could not open " << filePath << endl;
-        ::perror("");
+        throw runtime_error(errorMessage);
     }
     myfile.close();
 }
@@ -216,8 +214,7 @@ void save_propeller(PropDB *db, string filePath) {
 
     }else {
         string errorMessage = "Could not open " + filePath;
-        cerr << "Could not open " << filePath << endl;
-        ::perror("");
+        throw runtime_error(errorMessage);
     }
     myfile.close();
 }

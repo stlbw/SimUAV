@@ -165,8 +165,7 @@ int getAoALength(string filePath) {
         myfile.close();
     } else {
         string errorMessage = "Could not open " + filePath;
-        cerr << "Could not open " << filePath << endl;
-        ::perror("");
+        throw runtime_error(errorMessage);
     }
 }
 
