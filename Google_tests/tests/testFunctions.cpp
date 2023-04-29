@@ -19,17 +19,17 @@ TEST(InterpolationTest, CanDoLinearInterpolation) {
 TEST(TrimTest, CanComputeAlphaTrim) {
     AeroDB db;
     db = readData("dba_100.ini", true);
-    //double V = 15;
-    //double h = 100;
+    double V = 15;
+    double h = 100;
     double tol = 0.05;
-    ASSERT_NEAR(trim1(db).alpha_trim, 2.36, tol);
+    ASSERT_NEAR(trimAngles(db, V, h).alpha_trim, 2.36, tol);
 }
 
 TEST(TrimTest, CanComputeDeltaTrim) {
     AeroDB db;
     db = readData("dba_100.ini", true);
-    //double V = 15;
-    //double h = 100;
+    double V = 15;
+    double h = 100;
     double tol = 0.05;
-    ASSERT_NEAR(trim1(db).deltae_trim, -2.16, tol);
+    ASSERT_NEAR(trimAngles(db, V, h).deltae_trim, -2.16, tol);
 }
