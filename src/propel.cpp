@@ -2,16 +2,16 @@
 // Created by Matheus Padilha on 29/04/23.
 //
 #include "../declaredFun.h"
-#include <math.h>
+#include <cmath>
 #include<iostream>
 
 struct Propel {
-    double T; //thrust
-    double Q; // torque
-    double ct; // thrust coefficient
-    double cq; //torque coefficient
-    double J; // rapporto di avanzamento
-    double eta; // propeller's efficiency
+    double T = 0; //thrust
+    double Q = 0; // torque
+    double ct = 0; // thrust coefficient
+    double cq = 0; //torque coefficient
+    double J = 0; // rapporto di avanzamento
+    double eta = -1; // propeller's efficiency - initialized as -1 as 0 is a possible value
 };
 /**
  * Computes propeller performance using a simpolified Glauert's Blade Element Theory for each station of the propeller
@@ -25,7 +25,7 @@ struct Propel {
  * @param rpm
  * @return
  */
-Propel getPropellerPerformance(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h, double rpm) {
+Propel getPropellerPerformance(AeroDB db, EngineDB endb, PropDB pdb, double alpha, double delta_e, double V, double h, double rpm) {
     Propel result;
     int lenVec = pdb.Pg.nstation; // [-] 100
     double diam = pdb.Pg.diameter; // [m] 0.125
@@ -71,8 +71,8 @@ Propel getPropellerPerformance(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles
     double T = 0.0; // inizializzazione vettore spinta
     double Torque = 0.0;// inizializzazione vettore coppia
 
-    double alpha_trim = angles.alpha_trim; // [deg] 2.36
-    double deltae_trim= angles.deltae_trim; // [deg]-2.16
+    double alpha_trim = alpha; // [deg] 2.36
+    double deltae_trim= delta_e; // [deg]-2.16
 
     double nBlade = pdb.Pg.np; // [-] 2
     double cl0 = pdb.Pc.Cl0; // [-] 0.3832

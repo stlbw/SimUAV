@@ -9,12 +9,12 @@
 using namespace std;
 
 struct Trim_Angles{
-    double alpha_trim, deltae_trim, u, w;
+    double alpha_trim, deltae_trim, theta_trim, u, w;
 };
 
 
 // Prima approssimazione
-Trim_Angles trimAngles(AeroDB db, double V, double h) {
+Trim_Angles trimAngles(AeroDB db, double V, double h, double gamma_0 = 0) {
     // Primo tentativo gamma_0=0 --> alpha = theta
 
     double alpha_min;
@@ -29,7 +29,7 @@ Trim_Angles trimAngles(AeroDB db, double V, double h) {
 
     //double V = 15;
     //double h = 100; // velocità e altezza che poi saranno definite da utente
-    double beta = 0, delta_a = 0, gamma_0 = 0, p = 0, q = 0, r = 0;
+    double beta = 0, delta_a = 0, p = 0, q = 0, r = 0;
     double g = 9.81;
 
     double rho = computeDensity(h);
@@ -85,6 +85,7 @@ Trim_Angles trimAngles(AeroDB db, double V, double h) {
         throw range_error(error);
     }
 
+    angles.theta_trim = angles.alpha_trim + gamma_0; // theta = alpha + gamma
     angles.u = V*cos(angles.alpha_trim * M_PI / 180.0);
     angles.w = V*sin(angles.alpha_trim * M_PI / 180.0);
 

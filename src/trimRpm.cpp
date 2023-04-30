@@ -3,10 +3,12 @@
 //
 
 #include "../declaredFun.h"
-#include <math.h>
+#include <cmath>
 
 struct  Trim_Engine_Propeller{
-    double rpm, T, Throttle;
+    double rpm = 0;
+    double T = 0;
+    double Throttle = 0;
 };
 
 Trim_Engine_Propeller trimEnginePropeller(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
@@ -35,7 +37,7 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db, EngineDB endb, PropDB pdb, 
 
     for(rpm = rpm_min; rpm <= rpm_max; rpm += delta_rpm){
 
-        propelResult = getPropellerPerformance(db, endb, pdb, angles, V, h, rpm);
+        propelResult = getPropellerPerformance(db, endb, pdb, angles.alpha_trim, angles.deltae_trim, V, h, rpm);
 
         if(abs(enginePerformanceTrim.T-propelResult.T) < res){
             enginePerformanceTrim.rpm = rpm;
