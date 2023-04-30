@@ -105,17 +105,29 @@ int main() {
 
         // try and catch block used to deal with errors -> this way errors are always sent back to the main
         try {
+            // trim angles
             Trim_Angles a = trimAngles(dba100, V, h);
             cout << "Alpha trim [deg]: " << a.alpha_trim << endl;
             cout << "Elevator delta trim [deg]: " << a.deltae_trim << endl;
             cout << "Velocity component u [m/s]: " << a.u << endl;
             cout << "Velocity component w [m/s]: " << a.w << endl;
 
+            //trim rpm, T and Throttle
             cout << "" << endl;
             Trim_Engine_Propeller y = trimEnginePropeller(dba100, en0, prop0, a, V, h);
             cout << "RPM trim: " << y.rpm  << endl;
             cout << "Thrust trim: " << y.T  << endl;
             cout << "Throttle: " << y.Throttle  << endl;
+
+            //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
+            // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
+            double vecCI[10] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h}; // [u, v, w, p, q, r, phi, theta, psi, h]
+            // initialize the command vector
+            double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle};
+
+            //todo: decide whether the integration loop should be done in main or under integrateEquationsOfMotion
+            integrateEquationsOfMotion(dba100, en0, prop0, y.rpm, vecCI, vecComm);
+
 
             cout << "" << endl;
             cout << "---------------------------------------------------------------" << endl;

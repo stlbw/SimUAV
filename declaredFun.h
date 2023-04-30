@@ -10,4 +10,5 @@
 #include "src/propel.cpp"
 #include "src/trimRpm.cpp"
 #include "src/stability.cpp"
+#include "src/integrateMotion.cpp"
 #endif
