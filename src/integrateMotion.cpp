@@ -163,7 +163,34 @@ double* getRemainders(const double state[10], const double command[4], const dou
     double M = forces[4];
     double N = forces[5];
 
-    //double du = (r * v - q * w) - g * sin(theta)
+    double p_dot = 0; //change
+    double r_dot = 0; //change
+
+    double du = (r * v - q * w) - g * sin(theta) + X / m + thrust / m;
+    double dv = (p * w - r * u) + g * sin(phi) * cos(theta) + Y / m;
+    double dw = (q * u - p * v) + g * cos(phi) * cos(theta) + Z / m;
+    double dp = -((Jz - Jy) * q * r) / Jx + (p * q + r_dot) * Jxz / Jx + L / Jx;
+    double dq = -((Jx - Jz) * p * r) / Jy - (pow(p, 2) - pow(r, 2)) * Jxz / Jy + M / Jy;
+    double dr = -((Jy - Jx) * p * q) / Jz - (q * r - p_dot) * Jxz / Jz + N / Jz;
+    double dphi = p + q * sin(phi) * tan(theta) + r * cos(phi) * tan(theta);
+    double dtheta = q * cos(phi) - r * sin(phi);
+    double dpsi = q * sin(phi) / cos(theta) + r * cos(phi) / cos(theta);
+    double dh = -u * sin(theta) + v * cos(theta) * sin(phi) + w * cos(theta) * cos(phi);
+
+    double* remainder = new double[10];
+    remainder[0] = du;
+    remainder[1] = dv;
+    remainder[2] = dw;
+    remainder[3] = dp;
+    remainder[4] = dq;
+    remainder[5] = dr;
+    remainder[6] = dphi;
+    remainder[7] = dtheta;
+    remainder[8] = dpsi;
+    remainder[9] = dh;
+
+    return remainder;
+
 
 }
 
