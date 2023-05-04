@@ -12,7 +12,7 @@
  * @param result
  * @returns a vector containing the 6 aerodynamic forces (3) and moments(3)
  */
-void getAerodynamicForces(AeroDB db, const double initialConditions[10], const double command[4], double* result) {
+double* getAerodynamicForces(AeroDB db, const double initialConditions[10], const double command[4]) {
     // unpack initial conditions vector
     double u = initialConditions[0];
     double v = initialConditions[1];
@@ -70,7 +70,7 @@ void getAerodynamicForces(AeroDB db, const double initialConditions[10], const d
     double Czp = linearInterpolation(db.alpha, db.fz.cz_p, alpha_deg);
     double Czq = linearInterpolation(db.alpha, db.fz.cz_q, alpha_deg);
     double Czr = linearInterpolation(db.alpha, db.fz.cz_r, alpha_deg);
-    double Czdelta_a = 0; //cannot finc Cz_deltaa
+    double Czdelta_a = 0; //cannot find Cz_deltaa
     double Czdelta_e = linearInterpolation(db.alpha, db.cf.cz_de, alpha_deg);
     double Czdelta_r = 0; //cannot find Cz_deltar
 
@@ -116,9 +116,15 @@ void getAerodynamicForces(AeroDB db, const double initialConditions[10], const d
     double CnTot = Cna * alpha + Cnb * beta + Cnp * p + Cnq * q + Cnr * r + Cndelta_a * delta_a + Cndelta_e * delta_e + Cndelta_r * delta_r;
     double NMoment = 0.5 * rho * pow(V, 2) * S * CnTot;
 
-    double vecForceMoment[8] = {XForce, YForce, ZForce, LMoment, MMoment, NMoment};
+    double* vecForceMoment = new double[6];
+    vecForceMoment[0] = XForce;
+    vecForceMoment[1] = YForce;
+    vecForceMoment[2] = ZForce;
+    vecForceMoment[3] = LMoment;
+    vecForceMoment[4] = MMoment;
+    vecForceMoment[5] = NMoment;
 
-    result = vecForceMoment;
+    return vecForceMoment;
 
 
 
@@ -127,7 +133,7 @@ void getAerodynamicForces(AeroDB db, const double initialConditions[10], const d
 
 }
 
-void getRemainders(double state[10], double command[4], double inertiaParameters[5], double* remainder[8]) {
+double* getRemainders(const double state[10], const double command[4], const double inertiaParameters[5], const double forces[6], const double thrust) {
     // unpack state vector -> i-th step
     double u = state[0];
     double v = state[1];
@@ -140,11 +146,22 @@ void getRemainders(double state[10], double command[4], double inertiaParameters
     double psi = state[8];
     double h = state[9];
 
+    double g = 9.81;
+
     //unpack inertia parameters
     double m = inertiaParameters[0];
     double Jx = inertiaParameters[1];
     double Jy = inertiaParameters[2];
-    double Jxz = inertiaParameters[3];
+    double Jz = inertiaParameters[3];
+    double Jxz = inertiaParameters[4];
+
+    //unpack forces and moments
+    double X = forces[0];
+    double Y = forces[1];
+    double Z = forces[2];
+    double L = forces[3];
+    double M = forces[4];
+    double N = forces[5];
 
     //double du = (r * v - q * w) - g * sin(theta)
 
@@ -180,7 +197,9 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     double V = sqrt(pow(u, 2) + pow(v, 2) + pow(w, 2));
 
     //aerodynamic forces
-    getAerodynamicForces(db, initialConditions, command, aeroForces); // get aerodynamic forces and return it to aeroForces
+    double* aeroPointer = getAerodynamicForces(db, initialConditions, command); // get aerodynamic forces and return it to aeroForces
+    for(int i = 0; i < 6; i++) {aeroForces[i] = aeroPointer[i];}
+    delete[] aeroPointer; // delete pointer to avoid memory leak
 
     //propeller forces
     propellerData = getPropellerPerformance(db, endb, pdb, alpha, delta_e, V, h, rpm);
@@ -190,8 +209,19 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     //todo: how to compute inertial forces?
     //todo: add gravitational forces -> add rotation matrix L_vb
 
+    double completeForce[6] = {0};
+    for (int i = 0; i < size(completeForce); i++) {
+        completeForce[i] = aeroForces[i] + propForces[i] + inertialForces[i] + gravForces[i];
+    }
 
-    double remainder[8] = {0}; //initialize remainders vector for the i-th step
+    double remainder[10] = {0}; //initialize remainders vector for the i-th step
+    double inertiaParameters[5] = {db.Ad.Mass, db.Ad.Jx, db.Ad.Jy, db.Ad.jz, db.Ad.jxz};
+
+    double* remainderPointer = getRemainders(initialConditions, command, inertiaParameters, completeForce, propellerData.T);
+    for(int i = 0; i < 6; i++) {remainder[i] = remainderPointer[i];} // assign values to variable
+    delete[] remainderPointer; // delete pointer to avoid memory leak
+
+    // integrate equations of motion
 
 
 
