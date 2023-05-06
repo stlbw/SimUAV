@@ -2,6 +2,7 @@
 // Created by Matheus Padilha on 30/04/23.
 //
 #include <cmath>
+#include "../declaredFun.h"
 
 
 
@@ -27,6 +28,8 @@ double* getAerodynamicForces(AeroDB db, const double initialConditions[10], cons
     //double theta = initialConditions[7];
     //double psi = initialConditions[8];
     double h = initialConditions[9];
+    double x = initialConditions[10];
+    double y = initialConditions[11];
     
     //unpack command vector (throttle is not relevant here) - ANGLES IN RAD
     double delta_a = command[0];
@@ -148,6 +151,8 @@ double* getRemainders(const double state[10], const double command[4], const dou
     double theta = state[7];
     double psi = state[8];
     double h = state[9];
+    double x = state[10];
+    double y = state[11];
 
     double g = 9.81;
 
@@ -179,6 +184,10 @@ double* getRemainders(const double state[10], const double command[4], const dou
     double dtheta = q * cos(phi) - r * sin(phi);
     double dpsi = q * sin(phi) / cos(theta) + r * cos(phi) / cos(theta);
     double dh = -u * sin(theta) + v * cos(theta) * sin(phi) + w * cos(theta) * cos(phi);
+    double dx = u * cos(theta) * cos(psi) + v * (sin(phi) * sin(theta) * cos(psi) - cos(phi) * sin(psi)) + w * (cos(phi) * sin(theta) * cos(psi) + sin(phi) * sin(psi));
+    double dy = u * cos(theta) * sin(psi) + v * (sin(phi) * sin(theta) * sin(psi) + cos(phi) * cos(psi)) + w * (cos(phi) * sin(theta) * sin(psi) - sin(phi) * cos(psi));
+
+
 
     double* remainder = new double[10];
     remainder[0] = du;
@@ -191,6 +200,8 @@ double* getRemainders(const double state[10], const double command[4], const dou
     remainder[7] = dtheta;
     remainder[8] = dpsi;
     remainder[9] = dh;
+    remainder[10] = dx;
+    remainder[11] = dy;
 
     return remainder;
 
@@ -314,13 +325,14 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     double V = sqrt(pow(u, 2) + pow(v, 2) + pow(w, 2));
 
     //aerodynamic forces
-    double* aeroPointer = getAerodynamicForces(db, initialConditions, command); // get aerodynamic forces and return it to aeroForces
-    for(int i = 0; i < 6; i++) {aeroForces[i] = aeroPointer[i];}
+    double *aeroPointer = getAerodynamicForces(db, initialConditions,
+                                               command); // get aerodynamic forces and return it to aeroForces
+    for (int i = 0; i < 6; i++) { aeroForces[i] = aeroPointer[i]; }
     delete[] aeroPointer; // delete pointer to avoid memory leak
 
     //propeller forces
     propellerData = getPropellerPerformance(db, endb, pdb, alpha, delta_e, V, h, rpm);
-    propForces[0] = - propellerData.T; // all other entries are set to 0
+    propForces[0] = -propellerData.T; // all other entries are set to 0
     //todo: how to compute L, M, N propeller?
 
     //todo: how to compute inertial forces?
@@ -373,6 +385,10 @@ void complete_forces(AeroDB db, Propel propellerData, EngineDB endb, PropDB pdb,
     for (int i = 0; i < size(completeForce); i++) {
         completeForce[i] = aeroForces[i] + propForces[i] + inertialForces[i] + gravForces[i];
     }
+
+
+
+
 
     double remainder[10] = {0}; //initialize remainders vector for the i-th step
     double inertiaParameters[5] = {db.Ad.Mass, db.Ad.Jx, db.Ad.Jy, db.Ad.jz, db.Ad.jxz};
