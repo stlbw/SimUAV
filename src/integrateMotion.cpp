@@ -3,6 +3,9 @@
 //
 #include <cmath>
 
+
+
+
 /**
  * Evaluate the aerodynamic forces given a initial condition and the command vector. Uses linear interpolation and the
  * single dependency of alpha (AoA) to compute aerodynamic coefficients.
@@ -193,6 +196,92 @@ double* getRemainders(const double state[10], const double command[4], const dou
 
 
 }
+// Gravitational forces
+struct G_forces{
+    double gravity_forcex, gravity_forcey, gravity_forcez;
+};
+
+G_forces Gravity_forces(const double state[10]){
+
+    G_forces gravForces;
+    gravForces.gravity_forcex = 0;
+    gravForces.gravity_forcey = 0;
+    gravForces.gravity_forcez = 0;
+    double g = 9.81;
+    double det = 0;
+    double rotationMatrix[3][3] = {0};
+    double inverse_matrix[3][3] = {0};
+    double roll = state[6];
+    double pitch = state[7];
+    double yaw = state[8];
+    vector<double> Gravity{0,0,g}; // vector to be multiply per rotational matrix
+    vector<double> gravity(3,0); //final vector with the results
+
+
+
+    double cr = cos(roll);
+    double sr = sin(roll);
+    double cp = cos(pitch);
+    double sp = sin(pitch);
+    double cy = cos(yaw);
+    double sy = sin(yaw);
+
+    double m00, m01, m02, m10, m11, m12, m20, m21, m22;
+
+    m00 = cp * cy;
+    m01 = cp * sy;
+    m02 = -sp;
+
+    m10 = -cr * sy + sr * sp * cy;
+    m11 = cr * cy + sr * sp * sy;
+    m12 = sr * cp;
+
+    m20 = sr * sy + cr * sp * cy;
+    m21 = -sr * cy + cr * sp * sy;
+    m22 = cr * cp;
+
+    rotationMatrix[0][0] = m00;
+    rotationMatrix[0][1] = m01;
+    rotationMatrix[0][2] = m02;
+    rotationMatrix[1][0] = m10;
+    rotationMatrix[1][1] = m11;
+    rotationMatrix[1][2] = m12;
+    rotationMatrix[2][0] = m20;
+    rotationMatrix[2][1] = m21;
+    rotationMatrix[2][2] = m22;
+
+    //finding determinant of the matrix
+    for(int i = 0; i < 3; i++)
+        det = det + (rotationMatrix[0][i] * (rotationMatrix[1][(i+1)%3] * rotationMatrix[2][(i+2)%3] - rotationMatrix[1][(i+2)%3] * rotationMatrix[2][(i+1)%3]));
+    if (det > 0)
+    {
+        // cout<<"\n Inverse of the matrix is: \n";
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++)
+                inverse_matrix[i][j] = ((rotationMatrix[(j+1)%3][(i+1)%3] * rotationMatrix[(j+2)%3][(i+2)%3]) - (rotationMatrix[(j+1)%3][(i+2)%3] *rotationMatrix[(j+2)%3][(i+1)%3])); //finding adjoint and dividing it by determinant
+
+        }
+    }
+    else std::cout<<"Inverse doesn't exist for this matrix";
+
+    // g_FB = L_VB ^-1 * {0 0 g}:
+    for(int m = 0; m < 3; m++){
+        for (int n = 0; n < 3; n++){
+           gravity[m] += (inverse_matrix[m][n]*Gravity[n]);
+
+        }
+
+    }
+    gravForces.gravity_forcex = gravity[0];
+    gravForces.gravity_forcey = gravity[1];
+    gravForces.gravity_forcez = gravity[2];
+
+    return gravForces;
+
+}
+
+
+
 
 /**
  * Integrates the i-th step of the equations of motion using Euler's Explicit method. Requires all parameters to be given
@@ -219,6 +308,7 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     double v = initialConditions[1];
     double w = initialConditions[2];
     double h = initialConditions[9];
+
     double alpha = atan2(w, u); //[rad]
     double delta_e = command[1]; //[rad]
     double V = sqrt(pow(u, 2) + pow(v, 2) + pow(w, 2));
@@ -234,7 +324,50 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     //todo: how to compute L, M, N propeller?
 
     //todo: how to compute inertial forces?
-    //todo: add gravitational forces -> add rotation matrix L_vb
+}
+    // Inertial Forces
+    struct Inertia {
+        double X_inert, Y_inert, Z_inert, L_inert, M_inert, N_inert;
+    };
+
+    Inertia InertialForces(AeroDB db){
+
+    Inertia Inertial_forces;
+    double mass = db.Ad.Mass;
+    double Ix = db.Ad.Jx;
+    double Iy = db.Ad.Jy;
+    double Iz = db.Ad.jz;
+
+    Inertial_forces.X_inert = mass;
+    Inertial_forces.Y_inert = mass;
+    Inertial_forces.Z_inert = mass;
+
+    Inertial_forces.L_inert = Ix;
+    Inertial_forces.M_inert = Iy;
+    Inertial_forces.N_inert = Iz;
+
+    return Inertial_forces;
+
+    }
+// Propeller forces
+    struct Propeller {
+        double X_prop, Y_prop, Z_prop, L_prop, M_prop, N_prop;
+    };
+
+    Propeller Propeller_forces(AeroDB db,Propel propellerData, EngineDB endb,PropDB pdb){
+
+        Propeller pc;
+// cosa serve qui?????
+
+
+        pc.Y_prop = 0;
+        pc.Z_prop = 0;
+
+        return pc;
+    }
+
+void complete_forces(AeroDB db, Propel propellerData, EngineDB endb, PropDB pdb, double rpm, double initialConditions[10], double command[4], vector<double> aeroForces,vector<double> propForces,vector<double> inertialForces,vector<double> gravForces ){
+
 
     double completeForce[6] = {0};
     for (int i = 0; i < size(completeForce); i++) {
@@ -249,9 +382,6 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     delete[] remainderPointer; // delete pointer to avoid memory leak
 
     // integrate equations of motion
-
-
-
 
 
 }
