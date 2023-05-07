@@ -342,7 +342,7 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
         double X_inert, Y_inert, Z_inert, L_inert, M_inert, N_inert;
     };
 
-    Inertia InertialForces(AeroDB db){
+  /*  Inertia InertialForces(AeroDB db){
 
     Inertia Inertial_forces;
     double mass = db.Ad.Mass;
@@ -361,43 +361,4 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     return Inertial_forces;
 
     }
-// Propeller forces
-    struct Propeller {
-        double X_prop, Y_prop, Z_prop, L_prop, M_prop, N_prop;
-    };
-
-    Propeller Propeller_forces(AeroDB db,Propel propellerData, EngineDB endb,PropDB pdb){
-
-        Propeller pc;
-// cosa serve qui?????
-
-
-        pc.Y_prop = 0;
-        pc.Z_prop = 0;
-
-        return pc;
-    }
-
-void complete_forces(AeroDB db, Propel propellerData, EngineDB endb, PropDB pdb, double rpm, double initialConditions[10], double command[4], vector<double> aeroForces,vector<double> propForces,vector<double> inertialForces,vector<double> gravForces ){
-
-
-    double completeForce[6] = {0};
-    for (int i = 0; i < size(completeForce); i++) {
-        completeForce[i] = aeroForces[i] + propForces[i] + inertialForces[i] + gravForces[i];
-    }
-
-
-
-
-
-    double remainder[10] = {0}; //initialize remainders vector for the i-th step
-    double inertiaParameters[5] = {db.Ad.Mass, db.Ad.Jx, db.Ad.Jy, db.Ad.jz, db.Ad.jxz};
-
-    double* remainderPointer = getRemainders(initialConditions, command, inertiaParameters, completeForce, propellerData.T);
-    for(int i = 0; i < 6; i++) {remainder[i] = remainderPointer[i];} // assign values to variable
-    delete[] remainderPointer; // delete pointer to avoid memory leak
-
-    // integrate equations of motion
-
-
-}
+    */
