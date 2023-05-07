@@ -251,6 +251,7 @@ G_forces Gravity_forces(const double state[10]){
     m21 = -sr * cy + cr * sp * sy;
     m22 = cr * cp;
 
+
     rotationMatrix[0][0] = m00;
     rotationMatrix[0][1] = m01;
     rotationMatrix[0][2] = m02;
