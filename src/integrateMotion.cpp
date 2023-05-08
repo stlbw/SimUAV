@@ -307,7 +307,20 @@ G_forces Gravity_forces(const double state[10]){
  * @param command
  * @returns the (i+1)-th integration step
  */
-void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm, double initialConditions[10], double command[4]) {
+
+
+double* getAcceleration(double currentState[6], double previousState[6], double dt){
+    // { u v w p q r }
+    double* acceleration = new double[6];
+    for (int i = 0; i < 6; i++){
+        acceleration[i] = (currentState[i] - previousState[i]) / dt; // as a vector field
+    }
+    return acceleration;
+
+}
+
+
+double* integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt = 0.02) {
     // compute forces -> initialize vector to 0 + external function to compute it
     // get initial conditions [i-th step]
     // compute remaining -> initialize vector to 0
@@ -325,6 +338,7 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     double q = initialConditions[4];
     double r = initialConditions[5];
     double h = initialConditions[9];
+
 
     double alpha = atan2(w, u); //[rad]
     double delta_e = command[1]; //[rad]
@@ -377,19 +391,17 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     for (int i = 0; i < 6; i++) { remainder[i] = remainderPointer[i]; } // assign values to variable
     delete[] remainderPointer; // delete pointer to avoid memory leak
 
-    // Euler's explicit method
-    double delta; //difference between the following step and the previous one
-    double toll = 1e-6; // tolerance for the difference
-    double N_max = 100; //max number of iterations
-    double it; // number of iteration
-    double dt = 0.02; // time step
-    double ic;
-    for (int i = 0; i < 11; i++) {
-        while  (it < N_max) {
 
-            initialConditions[i] += dt * remainder[i];
-            it += 1;
-        }
+    // Initialize current states vector with the initial conditions (safety to avoid mistakes)
+    double* currentState = new double[12];
+    for (int i = 0; i < 12; i++) {
+        currentState[i] = initialConditions[i];
+    }
+
+
+    // Euler's explicit method implementation
+    for (int i = 0; i < 11; i++) {
+        currentState[i] = initialConditions[i] + dt * remainder[i];
     }
 
     return currentState;
@@ -397,22 +409,30 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
 
 
 
-}
-/*
-    // Inertial Forces
+
+
+
+};
+
+
+
+
+
+
+    //Inertial Forces
     struct Inertia {
         double X_inert, Y_inert, Z_inert, L_inert, M_inert, N_inert;
     };
-    */
 
 
-  /*  Inertia InertialForces(AeroDB db){
+
+Inertia InertialForces(AeroDB db){
 
     Inertia Inertial_forces;
     double mass = db.Ad.Mass;
     double Ix = db.Ad.Jx;
     double Iy = db.Ad.Jy;
-    double Iz = db.Ad.jz;
+    double Iz = db.Ad.jz;\
 
     Inertial_forces.X_inert = mass;
     Inertial_forces.Y_inert = mass;
