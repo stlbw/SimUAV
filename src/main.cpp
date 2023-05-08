@@ -126,7 +126,13 @@ int main() {
             double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle};
 
             //todo: decide whether the integration loop should be done in main or under integrateEquationsOfMotion
-            integrateEquationsOfMotion(dba100, en0, prop0, y.rpm, vecCI, vecComm);
+            double* newStatesPointer = integrateEquationsOfMotion(dba100, en0, prop0, y.rpm, vecCI, vecComm, vecCI);
+            double newStates[12] = {0};
+            for (int i = 0; i < 12; i++) { newStates[i] = newStatesPointer[i]; } // assign values to variable
+            delete[] newStatesPointer; // delete pointer to avoid memory leak
+
+            //double previous = vecCI; // i-1
+            //vecCI = newStates; // i
 
 
             cout << "" << endl;

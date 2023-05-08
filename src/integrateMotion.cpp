@@ -321,6 +321,9 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     double u = initialConditions[0];
     double v = initialConditions[1];
     double w = initialConditions[2];
+    double p = initialConditions[3];
+    double q = initialConditions[4];
+    double r = initialConditions[5];
     double h = initialConditions[9];
 
     double alpha = atan2(w, u); //[rad]
@@ -337,6 +340,21 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     propellerData = getPropellerPerformance(db, endb, pdb, alpha, delta_e, V, h, rpm);
     propForces[0] = -propellerData.T; // all other entries are set to 0
     //todo: how to compute L, M, N propeller?
+
+    // initialize vectors
+    double previousVelocity[6] = {0};
+    double currentVelocity[6] = {0};
+    // assign velocities to vectors
+    for (int i = 0; i <6; i++) {
+        previousVelocity[i] = previousState[i]; // (i-1)-th step
+        currentVelocity[i] = initialConditions[i]; // i-th step
+    }
+
+    double acceleration[6] = {0};
+    double *accelerationPointer = getAcceleration(previousVelocity, currentVelocity, dt);
+    for (int i = 0; i < 6; i++) { acceleration[i] = accelerationPointer[i]; } // assign values to variable
+    delete[] accelerationPointer; // delete pointer to avoid memory leak
+
 
     //todo: how to compute inertial forces?
 
@@ -373,6 +391,11 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
             it += 1;
         }
     }
+
+    return currentState;
+
+
+
 
 }
 /*
