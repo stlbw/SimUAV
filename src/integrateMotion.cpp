@@ -49,7 +49,7 @@ double* getAerodynamicForces(AeroDB db, const double initialConditions[10], cons
     double Cxp = linearInterpolation(db.alpha, db.fx.cx_p, alpha_deg);
     double Cxq = linearInterpolation(db.alpha, db.fx.cx_q, alpha_deg);
     double Cxr = linearInterpolation(db.alpha, db.fx.cx_r, alpha_deg);
-    double Cxdelta_a = 0; //todo: cannot find CX_da on database
+    double Cxdelta_a = 0;
     double Cxdelta_e = linearInterpolation(db.alpha, db.cf.cx_de, alpha_deg );
     double Cxdelta_r = 0; // same as Cxdelta_a
 
@@ -311,6 +311,7 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     // compute forces -> initialize vector to 0 + external function to compute it
     // get initial conditions [i-th step]
     // compute remaining -> initialize vector to 0
+
     Propel propellerData;
     double aeroForces[6] = {0};
     double propForces[6] = {0};
@@ -338,11 +339,49 @@ void integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm
     //todo: how to compute L, M, N propeller?
 
     //todo: how to compute inertial forces?
+
+    double completeForce[6] = {0};
+    for (int i = 0; i < size(completeForce); i++) {
+        completeForce[i] = aeroForces[i] + propForces[i] + inertialForces[i] + gravForces[i];
+    }
+
+
+    // FORZE INERZIALI
+
+    // MOMENTI PROPELLER
+
+    double remainder[10] = {0};
+    //initialize remainders vector for the i-th step
+    double inertiaParameters[5] = {db.Ad.Mass, db.Ad.Jx, db.Ad.Jy, db.Ad.jz, db.Ad.jxz};
+
+    double *remainderPointer = getRemainders(initialConditions, command, inertiaParameters, completeForce,
+                                             propellerData.T);
+    for (int i = 0; i < 6; i++) { remainder[i] = remainderPointer[i]; } // assign values to variable
+    delete[] remainderPointer; // delete pointer to avoid memory leak
+
+    // Euler's explicit method
+    double delta; //difference between the following step and the previous one
+    double toll = 1e-6; // tolerance for the difference
+    double N_max = 100; //max number of iterations
+    double it; // number of iteration
+    double dt = 0.02; // time step
+    double ic;
+    for (int i = 0; i < 11; i++) {
+        while  (it < N_max) {
+
+            initialConditions[i] += dt * remainder[i];
+            it += 1;
+        }
+    }
+
 }
+/*
     // Inertial Forces
     struct Inertia {
         double X_inert, Y_inert, Z_inert, L_inert, M_inert, N_inert;
     };
+    */
+
 
   /*  Inertia InertialForces(AeroDB db){
 
