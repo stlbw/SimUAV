@@ -122,34 +122,34 @@ void routhCriteria(double Iy, double rho, double mu, double V, double chord, dou
 
 }
 
-Modes longitudinalStability (AeroDB db, PropDB pdb, Trim_Angles angles, double V, double h) {
+Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles angles, double V, double h) {
     double C_Du = 0, C_mu = 0, C_Lu = 0; // these derivatives are 0 because it is a subsonic vehicle
     double g = 9.81;
     //double V = 15;
     //double h = 100;
     double rho = computeDensity(h);
     //double C_We = 0.2842;
-    double C_We = (db.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db.Ad.Wing_area);
+    double C_We = (db1.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db1.Ad.Wing_area); // MASS and WING AREA constant
     double C_Le = C_We;
-    double C_Xe = linearInterpolation(db.alpha, db.ss.cx, angles.alpha_trim); // CX coef in steady-state for the trim condition
+    double C_Xe = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, angles.alpha_trim, h); // CX coef in steady-state for the trim condition
     double C_De = -C_Xe;
     double k = 0.0382; //every flight condition
     double Cl1_alpha = 3.25; // discordanza valori tra slide 53 e 57
     double C_Tu = -0.0382;
     //double C_Tu = -3 * C_De;
-    double Cz_alpha = linearInterpolation(db.alpha, db.fz.cz_a, angles.alpha_trim);
-    double Cx_alpha = linearInterpolation(db.alpha, db.fx.cx_a, angles.alpha_trim);
+    double Cz_alpha = linearInterpolation(db1.alpha, db1.fz.cz_a, db2.fz.cz_a, angles.alpha_trim, h);
+    double Cx_alpha = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, angles.alpha_trim, h);
     double Cl_alpha = Cx_alpha * sin(angles.alpha_trim * M_PI / 180.0) - Cz_alpha * cos(angles.alpha_trim * M_PI / 180.0) ;
     double Cd_alpha = 2 * k * Cl_alpha * C_Le;
-    double Cz1_alpha = linearInterpolation(db.alpha, db.fz.cz_ap, angles.alpha_trim);
-    double Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, angles.alpha_trim);
-    double Cm_q = linearInterpolation(db.alpha, db.pm.cm_q, angles.alpha_trim);
-    double Cm1_alpha = linearInterpolation(db.alpha, db.pm.cm_ap, angles.alpha_trim) ;
+    double Cz1_alpha = linearInterpolation(db1.alpha, db1.fz.cz_ap, db2.fz.cz_ap, angles.alpha_trim, h);
+    double Cm_alpha = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, angles.alpha_trim, h);
+    double Cm_q = linearInterpolation(db1.alpha, db1.pm.cm_q, db2.pm.cm_q, angles.alpha_trim, h);
+    double Cm1_alpha = linearInterpolation(db1.alpha, db1.pm.cm_ap, db2.pm.cm_ap, angles.alpha_trim, h) ;
     double aeroCoefVec[10] = {C_We, C_Le, C_De, C_Tu, Cl_alpha, Cd_alpha, Cm_alpha, Cm_q, Cl1_alpha, Cm1_alpha};
     //**************************************************
-    double chord = db.Ad.Chord;
-    double Iy = 8 * db.Ad.Jy / (rho * db.Ad.Wing_area * pow(chord, 3)); // dimensionless inertia
-    double mu = 2 * db.Ad.Mass / (rho * db.Ad.Wing_area * chord); //dimensionless mass parameter
+    double chord = db1.Ad.Chord;
+    double Iy = 8 * db1.Ad.Jy / (rho * db1.Ad.Wing_area * pow(chord, 3)); // dimensionless inertia
+    double mu = 2 * db1.Ad.Mass / (rho * db1.Ad.Wing_area * chord); //dimensionless mass parameter
     //**************************************************
 
     // Routh Criteria

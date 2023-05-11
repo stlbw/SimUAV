@@ -16,7 +16,7 @@
  * @param result
  * @returns a vector containing the 6 aerodynamic forces (3) and moments(3)
  */
-double* getAerodynamicForces(AeroDB db, const double initialConditions[10], const double command[4]) {
+double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditions[12], const double command[4]) {
     // unpack initial conditions vector
     double u = initialConditions[0];
     double v = initialConditions[1];
@@ -41,16 +41,17 @@ double* getAerodynamicForces(AeroDB db, const double initialConditions[10], cons
     double alpha_deg = alpha * 180.0 / M_PI;
     double beta = asin(v / V); // v(i)/V(i) [rad]
     double rho = computeDensity(h);
-    double S = db.Ad.Wing_area; //[m2] wing area
+    double S = db1.Ad.Wing_area; //[m2] wing area
     
     // XForces
-    double Cxa = linearInterpolation(db.alpha, db.fx.cx_a, alpha_deg);
-    double Cxb = linearInterpolation(db.alpha, db.fx.cx_b, alpha_deg);
-    double Cxp = linearInterpolation(db.alpha, db.fx.cx_p, alpha_deg);
-    double Cxq = linearInterpolation(db.alpha, db.fx.cx_q, alpha_deg);
-    double Cxr = linearInterpolation(db.alpha, db.fx.cx_r, alpha_deg);
+    double Cxa = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, alpha_deg, h);
+    double Cxb = linearInterpolation(db1.alpha, db1.fx.cx_b, db2.fx.cx_b, alpha_deg, h);
+    double Cxp = linearInterpolation(db1.alpha, db1.fx.cx_p, db2.fx.cx_p, alpha_deg, h);
+    double Cxq = linearInterpolation(db1.alpha, db1.fx.cx_q, db2.fx.cx_q, alpha_deg, h);
+    double Cxr = linearInterpolation(db1.alpha, db1.fx.cx_r, db2.fx.cx_r, alpha_deg, h);
+
     double Cxdelta_a = 0;
-    double Cxdelta_e = linearInterpolation(db.alpha, db.cf.cx_de, alpha_deg );
+    double Cxdelta_e = linearInterpolation(db1.alpha, db1.cf.cx_de, db2.cf.cx_de, alpha_deg, h);
     double Cxdelta_r = 0; // same as Cxdelta_a
 
     double CxTot = Cxa * alpha + Cxb * beta + Cxp * p + Cxq * q + Cxr * r + Cxdelta_a * delta_a + Cxdelta_e * delta_e + Cxdelta_r * delta_r;
@@ -58,66 +59,69 @@ double* getAerodynamicForces(AeroDB db, const double initialConditions[10], cons
     
     
     //YForces
-    double Cya = linearInterpolation(db.alpha, db.fy.cy_a, alpha_deg);
-    double Cyb = linearInterpolation(db.alpha, db.fy.cy_b, alpha_deg);
-    double Cyp = linearInterpolation(db.alpha, db.fy.cy_p, alpha_deg);
-    double Cyq = linearInterpolation(db.alpha, db.fy.cy_q, alpha_deg);
-    double Cyr = linearInterpolation(db.alpha, db.fy.cy_r, alpha_deg);
-    double Cydelta_a = linearInterpolation(db.alpha, db.cf.cy_da, alpha_deg);
+    double Cya = linearInterpolation(db1.alpha, db1.fy.cy_a, db2.fy.cy_a, alpha_deg, h);
+    double Cyb = linearInterpolation(db1.alpha, db1.fy.cy_b, db2.fy.cy_b, alpha_deg, h);
+    double Cyp = linearInterpolation(db1.alpha, db1.fy.cy_p, db2.fy.cy_p, alpha_deg, h);
+    double Cyq = linearInterpolation(db1.alpha, db1.fy.cy_q, db2.fy.cy_q, alpha_deg, h);
+    double Cyr = linearInterpolation(db1.alpha, db1.fy.cy_r, db2.fy.cy_r, alpha_deg, h);
+    double Cydelta_a = linearInterpolation(db1.alpha, db1.cf.cy_da, db2.cf.cy_da, alpha_deg, h);
+
     double Cydelta_e = 0; //cannot finc Cy_deltae
-    double Cydelta_r = linearInterpolation(db.alpha, db.cf.cy_dr, alpha_deg);
+    double Cydelta_r = linearInterpolation(db1.alpha, db1.cf.cy_dr, db2.cf.cy_dr, alpha_deg, h);
 
     double CyTot = Cya * alpha + Cyb * beta + Cyp * p + Cyq * q + Cyr * r + Cydelta_a * delta_a + Cydelta_e * delta_e + Cydelta_r * delta_r;
     double YForce = 0.5 * rho * pow(V, 2) * S * CyTot;
     
     //ZForces
-    double Cza = linearInterpolation(db.alpha, db.fz.cz_a, alpha_deg);
-    double Czb = linearInterpolation(db.alpha, db.fz.cz_b, alpha_deg);
-    double Czp = linearInterpolation(db.alpha, db.fz.cz_p, alpha_deg);
-    double Czq = linearInterpolation(db.alpha, db.fz.cz_q, alpha_deg);
-    double Czr = linearInterpolation(db.alpha, db.fz.cz_r, alpha_deg);
+    double Cza = linearInterpolation(db1.alpha, db1.fz.cz_a, db2.fz.cz_a, alpha_deg, h);
+    double Czb = linearInterpolation(db1.alpha, db1.fz.cz_b, db2.fz.cz_b, alpha_deg, h);
+    double Czp = linearInterpolation(db1.alpha, db1.fz.cz_p, db2.fz.cz_p, alpha_deg, h);
+    double Czq = linearInterpolation(db1.alpha, db1.fz.cz_q, db2.fz.cz_q, alpha_deg, h);
+    double Czr = linearInterpolation(db1.alpha, db1.fz.cz_r, db2.fz.cz_r, alpha_deg, h);
+
     double Czdelta_a = 0; //cannot find Cz_deltaa
-    double Czdelta_e = linearInterpolation(db.alpha, db.cf.cz_de, alpha_deg);
+    double Czdelta_e = linearInterpolation(db1.alpha, db1.cf.cz_de, db2.cf.cz_de, alpha_deg, h);
     double Czdelta_r = 0; //cannot find Cz_deltar
 
     double CzTot = Cza * alpha + Czb * beta + Czp * p + Czq * q + Czr * r + Czdelta_a * delta_a + Czdelta_e * delta_e + Czdelta_r * delta_r;
     double ZForce = 0.5 * rho * pow(V, 2) * S * CzTot;
     
     //LMoment
-    double Cla = linearInterpolation(db.alpha, db.rm.cl_a, alpha_deg);
-    double Clb = linearInterpolation(db.alpha, db.rm.cl_b, alpha_deg);
-    double Clp = linearInterpolation(db.alpha, db.rm.cl_p, alpha_deg);
-    double Clq = linearInterpolation(db.alpha, db.rm.cl_q, alpha_deg);
-    double Clr = linearInterpolation(db.alpha, db.rm.cl_r, alpha_deg);
-    double Cldelta_a = linearInterpolation(db.alpha, db.cm.cl_da, alpha_deg);
+    double Cla = linearInterpolation(db1.alpha, db1.rm.cl_a, db2.rm.cl_a, alpha_deg, h);
+    double Clb = linearInterpolation(db1.alpha, db1.rm.cl_b, db2.rm.cl_b, alpha_deg, h);
+    double Clp = linearInterpolation(db1.alpha, db1.rm.cl_p, db2.rm.cl_p, alpha_deg, h);
+    double Clq = linearInterpolation(db1.alpha, db1.rm.cl_q, db2.rm.cl_q, alpha_deg, h);
+    double Clr = linearInterpolation(db1.alpha, db1.rm.cl_r, db2.rm.cl_r, alpha_deg, h);
+    double Cldelta_a = linearInterpolation(db1.alpha, db1.cm.cl_da, db2.cm.cl_da, alpha_deg, h);
     double Cldelta_e = 0; // cannot find Cl_deltae
-    double Cldelta_r = linearInterpolation(db.alpha, db.cm.cl_dr, alpha_deg);
+    double Cldelta_r = linearInterpolation(db1.alpha, db1.cm.cl_dr, db2.cm.cl_dr, alpha_deg, h);
 
     double ClTot = Cla * alpha + Clb * beta + Clp * p + Clq * q + Clr * r + Cldelta_a * delta_a + Cldelta_e * delta_e + Cldelta_r * delta_r;
     double LMoment = 0.5 * rho * pow(V, 2) * S * ClTot;
 
     //MMoment
-    double Cma = linearInterpolation(db.alpha, db.pm.cm_a, alpha_deg);
-    double Cmb = linearInterpolation(db.alpha, db.pm.cm_b, alpha_deg);
-    double Cmp = linearInterpolation(db.alpha, db.pm.cm_p, alpha_deg);
-    double Cmq = linearInterpolation(db.alpha, db.pm.cm_q, alpha_deg);
-    double Cmr = linearInterpolation(db.alpha, db.pm.cm_r, alpha_deg);
+    double Cma = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_deg, h);
+    double Cmb = linearInterpolation(db1.alpha, db1.pm.cm_b, db2.pm.cm_b, alpha_deg, h);
+    double Cmp = linearInterpolation(db1.alpha, db1.pm.cm_p, db2.pm.cm_p, alpha_deg, h);
+    double Cmq = linearInterpolation(db1.alpha, db1.pm.cm_q, db2.pm.cm_q, alpha_deg, h);
+    double Cmr = linearInterpolation(db1.alpha, db1.pm.cm_r, db2.pm.cm_r, alpha_deg, h);
+
     double Cmdelta_a = 0;
-    double Cmdelta_e = linearInterpolation(db.alpha, db.cm.cm_de, alpha_deg);
+    double Cmdelta_e = linearInterpolation(db1.alpha, db1.cm.cm_de, db2.cm.cm_de, alpha_deg, h);
     double Cmdelta_r = 0;
 
     double CmTot = Cma * alpha + Cmb * beta + Cmp * p + Cmq * q + Cmr * r + Cmdelta_a * delta_a + Cmdelta_e * delta_e + Cmdelta_r * delta_r;
     double MMoment = 0.5 * rho * pow(V, 2) * S * CmTot;
 
     //NMoment
-    double Cna = linearInterpolation(db.alpha, db.ym.cn_a, alpha_deg);
-    double Cnb = linearInterpolation(db.alpha, db.ym.cn_b, alpha_deg);
-    double Cnp = linearInterpolation(db.alpha, db.ym.cn_p, alpha_deg);
-    double Cnq = linearInterpolation(db.alpha, db.ym.cn_q, alpha_deg);
-    double Cnr = linearInterpolation(db.alpha, db.ym.cn_r, alpha_deg);
-    double Cndelta_a = linearInterpolation(db.alpha, db.cm.cn_da, alpha_deg);
+    double Cna = linearInterpolation(db1.alpha, db1.ym.cn_a, db2.ym.cn_a, alpha_deg, h);
+    double Cnb = linearInterpolation(db1.alpha, db1.ym.cn_b, db2.ym.cn_b, alpha_deg, h);
+    double Cnp = linearInterpolation(db1.alpha, db1.ym.cn_p, db2.ym.cn_p, alpha_deg, h);
+    double Cnq = linearInterpolation(db1.alpha, db1.ym.cn_q, db2.ym.cn_q, alpha_deg, h);
+    double Cnr = linearInterpolation(db1.alpha, db1.ym.cn_r, db2.ym.cn_r, alpha_deg, h);
+    double Cndelta_a = linearInterpolation(db1.alpha, db1.cm.cn_da, db2.cm.cn_da, alpha_deg, h);
     double Cndelta_e = 0; // cannot find Cn_deltae
-    double Cndelta_r = linearInterpolation(db.alpha, db.cm.cn_dr, alpha_deg);
+    double Cndelta_r = linearInterpolation(db1.alpha, db1.cm.cn_dr, db2.cm.cn_dr, alpha_deg, h);
 
     double CnTot = Cna * alpha + Cnb * beta + Cnp * p + Cnq * q + Cnr * r + Cndelta_a * delta_a + Cndelta_e * delta_e + Cndelta_r * delta_r;
     double NMoment = 0.5 * rho * pow(V, 2) * S * CnTot;
@@ -320,7 +324,7 @@ double* getAcceleration(double currentState[6], double previousState[6], double 
 }
 
 
-double* integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt = 0.02) {
+double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt = 0.02) {
     // compute forces -> initialize vector to 0 + external function to compute it
     // get initial conditions [i-th step]
     // compute remaining -> initialize vector to 0
@@ -345,13 +349,13 @@ double* integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double 
     double V = sqrt(pow(u, 2) + pow(v, 2) + pow(w, 2));
 
     //aerodynamic forces
-    double *aeroPointer = getAerodynamicForces(db, initialConditions,
+    double *aeroPointer = getAerodynamicForces(db1, db2, initialConditions,
                                                command); // get aerodynamic forces and return it to aeroForces
     for (int i = 0; i < 6; i++) { aeroForces[i] = aeroPointer[i]; }
     delete[] aeroPointer; // delete pointer to avoid memory leak
 
     //propeller forces
-    propellerData = getPropellerPerformance(db, endb, pdb, alpha, delta_e, V, h, rpm);
+    propellerData = getPropellerPerformance(db1, db2, endb, pdb, alpha, delta_e, V, h, rpm);
     propForces[0] = -propellerData.T; // all other entries are set to 0
     //todo: how to compute L, M, N propeller?
 
@@ -384,7 +388,7 @@ double* integrateEquationsOfMotion(AeroDB db, EngineDB endb, PropDB pdb, double 
 
     double remainder[10] = {0};
     //initialize remainders vector for the i-th step
-    double inertiaParameters[5] = {db.Ad.Mass, db.Ad.Jx, db.Ad.Jy, db.Ad.jz, db.Ad.jxz};
+    double inertiaParameters[5] = {db1.Ad.Mass, db1.Ad.Jx, db1.Ad.Jy, db1.Ad.jz, db1.Ad.jxz};
 
     double *remainderPointer = getRemainders(initialConditions, command, inertiaParameters, completeForce,
                                              propellerData.T);

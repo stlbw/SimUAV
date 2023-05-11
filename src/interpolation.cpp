@@ -6,21 +6,21 @@
 using namespace std;
 
      /**
- *  Returns the variable value as a result of a linear interpolation of the angle of attack (alpha) for
- * a predetermined altitude.
+ *  Returns the variable value as a result of a linear interpolation of the angle of attack (alpha)
  * @param alpha
  * @param c
  * @param aoa
  * @return
  */
- double linearInterpolation(vector <double> alpha, vector<double> c, double aoa) {
+ double linearInterpolationAlpha(vector <double> alpha, vector<double> c, double aoa) {
      double interpCoef; // returning variable
      double alphaUp, alphaLow;
      int pos;
 
      if (aoa < alpha.front() || aoa > alpha.back()) {
-         cerr << "ERROR: The desired angle of attack is outside the database range ALPHA = [" << alpha.front() << ", " << alpha.back() << "]" << endl;
-         ::exit(1); // exits program if out of bound
+         string error = "The desired angle of attack is outside the database range ALPHA = [" + to_string(alpha.front()) +
+                 ", " + to_string(alpha.back()) + "]";
+         throw range_error(error);
      }
      vector<double>::iterator it;
      it = find_if(alpha.begin(), alpha.end(), [aoa](double value) {return std::abs(aoa - value) < 0.0001; });
@@ -51,4 +51,64 @@ using namespace std;
      return interpCoef;
  }
 
+ /**
+  * Returns the variable value as a result of a linear interpolation of the angle of attack (alpha) for
+ * a predetermined altitude.
+  * @param alpha
+  * @param var1
+  * @param var2
+  * @param aoa
+  * @param h
+  * @return
+  */
+double linearInterpolation(vector <double> alpha, vector<double> var1, vector<double> var2, double aoa, double h) {
+     if(var1.size() != alpha.size() || var2.size() != alpha.size()){
+         string error = "Cannot interpolate database as the variables do not have the same size.";
+         throw range_error(error);
+     }
 
+    double interp1 = linearInterpolationAlpha(alpha, var1, aoa); // h1
+    double interp2 = linearInterpolationAlpha(alpha, var2, aoa); // h2 > h1
+    double delta = 0;
+    double dH = 0;
+     if (0 <= h && h <= 100) {
+         delta = (interp2 - interp1) / 100.0;
+         dH = h;
+     }
+     else if (100 < h && h <= 1000) {
+         delta = (interp2 - interp1) / (1000.0 - 100.0);
+         dH = (h - 100.0);
+    }
+     else if (1000 < h && h <= 2000) {
+          delta = (interp2 - interp1) / 1000.0;
+          dH = (h - 1000.0);
+     }
+     else {
+         string error = "Could not interpolate database as the altitude exceeds the maximum altitude. Declared h = " +
+                 to_string(h) + " m.";
+         throw range_error(error);
+     }
+
+    double interpCoef = interp1 + delta * dH;
+     return interpCoef;
+ }
+
+ void getAerodynamicDbWithAltitude(double h, AeroDB& db1, AeroDB& db2, AeroDB dba0, AeroDB dba100, AeroDB dba1000, AeroDB dba2000) {
+     if (0 <= h && h <= 100) {
+         db1 = dba100; //dba0 is not considered
+         db2 = dba100;
+     }
+     else if (100 < h && h <= 1000) {
+         db1 = dba100;
+         db2 = dba1000;
+     }
+     else if (1000 < h && h <= 2000) {
+         db1 = dba1000;
+         db2 = dba2000;
+     }
+     else {
+         string error = "Could not get database as altitude exceeds the maximum altitude. Declared h = " +
+                        to_string(h) + " m.";
+         throw range_error(error);
+     }
+}

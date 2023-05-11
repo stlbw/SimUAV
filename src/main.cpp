@@ -105,8 +105,15 @@ int main() {
 
         // try and catch block used to deal with errors -> this way errors are always sent back to the main
         try {
+            // declared db for interpolation
+            AeroDB DB1;
+            AeroDB DB2;
+
+            // get correct dba with altitude
+            getAerodynamicDbWithAltitude(h, DB1, DB2, dba0, dba100, dba1000, dba2000);
+
             // trim angles
-            Trim_Angles a = trimAngles(dba100, V, h);
+            Trim_Angles a = trimAngles(DB1, DB2, V, h);
             cout << "Alpha trim [deg]: " << a.alpha_trim << endl;
             cout << "Elevator delta trim [deg]: " << a.deltae_trim << endl;
             cout << "Velocity component u [m/s]: " << a.u << endl;
@@ -114,32 +121,33 @@ int main() {
 
             //trim rpm, T and Throttle
             cout << "" << endl;
-            Trim_Engine_Propeller y = trimEnginePropeller(dba100, en0, prop0, a, V, h);
+            Trim_Engine_Propeller y = trimEnginePropeller(DB1, DB2, en0, prop0, a, V, h);
             cout << "RPM trim: " << y.rpm  << endl;
             cout << "Thrust trim: " << y.T  << endl;
             cout << "Throttle: " << y.Throttle  << endl;
 
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
-            double vecCI[10] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h}; // [u, v, w, p, q, r, phi, theta, psi, h]
+            double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
             // initialize the command vector
             double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle};
 
             //todo: decide whether the integration loop should be done in main or under integrateEquationsOfMotion
-            double* newStatesPointer = integrateEquationsOfMotion(dba100, en0, prop0, y.rpm, vecCI, vecComm, vecCI);
+            // todo: get new DB1, DB2 at each step based on h
+           /* double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, vecCI);
             double newStates[12] = {0};
             for (int i = 0; i < 12; i++) { newStates[i] = newStatesPointer[i]; } // assign values to variable
             delete[] newStatesPointer; // delete pointer to avoid memory leak
 
             //double previous = vecCI; // i-1
             //vecCI = newStates; // i
-
+            */
 
             cout << "" << endl;
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
 
-            Modes md = longitudinalStability(dba100,prop0,a,V,h);
+            Modes md = longitudinalStability(DB1, DB2,prop0,a,V,h);
             cout << "PHUGOID: " << endl;
             cout << "Frequency [rad/s]: " << md.omega_ph <<endl;
             cout << "Damping ratio: " << md.zeta_ph <<endl;
@@ -160,13 +168,13 @@ int main() {
 
         }
         catch (const range_error& e){
-            cerr<<"Error: "<<e.what()<<endl; //print error
+            cerr<<"Out of range: "<<e.what()<<endl; //print error
             return 1; // return from main
         }
 
     }
     catch (const runtime_error& e){
-        cerr<<"Error: "<<e.what()<<endl; //print error
+        cerr<<"Runtime error: "<<e.what()<<endl; //print error
         return 1; // return from main
     }
 

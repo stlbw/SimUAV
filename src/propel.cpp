@@ -25,7 +25,7 @@ struct Propel {
  * @param rpm
  * @return
  */
-Propel getPropellerPerformance(AeroDB db, EngineDB endb, PropDB pdb, double alpha, double delta_e, double V, double h, double rpm) {
+Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double alpha, double delta_e, double V, double h, double rpm) {
     Propel result;
     int lenVec = pdb.Pg.nstation; // [-] 100
     double diam = pdb.Pg.diameter; // [m] 0.125
@@ -82,10 +82,10 @@ Propel getPropellerPerformance(AeroDB db, EngineDB endb, PropDB pdb, double alph
     double cd_alpha_2 = pdb.Pc.Cdalpha2; // [rad^-2] 1.0476
     double omega;
 
-    double S = db.Ad.Wing_area; //0.24704
-    double cx_alpha = linearInterpolation(db.alpha, db.fx.cx_a, alpha_trim); //0.2115
-    double cx_de = linearInterpolation(db.alpha, db.cf.cx_de, alpha_trim); // 0.04029
-    double cx_ss = linearInterpolation(db.alpha, db.ss.cx, alpha_trim); // -0.010595
+    double S = db1.Ad.Wing_area; //0.24704
+    double cx_alpha = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, alpha_trim, h); //0.2115
+    double cx_de = linearInterpolation(db1.alpha, db1.cf.cx_de, db2.cf.cx_de, alpha_trim, h); // 0.04029
+    double cx_ss = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, alpha_trim, h); // -0.010595
     double Cx_tot= cx_ss+cx_alpha*alpha_trim/180*M_PI+ cx_de*deltae_trim/180*M_PI;
 
     double n = rpm/60; // [giri/s]

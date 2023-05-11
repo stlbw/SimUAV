@@ -14,21 +14,21 @@ struct Trim_Angles{
 
 
 // Prima approssimazione
-Trim_Angles trimAngles(AeroDB db, double V, double h, double gamma_0 = 0) {
+Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_0 = 0) {
     // Primo tentativo gamma_0=0 --> alpha = theta
 
     double alpha_min;
     double alpha_max;
-    alpha_min = db.alpha.front();
-    alpha_max = db.alpha.back();
+    alpha_min = db1.alpha.front();
+    alpha_max = db1.alpha.back();
 
+    // since the mobile surface angles do not change with altitude, they do not need to be interpolated. They are coincident independently of the database used
+    // REPORT: make sure this is explicitly written
     double deltae_min;
     double deltae_max;
-    deltae_min = db.Dl.Elevator_min;
-    deltae_max = db.Dl.Elevator_max;
+    deltae_min = db1.Dl.Elevator_min;
+    deltae_max = db1.Dl.Elevator_max;
 
-    //double V = 15;
-    //double h = 100; // velocità e altezza che poi saranno definite da utente
     double beta = 0, delta_a = 0, p = 0, q = 0, r = 0;
     double g = 9.81;
 
@@ -51,22 +51,24 @@ Trim_Angles trimAngles(AeroDB db, double V, double h, double gamma_0 = 0) {
     bool foundAlpha = false;
 
     for (alpha_int = alpha_min; alpha_int <= alpha_max; alpha_int += incr_alpha) {
-        Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_int);
-        Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_int);
-        Cm_deltae = linearInterpolation(db.alpha, db.cm.cm_de, alpha_int);
+        Cm_ss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_int, h);
+        Cm_alpha = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_int, h);
+        Cm_deltae = linearInterpolation(db1.alpha, db1.cm.cm_de, db2.cm.cm_de, alpha_int, h);
         deltae_int = -(Cm_ss + Cm_alpha * alpha_int) / Cm_deltae;
-        Cz_ss = linearInterpolation(db.alpha, db.ss.cz, alpha_int);
-        Cz_alpha = linearInterpolation(db.alpha, db.fz.cz_a, alpha_int);
-        Cz_deltae = linearInterpolation(db.alpha, db.cf.cz_de, alpha_int);
+        Cz_ss = linearInterpolation(db1.alpha, db1.ss.cz, db2.ss.cz, alpha_int, h);
+        Cz_alpha = linearInterpolation(db1.alpha, db1.fz.cz_a, db2.fz.cz_a, alpha_int, h);
+        Cz_deltae = linearInterpolation(db1.alpha, db1.cf.cz_de,  db2.cf.cz_de, alpha_int, h);
         Cz_tot = Cz_ss + Cz_alpha * alpha_int / 180 * M_PI + Cz_deltae * deltae_int / 180 * M_PI;
-        if (abs(db.Ad.Mass * g * cos(alpha_int / 180 * M_PI) + 0.5 * Cz_tot * rho * db.Ad.Wing_area * pow(V, 2)) <
+
+        // MASS and WING AREA are also CONSTANT in the database, no need to interpolate
+        if (abs(db1.Ad.Mass * g * cos(alpha_int / 180 * M_PI) + 0.5 * Cz_tot * rho * db1.Ad.Wing_area * pow(V, 2)) <
             res){
             angles.alpha_trim = alpha_int;
             foundAlpha = true; // change the flag's state once a possible trim condition is found
 
-            Cm_ss = linearInterpolation(db.alpha, db.ss.cm, alpha_int);
-            Cm_alpha = linearInterpolation(db.alpha, db.pm.cm_a, alpha_int);
-            Cm_deltae = linearInterpolation(db.alpha, db.cm.cm_de, alpha_int);
+            Cm_ss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_int, h);
+            Cm_alpha = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_int, h);
+            Cm_deltae = linearInterpolation(db1.alpha, db1.cm.cm_de, db2.cm.cm_de, alpha_int, h);
             angles.deltae_trim = (-(Cm_ss + Cm_alpha * angles.alpha_trim* M_PI /180) / Cm_deltae) *180 / M_PI;
         }
     }

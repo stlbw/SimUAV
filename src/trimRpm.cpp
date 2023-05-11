@@ -11,7 +11,7 @@ struct  Trim_Engine_Propeller{
     double Throttle = 0;
 };
 
-Trim_Engine_Propeller trimEnginePropeller(AeroDB db, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
+Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
     Trim_Engine_Propeller enginePerformanceTrim;
     Propel propelResult;
 
@@ -28,16 +28,16 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db, EngineDB endb, PropDB pdb, 
     double gamma_0 = 0;
     double res = 1; // [N]
 
-    double S = db.Ad.Wing_area; //0.24704
-    double cx_alpha = linearInterpolation(db.alpha, db.fx.cx_a, alpha_trim); //0.2115
-    double cx_de = linearInterpolation(db.alpha, db.cf.cx_de, alpha_trim); // 0.04029
-    double cx_ss = linearInterpolation(db.alpha, db.ss.cx, alpha_trim); // -0.010595
+    double S = db1.Ad.Wing_area; //0.24704
+    double cx_alpha = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, alpha_trim, h); //0.2115
+    double cx_de = linearInterpolation(db1.alpha, db1.cf.cx_de, db2.cf.cx_de, alpha_trim, h); // 0.04029
+    double cx_ss = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, alpha_trim, h); // -0.010595
     double Cx_tot= cx_ss+cx_alpha*alpha_trim/180*M_PI+ cx_de*deltae_trim/180*M_PI;
-    enginePerformanceTrim.T = db.Ad.Mass*g*sin(alpha_trim/180*M_PI+gamma_0/180*M_PI)-0.5*Cx_tot*rho*S*V*V; //mass 0.9726
+    enginePerformanceTrim.T = db1.Ad.Mass*g*sin(alpha_trim/180*M_PI+gamma_0/180*M_PI)-0.5*Cx_tot*rho*S*V*V; //mass 0.9726
 
     for(rpm = rpm_min; rpm <= rpm_max; rpm += delta_rpm){
 
-        propelResult = getPropellerPerformance(db, endb, pdb, angles.alpha_trim, angles.deltae_trim, V, h, rpm);
+        propelResult = getPropellerPerformance(db1, db2, endb, pdb, angles.alpha_trim, angles.deltae_trim, V, h, rpm);
 
         if(abs(enginePerformanceTrim.T-propelResult.T) < res){
             enginePerformanceTrim.rpm = rpm;
