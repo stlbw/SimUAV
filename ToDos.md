@@ -9,3 +9,5 @@
 3) Inizializzare a 0 i momenti del Propeller
 4) Fare un check relativamente al metodo di Eulero, facendo in modo che l'utente immetta il dt
 5) Cambiare il database a seconda della quota
+6) Controllare dopo il trim che la velocità trovata sia uguale (o moltl vicina) a quella di inizio simulazione (dichiarata dall'utente)
+7) Check per ogni step di simulazione se la velocità è dentro il range Vmin, Vmax
