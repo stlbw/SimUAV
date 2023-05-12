@@ -126,23 +126,6 @@ int main() {
             cout << "Thrust trim: " << y.T  << endl;
             cout << "Throttle: " << y.Throttle  << endl;
 
-            //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
-            // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
-            double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
-            // initialize the command vector
-            double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle};
-
-            //todo: decide whether the integration loop should be done in main or under integrateEquationsOfMotion
-            // todo: get new DB1, DB2 at each step based on h
-           /* double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, vecCI);
-            double newStates[12] = {0};
-            for (int i = 0; i < 12; i++) { newStates[i] = newStatesPointer[i]; } // assign values to variable
-            delete[] newStatesPointer; // delete pointer to avoid memory leak
-
-            //double previous = vecCI; // i-1
-            //vecCI = newStates; // i
-            */
-
             cout << "" << endl;
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
@@ -163,6 +146,42 @@ int main() {
             cout << "" << endl;
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
+
+            //todo: decide whether the integration loop should be done in main or under integrateEquationsOfMotion
+            // todo: get new DB1, DB2 at each step based on h
+            double Tsim = 10.0;
+            double dt = 0.01;
+            int nStep = static_cast<int>(Tsim / dt);
+
+            //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
+            // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
+            double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
+            // initialize the command vector
+            double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle};
+
+            double stateMinusOne[12] = {0}; // i-1
+            for (int j = 0; j < 12; j++) {
+                stateMinusOne[j] = vecCI[j]; // during trim the (i-1)th state is the same as the trim. We asssume the
+                // simulation starts at the last trim state (i=0) and before that we assume infinite trim states take place
+            }
+
+            for (int i = 0; i <= nStep; i++) {
+
+                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne);
+
+                double newStates[12] = {0};
+                for (int j = 0; j < 12; j++) {
+                    newStates[j] = newStatesPointer[j]; // save the recently calculated state vector in newStates
+                    stateMinusOne[j] = vecCI[j]; // save the OLD initial condition as the (i-1)th step
+
+                    vecCI[j] = newStates[j]; // update the initial condition vector with the new states for the next loop iteration
+                } // assign values to variable
+                delete[] newStatesPointer; // delete pointer to avoid memory leak
+
+
+            }
+
+
 
 
 
