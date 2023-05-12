@@ -422,11 +422,11 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     //todo: check V, alpha, ecc
     double deltae_min;
     double deltae_max;
-    deltae_min = db1.Dl.Elevator_min;
-    deltae_max = db1.Dl.Elevator_max;
+    deltae_min = db1.Dl.Elevator_min/180*M_PI;
+    deltae_max = db1.Dl.Elevator_max/180*M_PI;
     if(command[1]> deltae_max || command[1]< deltae_min) {
         string error = "Delta_trim is out of bounds [" + to_string(deltae_min) + ", " + to_string(deltae_max) + "]. Delta_trim = " +
-                       to_string(command[1]) + " [deg].";
+                       to_string(command[1]) + " [rad].";
         throw range_error(error);
     }
     return currentState;
