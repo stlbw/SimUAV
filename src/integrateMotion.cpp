@@ -255,8 +255,6 @@ G_forces Gravity_forces(const double state[10]){
     m21 = -sr * cy + cr * sp * sy;
     m22 = cr * cp;
 
-
-
     rotationMatrix[0][0] = m00;
     rotationMatrix[0][1] = m01;
     rotationMatrix[0][2] = m02;
@@ -276,7 +274,6 @@ G_forces Gravity_forces(const double state[10]){
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 3; j++)
                 inverse_matrix[i][j] = ((rotationMatrix[(j+1)%3][(i+1)%3] * rotationMatrix[(j+2)%3][(i+2)%3]) - (rotationMatrix[(j+1)%3][(i+2)%3] *rotationMatrix[(j+2)%3][(i+1)%3])); //finding adjoint and dividing it by determinant
-
         }
     }
     else std::cout<<"Inverse doesn't exist for this matrix";
@@ -284,10 +281,8 @@ G_forces Gravity_forces(const double state[10]){
     // g_FB = L_VB ^-1 * {0 0 g}:
     for(int m = 0; m < 3; m++){
         for (int n = 0; n < 3; n++){
-           gravity[m] += (inverse_matrix[m][n]*Gravity[n]);
-
+           gravityForces[m] += (inverse_matrix[m][n] * gravity[n]);
         }
-
     }
     gravForces.gravity_forcex = gravity[0];
     gravForces.gravity_forcey = gravity[1];
@@ -297,7 +292,23 @@ G_forces Gravity_forces(const double state[10]){
 
 }
 
+double* getInertialForces(AeroDB db, double acceleration[6]) {
 
+    double inertia[6] = {0};
+    inertia[0] = db.Ad.Mass;
+    inertia[1] = db.Ad.Mass;
+    inertia[2] = db.Ad.Mass;
+    inertia[3] = db.Ad.Jx;
+    inertia[4] = db.Ad.Jy;
+    inertia[5] = db.Ad.jz;
+
+    double *forces = new double[6];
+    for (int i = 0; i < 6; i++) {
+        forces[i] = inertia[i] * acceleration[i];
+    }
+
+    return forces;
+}
 
 
 /**
@@ -357,9 +368,9 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     //propeller forces
     propellerData = getPropellerPerformance(db1, db2, endb, pdb, alpha, delta_e, V, h, rpm);
     propForces[0] = -propellerData.T; // all other entries are set to 0
-    //todo: how to compute L, M, N propeller?
+    //L, M, N propeller? -> all zero
 
-    // initialize vectors
+    // initialize velocity vectors
     double previousVelocity[6] = {0};
     double currentVelocity[6] = {0};
     // assign velocities to vectors
@@ -373,8 +384,14 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     for (int i = 0; i < 6; i++) { acceleration[i] = accelerationPointer[i]; } // assign values to variable
     delete[] accelerationPointer; // delete pointer to avoid memory leak
 
+    //compute inertial forces
+    double *inertialPointer = getInertialForces(db1, acceleration);
+    for (int i = 0; i < 6; i++) { inertialForces[i] = inertialPointer[i]; } // assign values to variable
+    delete[] inertialPointer; // delete pointer to avoid memory leak
+
 
     //todo: how to compute inertial forces?
+
 
     double completeForce[6] = {0};
     for (int i = 0; i < size(completeForce); i++) {
@@ -383,7 +400,6 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 
 
     // FORZE INERZIALI
-
     // MOMENTI PROPELLER
 
     double remainder[10] = {0};
@@ -408,6 +424,16 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
         currentState[i] = initialConditions[i] + dt * remainder[i];
     }
 
+    //todo: check V, alpha, ecc
+    double deltae_min;
+    double deltae_max;
+    deltae_min = db1.Dl.Elevator_min;
+    deltae_max = db1.Dl.Elevator_max;
+    if(command[1]> deltae_max || command[1]< deltae_min) {
+        string error = "Delta_trim is out of bounds [" + to_string(deltae_min) + ", " + to_string(deltae_max) + "]. Delta_trim = " +
+                       to_string(command[1]) + " [deg].";
+        throw range_error(error);
+    }
     return currentState;
 
 
@@ -417,7 +443,6 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 
 
 };
-
 
 
 

@@ -10,4 +10,6 @@
 4) ~~Cambiare il database a seconda della quota (interpolazione) --> MATHEUS~~ DONE
 5) Controllare dopo il trim che la velocità trovata sia uguale (o moltl vicina) a quella di inizio simulazione (dichiarata dall'utente)
 6) Check per ogni step di simulazione se la velocità è dentro il range Vmin, Vmax
+7) Implementare check su velocità, quota e angoli ad ogni step (angoli superfici mobili e aoa) 
+8) ~~Riassumere errori e warnings dalle slide nel file excel & controllare che siano stati implementati nel codice --> NOEMI & MARIO~~
 

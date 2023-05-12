@@ -167,7 +167,7 @@ int main() {
 
             for (int i = 0; i <= nStep; i++) {
 
-                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne);
+                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt);
 
                 double newStates[12] = {0};
                 for (int j = 0; j < 12; j++) {
