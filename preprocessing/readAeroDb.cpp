@@ -860,8 +860,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
         //todo find a way to check if all variables in a struct are initialized
     } else {
         string errorMessage = "Could not open " + filePath;
-        cerr << "Could not open " << filePath << endl;
-        ::perror("");
+        throw runtime_error(errorMessage);
     }
 
 }
