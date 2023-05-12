@@ -211,28 +211,21 @@ double* getRemainders(const double state[10], const double command[4], const dou
 
 
 }
-// Gravitational forces
-struct G_forces{
-    double gravity_forcex, gravity_forcey, gravity_forcez;
-};
 
-G_forces Gravity_forces(const double state[10]){
+double* getGravitationalForces (const double state[10]) {
 
-    G_forces gravForces;
-    gravForces.gravity_forcex = 0;
-    gravForces.gravity_forcey = 0;
-    gravForces.gravity_forcez = 0;
+    double gravity[3] = {0};
     double g = 9.81;
+    gravity[2] = g ;
     double det = 0;
     double rotationMatrix[3][3] = {0};
     double inverse_matrix[3][3] = {0};
     double roll = state[6];
     double pitch = state[7];
     double yaw = state[8];
-    vector<double> Gravity{0,0,g}; // vector to be multiply per rotational matrix
-    vector<double> gravity(3,0); //final vector with the results
-
-
+    double gravityForces[3]= {0};
+    //vector<double> Gravity{0,0,g}; // vector to be multiply per rotational matrix
+    //vector<double> gravity(3,0); //final vector with the results
 
     double cr = cos(roll);
     double sr = sin(roll);
@@ -284,11 +277,8 @@ G_forces Gravity_forces(const double state[10]){
            gravityForces[m] += (inverse_matrix[m][n] * gravity[n]);
         }
     }
-    gravForces.gravity_forcex = gravity[0];
-    gravForces.gravity_forcey = gravity[1];
-    gravForces.gravity_forcez = gravity[2];
 
-    return gravForces;
+    return gravityForces;
 
 }
 
@@ -365,6 +355,11 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     for (int i = 0; i < 6; i++) { aeroForces[i] = aeroPointer[i]; }
     delete[] aeroPointer; // delete pointer to avoid memory leak
 
+    // gravity forces
+    double *gravityPointer = getGravitationalForces(initialConditions); // get gravity forces and return it to aeroForces
+    for (int i = 0; i < 3; i++) { gravForces[i] = gravityPointer[i]; }
+    delete[] gravityPointer; // delete pointer to avoid memory leak
+
     //propeller forces
     propellerData = getPropellerPerformance(db1, db2, endb, pdb, alpha, delta_e, V, h, rpm);
     propForces[0] = -propellerData.T; // all other entries are set to 0
@@ -378,7 +373,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
         previousVelocity[i] = previousState[i]; // (i-1)-th step
         currentVelocity[i] = initialConditions[i]; // i-th step
     }
-
+    // initialize acceleration vectors
     double acceleration[6] = {0};
     double *accelerationPointer = getAcceleration(previousVelocity, currentVelocity, dt);
     for (int i = 0; i < 6; i++) { acceleration[i] = accelerationPointer[i]; } // assign values to variable
@@ -437,41 +432,30 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     return currentState;
 
 
+// Calcoliamo la Vmin
+
+    // Massimo CL e velocità minima
+    // dba 2 --> Cx
+    // dba 4 --> Cz
+}
+
+double computeVmin (AeroDB db1, AeroDB db2, double h) {
+    double S = db1.Ad.Wing_area;
+    double m = db1.Ad.Mass;
+    double rho = computeDensity(h);
+    double AlphaMax = db1.alpha.back();
+    double g = 9.81;
+    double CX = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, AlphaMax, h);
+    double CZ = linearInterpolation(db1.alpha, db1.ss.cz, db2.ss.cz, AlphaMax, h);
+    double CLmax = -CX * sin(M_PI / 180 * AlphaMax) + CZ * cos(M_PI / 180 * AlphaMax);
+    double Vmin = sqrt(2 * m * g / (S * rho * CLmax));
+
+    return Vmin;
+}
 
 
 
 
 
-};
 
-
-
-
-
-    //Inertial Forces
-    struct Inertia {
-        double X_inert, Y_inert, Z_inert, L_inert, M_inert, N_inert;
-    };
-
-
-
-Inertia InertialForces(AeroDB db){
-
-    Inertia Inertial_forces;
-    double mass = db.Ad.Mass;
-    double Ix = db.Ad.Jx;
-    double Iy = db.Ad.Jy;
-    double Iz = db.Ad.jz;\
-
-    Inertial_forces.X_inert = mass;
-    Inertial_forces.Y_inert = mass;
-    Inertial_forces.Z_inert = mass;
-
-    Inertial_forces.L_inert = Ix;
-    Inertial_forces.M_inert = Iy;
-    Inertial_forces.N_inert = Iz;
-
-    return Inertial_forces;
-
-    }
 
