@@ -223,9 +223,7 @@ double* getGravitationalForces (const double state[10]) {
     double roll = state[6];
     double pitch = state[7];
     double yaw = state[8];
-    double gravityForces[3]= {0};
-    //vector<double> Gravity{0,0,g}; // vector to be multiply per rotational matrix
-    //vector<double> gravity(3,0); //final vector with the results
+    double* gravityForces = new double[3];
 
     double cr = cos(roll);
     double sr = sin(roll);
