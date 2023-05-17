@@ -93,6 +93,17 @@ double linearInterpolation(vector <double> alpha, vector<double> var1, vector<do
      return interpCoef;
  }
 
+ /**
+  * Selects the correct databases to interpolate from based on the altitude. This function receives the databses for
+  * sea-level, 100m, 1000m and 2000m and the altitude. Returns the range of databases for the desired altitude as db1 and db2
+  * @param h
+  * @param db1 lower-bound database
+  * @param db2 upper-bound database
+  * @param dba0 sea-level
+  * @param dba100 100m
+  * @param dba1000 1000m
+  * @param dba2000 2000m
+  */
  void getAerodynamicDbWithAltitude(double h, AeroDB& db1, AeroDB& db2, AeroDB dba0, AeroDB dba100, AeroDB dba1000, AeroDB dba2000) {
      if (0 <= h && h <= 100) {
          db1 = dba100; //dba0 is not considered

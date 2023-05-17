@@ -25,7 +25,7 @@ Modes md; // initialize the struct of type Modes
  * @param aeroCoef
  * @return
  */
-void routhCriteria(double Iy, double rho, double mu, double V, double chord, double aeroCoef[10]) {
+bool routhCriteria(double Iy, double rho, double mu, double V, double chord, double aeroCoef[10]) {
     double Cw_e = aeroCoef[0];
     double Cl_e = aeroCoef[1];
     double Cd_e = aeroCoef[2];
@@ -79,6 +79,7 @@ void routhCriteria(double Iy, double rho, double mu, double V, double chord, dou
     double routhCoef[6] = {A1, B1, C1, D1, E1, R}; // todo: understand if it needs to be returned
 
     // evaluate the short and phugoid modes using the complete
+    /*
     if (checkDynamicStability) {
         // iff the dynamic stability criteria is respected (complex conjugate solutions), the short period and phugoid exist and can be calculated
         double t_char = chord / (2 * V); // time constant (tempo caratteristico)
@@ -119,6 +120,9 @@ void routhCriteria(double Iy, double rho, double mu, double V, double chord, dou
         cout << "" << endl;
 
     }
+     */
+
+    return checkDynamicStability;
 
 }
 
@@ -153,33 +157,47 @@ Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles ang
     //**************************************************
 
     // Routh Criteria
-    routhCriteria(Iy, rho, mu, V, chord, aeroCoefVec);
+    bool checkRouth = routhCriteria(Iy, rho, mu, V, chord, aeroCoefVec);
 
     // Approximated Solution
 
+    if (checkRouth) {
+        // PHUGOID
+        double t_car = chord / (2 * V);
+        double omega_ph_ad = C_We / (sqrt(2) * mu); // dimensionless omega - phugoid mode
+        double omega_ph_n = omega_ph_ad / t_car; // natural frequency - phugoid mode
+        md.zeta_ph = -C_Tu / (2 * sqrt(2) * C_We);
+        double ph_Re = -md.zeta_ph * omega_ph_n;
+        md.omega_ph = omega_ph_n * sqrt(fabs(md.zeta_ph * md.zeta_ph - 1));
 
-    // PHUGOID
-    double t_car = chord / (2 * V);
-    double omega_ph_ad = C_We / (sqrt(2) * mu); // dimensionless omega - phugoid mode
-    double omega_ph_n = omega_ph_ad / t_car; // natural frequency - phugoid mode
-    md.zeta_ph = -C_Tu / (2 * sqrt(2) * C_We);
-    double ph_Re = -md.zeta_ph * omega_ph_n;
-    md.omega_ph = omega_ph_n * sqrt(fabs(md.zeta_ph * md.zeta_ph - 1));
+        md.t_dim_ph = abs(log(0.5) / ph_Re);
+        md.T_ph = 2 * M_PI / md.omega_ph;
 
-    md.t_dim_ph = abs(log(0.5) / ph_Re);
-    md.T_ph = 2 * M_PI / md.omega_ph;
+        //**************************************************
+        // SHORT PERIOD
+        double omega_sp_ad = sqrt(- Cm_alpha/ Iy);
+        double omega_sp_n = omega_sp_ad / t_car;
+        md.zeta_sp = (Iy*Cl_alpha-2*mu*(Cm_q+Cm1_alpha))/(2*sqrt(-2*mu*Iy*(2*mu*Cm_alpha+Cm_q*Cl_alpha)));
+        double sp_Re = -md.zeta_sp * omega_sp_n;
+        md.omega_sp = omega_sp_n * sqrt(fabs(md.zeta_sp * md.zeta_sp - 1));
+        md.t_dim_sp = log(0.5) / sp_Re;
+        md.T_sp = 2 * M_PI / md.omega_sp;
 
-    //**************************************************
-    // SHORT PERIOD
-    double omega_sp_ad = sqrt(- Cm_alpha/ Iy);
-    double omega_sp_n = omega_sp_ad / t_car;
-    md.zeta_sp = (Iy*Cl_alpha-2*mu*(Cm_q+Cm1_alpha))/(2*sqrt(-2*mu*Iy*(2*mu*Cm_alpha+Cm_q*Cl_alpha)));
-    double sp_Re = -md.zeta_sp * omega_sp_n;
-    md.omega_sp = omega_sp_n * sqrt(fabs(md.zeta_sp * md.zeta_sp - 1));
-    md.t_dim_sp = log(0.5) / sp_Re;
-    md.T_sp = 2 * M_PI / md.omega_sp;
+        //**************************************************
 
-    //**************************************************
+        cout << "PHUGOID: " << endl;
+        cout << "Frequency [rad/s]: " << md.omega_ph <<endl;
+        cout << "Damping ratio: " << md.zeta_ph <<endl;
+        cout << "Time to half the amplitude [s]: " << md.t_dim_ph <<endl;
+        cout << "Period [s]: " << md.T_ph <<endl;
+        cout << "" << endl;
+        cout << "SHORT PERIOD:" << endl;
+        cout << "Frequency [rad/s]: " << md.omega_sp <<endl;
+        cout << "Damping ratio: " << md.zeta_sp <<endl;
+        cout << "Time to half the amplitude [s]: " << md.t_dim_sp <<endl;
+        cout << "Period [s]: " << md.T_sp <<endl;
+    }
+
 
 
     return md;

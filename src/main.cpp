@@ -130,18 +130,8 @@ int main() {
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
 
-            Modes md = longitudinalStability(DB1, DB2,prop0,a,V,h);
-            cout << "PHUGOID: " << endl;
-            cout << "Frequency [rad/s]: " << md.omega_ph <<endl;
-            cout << "Damping ratio: " << md.zeta_ph <<endl;
-            cout << "Time to half the amplitude [s]: " << md.t_dim_ph <<endl;
-            cout << "Period [s]: " << md.T_ph <<endl;
-            cout << "" << endl;
-            cout << "SHORT PERIOD:" << endl;
-            cout << "Frequency [rad/s]: " << md.omega_sp <<endl;
-            cout << "Damping ratio: " << md.zeta_sp <<endl;
-            cout << "Time to half the amplitude [s]: " << md.t_dim_sp <<endl;
-            cout << "Period [s]: " << md.T_sp <<endl;
+            longitudinalStability(DB1, DB2,prop0,a,V,h); // this function computes the Routh criteria
+            // for the aircraft and computes the longitudinal modes in case the criteria is respected
 
             cout << "" << endl;
             cout << "---------------------------------------------------------------" << endl;
@@ -161,25 +151,60 @@ int main() {
 
             double stateMinusOne[12] = {0}; // i-1
             for (int j = 0; j < 12; j++) {
-                stateMinusOne[j] = vecCI[j]; // during trim the (i-1)th state is the same as the trim. We asssume the
+                stateMinusOne[j] = vecCI[j]; // during trim the (i-1)th state is the same as the trim. We assume the
                 // simulation starts at the last trim state (i=0) and before that we assume infinite trim states take place
             }
 
-            for (int i = 0; i <= nStep; i++) {
+            double** fullStateMatrix = new double*[nStep];
+            for (int i = 0; i < 12; i++) {fullStateMatrix[i] = new double[12];}
+
+            // assign the first column as the trim condition
+            cout << left << setw(25) << "T"  << left << setw(25) << "u" << left << setw(25) << "v" << left << setw(25) << "w" << left << setw(25) << "p"
+                    << left << setw(25) << "q" << left << setw(25) << "r" << left << setw(25) << "phi" << left << setw(25) << "theta"
+                    << left << setw(25) << "psi" << left << setw(25) << "h" << left << setw(25) << "x" << left << setw(25) << "y" << endl;
+            for (int i = 0; i < 12; i++) {
+                fullStateMatrix[0][i] = vecCI[i];
+                cout << left << setw(25) << 0.0;
+                cout << left << setw(25) << fullStateMatrix[0][i];
+            }
+            cout << " " << endl;
+
+
+            for (int i = 1; i <= nStep; i++) {
 
                 double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt);
 
                 double newStates[12] = {0};
+
                 for (int j = 0; j < 12; j++) {
                     newStates[j] = newStatesPointer[j]; // save the recently calculated state vector in newStates
                     stateMinusOne[j] = vecCI[j]; // save the OLD initial condition as the (i-1)th step
-
                     vecCI[j] = newStates[j]; // update the initial condition vector with the new states for the next loop iteration
                 } // assign values to variable
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
+                // assign the recently calculated state to the fullStateMatrix at column i
+                double time = i * dt;
+                cout << left << setw(25) << time;
+                for (int k = 0; k < 12; k++) {
+                    fullStateMatrix[i][k] = newStates[k];
+                    cout << left << setw(25) << fullStateMatrix[i][k];
+
+                }
+                cout << " " << endl;
+
 
             }
+
+            /*for (int i = 0; i < 12; i++) {
+                for (int j = 0; j <= nStep; j++) {
+                    cout << fullStateMatrix[i][j] << "   ";
+                }
+                cout << " " << endl;
+            }
+             */
+
+            delete[] fullStateMatrix; // delete matrix pointer to avoid memory overflow
 
 
 
