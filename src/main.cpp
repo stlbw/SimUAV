@@ -140,7 +140,8 @@ int main() {
             //todo: decide whether the integration loop should be done in main or under integrateEquationsOfMotion
             // todo: get new DB1, DB2 at each step based on h
             double Tsim = 10.0;
-            double dt = 0.01;
+            //double dt = 0.01;
+            double dt = 0.02;
             int nStep = static_cast<int>(Tsim / dt);
 
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion

@@ -136,11 +136,6 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
 
     return vecForceMoment;
 
-
-
-
-
-
 }
 
 double* getRemainders(const double state[10], const double command[4], const double inertiaParameters[5], const double forces[6], const double thrust) {
@@ -208,7 +203,6 @@ double* getRemainders(const double state[10], const double command[4], const dou
     remainder[11] = dy;
 
     return remainder;
-
 
 }
 
@@ -323,7 +317,7 @@ double* getAcceleration(double currentState[6], double previousState[6], double 
 }
 
 
-double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt = 0.02) {
+double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt) { //double dt = 0.02
     // compute forces -> initialize vector to 0 + external function to compute it
     // get initial conditions [i-th step]
     // compute remaining -> initialize vector to 0
@@ -332,7 +326,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     double aeroForces[6] = {0};
     double propForces[6] = {0};
     double inertialForces[6] = {0};
-    double gravForces[6] = {0};
+    double gravForces[3] = {0};
 
     double u = initialConditions[0];
     double v = initialConditions[1];
@@ -383,9 +377,6 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     delete[] inertialPointer; // delete pointer to avoid memory leak
 
 
-    //todo: how to compute inertial forces?
-
-
     double completeForce[6] = {0};
     for (int i = 0; i < size(completeForce); i++) {
         completeForce[i] = aeroForces[i] + propForces[i] + inertialForces[i] + gravForces[i];
@@ -429,12 +420,6 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     }
     return currentState;
 
-
-// Calcoliamo la Vmin
-
-    // Massimo CL e velocità minima
-    // dba 2 --> Cx
-    // dba 4 --> Cz
 }
 
 double computeVmin (AeroDB db1, AeroDB db2, double h) {

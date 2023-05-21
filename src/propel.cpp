@@ -50,7 +50,7 @@ Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb
 
     double coef1 = (pitch_tip-pitch_hub)/(xt-xs); // [deg/m]
     double coef2 = pitch_hub-coef1*xs+pitch_propeller; // [deg]
-    double r_step = (xt-xs)/lenVec; //calcolo step
+    double r_step = (xt-xs)/lenVec; //calcolo step __> da correggere
     vector<double> r1;
     r1.assign(lenVec+1,0);
     for (int i = 0; i < lenVec+1; ++i) {
