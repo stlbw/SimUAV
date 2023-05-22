@@ -12,4 +12,9 @@
 6) Check per ogni step di simulazione se la velocità è dentro il range Vmin, Vmax
 7) Implementare check su velocità, quota e angoli ad ogni step (angoli superfici mobili e aoa) 
 8) ~~Riassumere errori e warnings dalle slide nel file excel & controllare che siano stati implementati nel codice --> NOEMI & MARIO~~
+9) Convertire gli assi di inerzia Ix Iy Iz in assi di stabilità (fatto, fare un check)
+10) Calcolare la manetta
+11) Vettore dei comandi è il vettore dei remainders a cui bisogna mettere un if else
+12) Bisogna fare la funzione PID come da Slide UAV Controller
+13) Pid per ogni cosa, Integrazione del derivativo e stampare errori e limiti
 

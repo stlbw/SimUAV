@@ -280,6 +280,7 @@ double* getInertialForces(AeroDB db, double acceleration[6]) {
     inertia[0] = db.Ad.Mass;
     inertia[1] = db.Ad.Mass;
     inertia[2] = db.Ad.Mass;
+
     inertia[3] = db.Ad.Jx;
     inertia[4] = db.Ad.Jy;
     inertia[5] = db.Ad.jz;
@@ -388,7 +389,13 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 
     double remainder[10] = {0};
     //initialize remainders vector for the i-th step
+
+    // INSERITI NUOVI
     double inertiaParameters[5] = {db1.Ad.Mass, db1.Ad.Jx, db1.Ad.Jy, db1.Ad.jz, db1.Ad.jxz};
+    inertiaParameters[1] = db1.Ad.Jx * pow((cos(alpha)),2)+db1.Ad.jz*pow((sin(alpha)),2)-2*db1.Ad.jxz*cos(alpha)*sin(alpha);
+    inertiaParameters[3] =db1.Ad.jz*pow((cos(alpha)),2)+db1.Ad.Jx*pow((sin(alpha)),2)+2*db1.Ad.jxz*cos(alpha)*sin(alpha);
+    inertiaParameters[4] = db1.Ad.jxz*pow((cos(alpha)),2)-pow((sin(alpha)),2)+(db1.Ad.Jx-db1.Ad.jz)*cos(alpha)*sin(alpha);
+    //
 
     double *remainderPointer = getRemainders(initialConditions, command, inertiaParameters, completeForce,
                                              propellerData.T);
