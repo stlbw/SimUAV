@@ -326,7 +326,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     double aeroForces[6] = {0};
     double propForces[6] = {0};
     double inertialForces[6] = {0};
-    double gravForces[3] = {0};
+    double gravForces[6] = {0};
 
     double u = initialConditions[0];
     double v = initialConditions[1];

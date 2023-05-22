@@ -36,7 +36,7 @@ Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb
     for (int i = 0; i < lenVec+1; ++i) {
         chord[i] = pdb.Ps.CH_AD[i]*radius; // [m]
     }
-    double pitch_propeller = 0;
+    double pitch_propeller = 10;
     double delta_rpm = 100; // [giri/min]
     double rpm_min = endb.laps_min; // [giri/min] 3600
     double rpm_max = endb.laps_max; // [giri/min] 30000
@@ -45,6 +45,7 @@ Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb
     double xt = radius; // [m]
     vector<double> CSI = pdb.Ps.CSI; // [-]
     double xs = CSI[0]*radius; // [m]
+    double a_0 = -0.09616302; // [rad]
 
     double rho = computeDensity(h); // [kg/m^3] 1.2132
 
@@ -57,7 +58,9 @@ Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb
         r1[i] = CSI[i]*radius; // [m]
     }
     double alpha1;
-    vector<double> t2 = pdb.Ps.BA; // [deg]
+    //vector<double> t2 = pdb.Ps.BA; // [deg]
+    vector<double> t2;
+    t2.assign(lenVec+1,0);
     vector<double> a2;
     a2.assign(lenVec+1,0);
     vector <double> b2;
@@ -93,10 +96,10 @@ Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb
 
     for(int j=0; j<lenVec+1; j++){
         rad = r1[j]; // [m] distanza da hub j-esima stazione
-        th = t2[j]/180.0*M_PI; // [rad] angolo di svergolamento
-        //theta1 = coef1*rad+coef2; //calcolo angolo di svergolamento della j-esima stazione
-        //t2[j] = theta1; //angolo di svergolamento della j-esima stazione (-> BA su propeller.txt)
-        //th = theta1/180.0*M_PI; //angolo di svergolamento [rad]
+        //th = t2[j]/180.0*M_PI; // [rad] angolo di svergolamento
+        theta1 = coef1*rad+coef2; //calcolo angolo di svergolamento della j-esima stazione
+        t2[j] = theta1; //angolo di svergolamento della j-esima stazione (-> BA su propeller.txt)
+        th = theta1/180.0*M_PI; //angolo di svergolamento [rad]
         a = 0.1; // [-] inizializzazione axial inflow factor (vedi pag.4 PROPEL.pdf)
         b = 0.01; // [-] inizializzazione angular inflow (swirl) factor (vedi pag.4 PROPEL.pdf)
         finished=0; // inizializzione flag
@@ -105,7 +108,7 @@ Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb
             V0 = V*(1+a); // [m/s] componente del flusso all'incirca uguale alla velocità di avanzamento del velivolo (Vinf), aumentata tramite l'axial inflow factor
             V2 = omega*rad*(1-b); // [m/s] componente del flusso all'incirca uguale alla velocità angolare della sezione della pala (omega*rad), ridotta tramite l'angular inflow factor
             phi1 = atan2(V0,V2); // [rad] angolo tra le due componenti del flusso V0 e V2
-            alpha1 = th-phi1; // [rad] angolo di attacco raltivo alla j-esima sezione della pala
+            alpha1 = th-phi1-a_0; // [rad] angolo di attacco raltivo alla j-esima sezione della pala
             cl = cl0+cl_alpha*alpha1; // [-] CL coefficiente di portanza
             cd = cd0+cd_alpha*alpha1+cd_alpha_2*alpha1*alpha1; // [-] CD coefficiente di resistenza CD = CD0+CD1*CL+CD2*CL^2 (NB nel nostro caso, CD = CD0+CD_alpha*alpha+CD_alpha2*alpha^2 -> slide lezione 2)
             Vlocal = sqrt(V0*V0+V2*V2); // [m/s] velocità locale del flusso
