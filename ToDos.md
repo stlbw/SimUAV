@@ -17,4 +17,6 @@
 11) Vettore dei comandi è il vettore dei remainders a cui bisogna mettere un if else
 12) Bisogna fare la funzione PID come da Slide UAV Controller
 13) Pid per ogni cosa, Integrazione del derivativo e stampare errori e limiti
-
+14) RPM MIN -0.45 RPM MAX 0.55
+15) PID FROM SIMULINK
+16) Controllo sulla saturazione
