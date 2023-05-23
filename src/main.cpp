@@ -124,6 +124,7 @@ int main() {
             Trim_Engine_Propeller y = trimEnginePropeller(DB1, DB2, en0, prop0, a, V, h);
             cout << "RPM trim: " << y.rpm  << endl;
             cout << "Thrust trim: " << y.T  << endl;
+            cout << "Torque trim: " << y.Torque << endl;
             cout << "Throttle: " << y.Throttle  << endl;
 
             cout << "" << endl;

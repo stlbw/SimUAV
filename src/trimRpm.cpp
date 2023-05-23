@@ -9,6 +9,7 @@ struct  Trim_Engine_Propeller{
     double rpm = 0;
     double T = 0;
     double Throttle = 0;
+    double Torque = 0;
 };
 
 Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
@@ -16,9 +17,9 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     Propel propelResult;
 
     double rpm;
-    double delta_rpm = 100; // [giri/min]
-    double rpm_min = endb.laps_min; // [giri/min] 3600
-    double rpm_max = endb.laps_max; // [giri/min] 30000
+    double delta_rpm = 100; // [rpm]
+    double rpm_min = endb.laps_min; // [rpm] 3600
+    double rpm_max = endb.laps_max; // [rpm] 30000
 
     double rho = computeDensity(h); // [kg/m^3] 1.2132
 
@@ -26,7 +27,7 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     double deltae_trim= angles.deltae_trim; // [deg]-2.16
     double g = 9.81; // [m/s^2]
     double gamma_0 = 0;
-    double res = 1; // [N]
+    double res = 0.02; // [N]
 
     double S = db1.Ad.Wing_area; //0.24704
     double cx_alpha = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, alpha_trim, h); //0.2115
@@ -45,10 +46,11 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     }
 
 
-    double n = enginePerformanceTrim.rpm / 60; // [giri/s]
+    double n = enginePerformanceTrim.rpm / 60; // [rpm]
     double omega = n * 2 * M_PI; // [rad/s]
     double P_max = 160; // [W]
     double P_d = propelResult.Q * omega / 1000; // [W] Q = Torque
+    enginePerformanceTrim.Torque = propelResult.Q;
 
     if (P_d < P_max){
         enginePerformanceTrim.Throttle = P_d / P_max;
