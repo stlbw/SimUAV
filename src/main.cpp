@@ -160,13 +160,14 @@ int main() {
             for (int i = 0; i < 12; i++) {fullStateMatrix[i] = new double[12];}
 
             // assign the first column as the trim condition
-            cout << left << setw(25) << "T"  << left << setw(25) << "u" << left << setw(25) << "v" << left << setw(25) << "w" << left << setw(25) << "p"
-                    << left << setw(25) << "q" << left << setw(25) << "r" << left << setw(25) << "phi" << left << setw(25) << "theta"
-                    << left << setw(25) << "psi" << left << setw(25) << "h" << left << setw(25) << "x" << left << setw(25) << "y" << endl;
+            cout << left << setw(15) << "T"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
+                    << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
+                    << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
+            cout << left << setw(15) << 0.0;
             for (int i = 0; i < 12; i++) {
                 fullStateMatrix[0][i] = vecCI[i];
-                cout << left << setw(25) << 0.0;
-                cout << left << setw(25) << fullStateMatrix[0][i];
+
+                cout << left << setw(15) << fullStateMatrix[0][i];
             }
             cout << " " << endl;
 
@@ -186,10 +187,10 @@ int main() {
 
                 // assign the recently calculated state to the fullStateMatrix at column i
                 double time = i * dt;
-                cout << left << setw(25) << time;
+                cout << left << setw(15) << time;
                 for (int k = 0; k < 12; k++) {
                     fullStateMatrix[i][k] = newStates[k];
-                    cout << left << setw(25) << fullStateMatrix[i][k];
+                    cout << left << setw(15) << fullStateMatrix[i][k];
 
                 }
                 cout << " " << endl;
