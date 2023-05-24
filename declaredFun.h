@@ -11,4 +11,6 @@
 #include "src/trimRpm.cpp"
 #include "src/stability.cpp"
 #include "src/integrateMotion.cpp"
+#include "src/pid.cpp"
+
 #endif
