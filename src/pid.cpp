@@ -2,8 +2,26 @@
 #include <cmath>
 #include "../declaredFun.h"
 
+double PID( double kp, double ki , double kd, double tau, double err_prev, double err_current, double dt, double time) {
+    double N = 1 / tau;
+    double PID;
+    double I, D, T = 0;
+    int k = 0;
 
-void longitudinalController(vector <double> currentState){
+    double der_err = (err_current - err_prev) / dt * time;    // è così o non è così, questo è il dilemma
+    if (time==0){
+        I = ki;
+        D = kd;
+    } else if {
+        I += dt * (ki * err_prev);
+        D = kd * N * der_err - D * N;
+    }
+    PID = kp * der_err + (I) + (-kd * N + kd * N * der_err);
+
+    return PID;
+}
+
+void longitudinalController(vector <double> currentState, vector <double> state){
     double err_v;
     double theta_prev;
     double kp_v = -0.0021;
@@ -15,7 +33,7 @@ void longitudinalController(vector <double> currentState){
     double V_current = sqrt(pow(currentState[0], 2) + pow(currentState[1], 2) + pow(currentState[2], 2));
 
     err_v = V_prev - V_current;
-    theta_prev = err_v * PID(kp_v, ki_v, kd_v, tau_v, s_v);
+    theta_prev = err_v * PID(kp_v, ki_v, kd_v, tau_v);
 
     double err_theta;
     double dth;
@@ -23,8 +41,9 @@ void longitudinalController(vector <double> currentState){
     double kd_theta = -0.01;
     double ki_theta = -3.5;
     double tau_theta = 0.0016;
+    double theta_current = state[7];
     err_theta = theta_prev - theta_current;
-    dth = err_theta * PID(kp_theta, ki_theta, kd_theta, tau_theta, s_theta);
+    dth = err_theta * PID(kp_theta, ki_theta, kd_theta, tau_theta);
 
     double err_h;
     double de;
@@ -32,8 +51,10 @@ void longitudinalController(vector <double> currentState){
     double kd_h = 0.01;
     double ki_h = 0.0002;
     double tau_h = 0.1592;
+    double h_prev= 100;       // da inserire utente
+    double h_current= currentState[9];
     err_h = h_prev - h_current;
-    de = PID(kp_h, ki_h, kd_h, tau_h, s_h);
+    de = PID(kp_h, ki_h, kd_h, tau_h);
 
 }
 void lateralController() {
@@ -51,23 +72,6 @@ void lateralController() {
 
 }
 }
-double PID( double kp, double ki , double kd, double tau, double s, double err_prev, double err_current, double dt, double time) {
-    double N = 1 / tau;
-    double pid;
-    double I, D, T = 0;
-    int k = 0;
 
-    double der_err = (err_current - err_prev) / dt * time;    // è così o non è così, questo è il dilemma
-if (time==0){
-    I = ki;
-    D = kd;
-} else if {
-    I += dt * (ki * err_prev);
-    D = kd * N * der_err - D * N;
-}
-    pid = kp * der_err + (I) + (-kd * N + kd * N * der_err);
-
-    return pid;
-}
 
 
