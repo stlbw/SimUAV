@@ -55,6 +55,7 @@ double* longitudinalController(vector <double> currentState, vector <double> sta
 
     double err_theta[2];
     double dth;
+
     double kp_theta = -0.3;
     double kd_theta = -0.01;
     double ki_theta = -3.5;
