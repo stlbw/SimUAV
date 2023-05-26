@@ -85,7 +85,7 @@ double* longitudinalController(vector <double> currentState, vector <double> sta
 
     if (flagPID == 0)
     {
-        err_h[0] = 0 ;
+        err_h[0] = 0;
         err_h[1] = err_h[0];
     }
     else if (flagPID == 1){
