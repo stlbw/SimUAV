@@ -12,6 +12,16 @@ struct  Trim_Engine_Propeller{
     double Torque = 0;
 };
 
+double getThrottle(double rpm_trim, double rpm_min, double rpm_max){
+    double Throttle_min = 0.1;
+    double Throttle_max = 1;
+    double m = (Throttle_max-Throttle_min)/(rpm_max-rpm_min);
+    double Throttle_trim = m*(rpm_trim-rpm_max)+Throttle_max;
+    //double Throttle_trim = (rpm_trim*Throttle_min)/rpm_min;
+
+    return Throttle_trim;
+}
+
 Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
     Trim_Engine_Propeller enginePerformanceTrim;
     Propel propelResult;
@@ -52,9 +62,8 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     double P_d = propelResult.Q * omega / 1000; // [W] Q = Torque
     enginePerformanceTrim.Torque = propelResult.Q;
 
-    if (P_d < P_max){
-        enginePerformanceTrim.Throttle = P_d / P_max;
-    }
+    enginePerformanceTrim.Throttle = getThrottle(enginePerformanceTrim.rpm, rpm_min, rpm_max);
 
     return enginePerformanceTrim;
 }
+
