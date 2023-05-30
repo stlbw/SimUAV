@@ -337,7 +337,6 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     double r = initialConditions[5];
     double h = initialConditions[9];
 
-
     double alpha = atan2(w, u); //[rad]
     double delta_e = command[1]; //[rad]
     double V = sqrt(pow(u, 2) + pow(v, 2) + pow(w, 2));
@@ -408,7 +407,6 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     for (int i = 0; i < 12; i++) {
         currentState[i] = initialConditions[i];
     }
-
 
     // Euler's explicit method implementation
     for (int i = 0; i < 11; i++) {

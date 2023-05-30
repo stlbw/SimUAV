@@ -1,8 +1,6 @@
 #include <cmath>
 #include "../declaredFun.h"
 
-
-
 using namespace std;
 
 double PID( double kp, double ki , double kd, double tau, double err_prev, double err_current, double dt, double time, double flagPID, double N) {
@@ -13,14 +11,14 @@ double PID( double kp, double ki , double kd, double tau, double err_prev, doubl
     double D[2];
     if (flagPID == 0)
     {
-        I[0] =I[1] = ki;
-        D[0]= I[1] = kd;
+        I[0] = I[1] = ki;
+        D[0] = I[1] = kd;
 
     }
     else if (flagPID == 1)
     {   
         I[0] = I[1];
-        D[0] = D [1];
+        D[0] = D[1];
         I[1] += dt * (ki * err_prev);
         D[1] = kd * N * der_err - D[0] * N;
     }
@@ -29,7 +27,7 @@ double PID( double kp, double ki , double kd, double tau, double err_prev, doubl
     return pid;
 }
 
-double* longitudinalController(vector <double> currentState, vector <double> state, double dt, double flagPID, double time){
+double* longitudinalController(double currentState[12], double dt, double flagPID, double time){
 
     double theta_ref;
     double kp_v = -0.0021;
@@ -61,7 +59,7 @@ double* longitudinalController(vector <double> currentState, vector <double> sta
     double ki_theta = -3.5;
     double tau_theta = 0.0016;
     double N_theta = 1 / tau_theta;
-    double theta_current = state[7];
+    double theta_current = currentState[7];
 
     if (flagPID == 0)
     {
@@ -81,8 +79,8 @@ double* longitudinalController(vector <double> currentState, vector <double> sta
     double ki_h = 0.0002;
     double tau_h = 0.1592;
     double N_h = 1 / tau_h;
-    double h_ref= 100;       // da inserire utente
-    double h_current= currentState[9];
+    double h_ref = 100;       // da inserire utente
+    double h_current = currentState[9];
 
     if (flagPID == 0)
     {
@@ -97,13 +95,14 @@ double* longitudinalController(vector <double> currentState, vector <double> sta
 
     double long_commands[2];
 
-    long_commands[0]=dth;
-    long_commands[1]=de;
+    long_commands[0] = dth;
+    long_commands[1] = de;
 
     return long_commands;
 
 }
-double lateralController(vector <double> state, double dt, double flagPID, double time){
+
+double lateralController(double state[12], double dt, double flagPID, double time){
     double err_psi[2];
     double kp_psi = 1.5;
     double kd_psi = 0.01;
@@ -130,7 +129,7 @@ double lateralController(vector <double> state, double dt, double flagPID, doubl
     double kd_phi = 0.001;
     double ki_phi = 0.0005;
     double phi_current =  state[6];
-    double dphi ;
+    double da;
 
     if (flagPID == 0)
     {
@@ -142,11 +141,12 @@ double lateralController(vector <double> state, double dt, double flagPID, doubl
         err_phi[1] = phi_ref - phi_current;
     }
 
-    dphi = err_phi[1] * (kp_phi*err_phi[1]+kd_phi*(err_phi[1]-err_phi[0])/dt +ki_phi*err_phi[1]*dt);
+    da = err_phi[1] * (kp_phi*err_phi[1]+kd_phi*(err_phi[1]-err_phi[0])/dt +ki_phi*err_phi[1]*dt);
 
 
 
-double lat_commands = dphi;
+double lat_commands = da;
+
 return lat_commands;
 }
 

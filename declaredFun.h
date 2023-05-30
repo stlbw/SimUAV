@@ -12,5 +12,6 @@
 #include "src/stability.cpp"
 #include "src/integrateMotion.cpp"
 #include "src/pid.cpp"
+#include "src/getPathData.cpp"
 
 #endif

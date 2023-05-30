@@ -149,7 +149,7 @@ int main() {
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
             double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
             // initialize the command vector
-            double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle};
+            double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; //da,de,0,throttle
 
             double stateMinusOne[12] = {0}; // i-1
             for (int j = 0; j < 12; j++) {
@@ -172,8 +172,20 @@ int main() {
             }
             cout << " " << endl;
 
+            double flagPID = 0;
+            /*Path psi0;
+            psi0 = read_psiref("SQUARE_psiref.txt");*/
 
             for (int i = 1; i <= nStep; i++) {
+
+                double time = i * dt;
+
+                double* newlongcommand = longitudinalController(vecCI,dt,flagPID,time);
+                double da = lateralController(vecCI,dt,flagPID,time);
+
+                vecComm[1] = newlongcommand[1];
+                vecComm[3] = newlongcommand[0];
+                vecComm[0] = da;
 
                 double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt);
 
@@ -186,8 +198,9 @@ int main() {
                 } // assign values to variable
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
+                flagPID = 1;
+
                 // assign the recently calculated state to the fullStateMatrix at column i
-                double time = i * dt;
                 cout << left << setw(15) << time;
                 for (int k = 0; k < 12; k++) {
                     fullStateMatrix[i][k] = newStates[k];
@@ -195,7 +208,6 @@ int main() {
 
                 }
                 cout << " " << endl;
-
 
             }
 
