@@ -427,6 +427,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     for (int i = 0; i < 6; i++) { remainder[i] = remainderPointer[i]; } // assign values to variable
     delete[] remainderPointer; // delete pointer to avoid memory leak
 
+//prova
 
     // Initialize current states vector with the initial conditions (safety to avoid mistakes)
     double* currentState = new double[12];
