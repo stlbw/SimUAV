@@ -206,11 +206,11 @@ double* getRemainders(const double state[10], const double command[4], const dou
 
 }
 
-double* getGravitationalForces (const double state[10]) {
+double* getGravitationalForces (const double state[10], const double mass) {
 
     double gravity[3] = {0};
     double g = 9.81;
-    gravity[2] = g ;
+    gravity[2] = g * mass ;
     double det = 0;
     double rotationMatrix[3][3] = {0};
     double inverse_matrix[3][3] = {0};
@@ -219,6 +219,7 @@ double* getGravitationalForces (const double state[10]) {
     double yaw = state[8];
     double* gravityForces = new double[3];
 
+    /*
     double cr = cos(roll);
     double sr = sin(roll);
     double cp = cos(pitch);
@@ -227,6 +228,7 @@ double* getGravitationalForces (const double state[10]) {
     double sy = sin(yaw);
 
     double m00, m01, m02, m10, m11, m12, m20, m21, m22;
+
 
     m00 = cp * cy;
     m01 = cp * sy;
@@ -240,6 +242,9 @@ double* getGravitationalForces (const double state[10]) {
     m21 = -sr * cy + cr * sp * sy;
     m22 = cr * cp;
 
+
+
+
     rotationMatrix[0][0] = m00;
     rotationMatrix[0][1] = m01;
     rotationMatrix[0][2] = m02;
@@ -249,6 +254,26 @@ double* getGravitationalForces (const double state[10]) {
     rotationMatrix[2][0] = m20;
     rotationMatrix[2][1] = m21;
     rotationMatrix[2][2] = m22;
+     */
+
+    double cosYaw = cos(yaw);
+    double sinYaw = sin(yaw);
+    double cosPitch = cos(pitch);
+    double sinPitch = sin(pitch);
+    double cosRoll = cos(roll);
+    double sinRoll = sin(roll);
+
+    rotationMatrix[0][0] = cosYaw * cosPitch;
+    rotationMatrix[0][1] = -sinYaw * cosRoll + cosYaw * sinPitch * sinRoll;
+    rotationMatrix[0][2] = sinYaw * sinRoll + cosYaw * sinPitch * cosRoll;
+
+    rotationMatrix[1][0] = sinYaw * cosPitch;
+    rotationMatrix[1][1] = cosYaw * cosRoll + sinYaw * sinPitch * sinRoll;
+    rotationMatrix[1][2] = -cosYaw * sinRoll + sinYaw * sinPitch * cosRoll;
+
+    rotationMatrix[2][0] = -sinPitch;
+    rotationMatrix[2][1] = cosPitch * sinRoll;
+    rotationMatrix[2][2] = cosPitch * cosRoll;
 
     //finding determinant of the matrix
     for(int i = 0; i < 3; i++)
@@ -287,7 +312,7 @@ double* getInertialForces(AeroDB db, double acceleration[6]) {
 
     double *forces = new double[6];
     for (int i = 0; i < 6; i++) {
-        forces[i] = inertia[i] * acceleration[i];
+        forces[i] = inertia[i] * acceleration[i]; //kg * m/s^2  = kg*m/s^2 = N and kg*m^2 * 1/s^2 = kg * m * m * 1/s^2 = N * m
     }
 
     return forces;
@@ -341,6 +366,8 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     double delta_e = command[1]; //[rad]
     double V = sqrt(pow(u, 2) + pow(v, 2) + pow(w, 2));
 
+    double mass = db1.Ad.Mass;
+
     //aerodynamic forces
     double *aeroPointer = getAerodynamicForces(db1, db2, initialConditions,
                                                command); // get aerodynamic forces and return it to aeroForces
@@ -348,7 +375,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     delete[] aeroPointer; // delete pointer to avoid memory leak
 
     // gravity forces
-    double *gravityPointer = getGravitationalForces(initialConditions); // get gravity forces and return it to aeroForces
+    double *gravityPointer = getGravitationalForces(initialConditions, mass); // get gravity forces and return it to aeroForces
     for (int i = 0; i < 3; i++) { gravForces[i] = gravityPointer[i]; }
     delete[] gravityPointer; // delete pointer to avoid memory leak
 

@@ -190,6 +190,7 @@ int main() {
                 vecComm[0] = da;
                 delete[] newlongcommand; // delete pointer to avoid memory leak
 
+
                 double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt);
 
                 double newStates[12] = {0};
@@ -223,8 +224,6 @@ int main() {
              */
 
             delete[] fullStateMatrix; // delete matrix pointer to avoid memory overflow
-
-
 
 
 
