@@ -97,7 +97,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cldelta_r = linearInterpolation(db1.alpha, db1.cm.cl_dr, db2.cm.cl_dr, alpha_deg, h);
 
     double ClTot = Cla * alpha + Clb * beta + Clp * p + Clq * q + Clr * r + Cldelta_a * delta_a + Cldelta_e * delta_e + Cldelta_r * delta_r;
-    double LMoment = 0.5 * rho * pow(V, 2) * S * ClTot;
+    double LMoment = 0.25 * rho * pow(V, 2) * S * ClTot * db1.Ad.Wing_spann;
 
     //MMoment
     double Cma = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_deg, h);
@@ -111,7 +111,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cmdelta_r = 0;
 
     double CmTot = Cma * alpha + Cmb * beta + Cmp * p + Cmq * q + Cmr * r + Cmdelta_a * delta_a + Cmdelta_e * delta_e + Cmdelta_r * delta_r;
-    double MMoment = 0.5 * rho * pow(V, 2) * S * CmTot;
+    double MMoment = 0.5 * rho * pow(V, 2) * S * CmTot * 0.134284878291602;
 
     //NMoment
     double Cna = linearInterpolation(db1.alpha, db1.ym.cn_a, db2.ym.cn_a, alpha_deg, h);
@@ -124,7 +124,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cndelta_r = linearInterpolation(db1.alpha, db1.cm.cn_dr, db2.cm.cn_dr, alpha_deg, h);
 
     double CnTot = Cna * alpha + Cnb * beta + Cnp * p + Cnq * q + Cnr * r + Cndelta_a * delta_a + Cndelta_e * delta_e + Cndelta_r * delta_r;
-    double NMoment = 0.5 * rho * pow(V, 2) * S * CnTot;
+    double NMoment = 0.25 * rho * pow(V, 2) * S * CnTot * db1.Ad.Wing_spann;
 
     double* vecForceMoment = new double[6];
     vecForceMoment[0] = XForce;
@@ -417,9 +417,9 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 
     // INSERITI NUOVI
     double inertiaParameters[5] = {db1.Ad.Mass, db1.Ad.Jx, db1.Ad.Jy, db1.Ad.jz, db1.Ad.jxz};
-    inertiaParameters[1] = db1.Ad.Jx * pow((cos(alpha)),2)+db1.Ad.jz*pow((sin(alpha)),2)-2*db1.Ad.jxz*cos(alpha)*sin(alpha);
-    inertiaParameters[3] =db1.Ad.jz*pow((cos(alpha)),2)+db1.Ad.Jx*pow((sin(alpha)),2)+2*db1.Ad.jxz*cos(alpha)*sin(alpha);
-    inertiaParameters[4] = db1.Ad.jxz*pow((cos(alpha)),2)-pow((sin(alpha)),2)+(db1.Ad.Jx-db1.Ad.jz)*cos(alpha)*sin(alpha);
+    //inertiaParameters[1] = db1.Ad.Jx * pow((cos(alpha)),2)+db1.Ad.jz*pow((sin(alpha)),2)-2*db1.Ad.jxz*cos(alpha)*sin(alpha);
+    //inertiaParameters[3] =db1.Ad.jz*pow((cos(alpha)),2)+db1.Ad.Jx*pow((sin(alpha)),2)+2*db1.Ad.jxz*cos(alpha)*sin(alpha);
+    //inertiaParameters[4] = db1.Ad.jxz*pow((cos(alpha)),2)-pow((sin(alpha)),2)+(db1.Ad.Jx-db1.Ad.jz)*cos(alpha)*sin(alpha);
     //
 
     double *remainderPointer = getRemainders(initialConditions, command, inertiaParameters, completeForce,
