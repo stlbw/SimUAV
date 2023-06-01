@@ -157,6 +157,7 @@ int main() {
                 // simulation starts at the last trim state (i=0) and before that we assume infinite trim states take place
             }
 
+            // create state matrix to allocate the states at each step
             double** fullStateMatrix = new double*[nStep];
             for (int i = 0; i < 12; i++) {fullStateMatrix[i] = new double[12];}
 
@@ -176,16 +177,18 @@ int main() {
             /*Path psi0;
             psi0 = read_psiref("SQUARE_psiref.txt");*/
 
+            // LOOP INTEGRATE EQUATIONS OF MOTION
             for (int i = 1; i <= nStep; i++) {
 
                 double time = i * dt;
 
-                double* newlongcommand = longitudinalController(vecCI,dt,flagPID,time);
+                double* newlongcommand = longitudinalController(vecCI,dt,flagPID,time); // longitudinalController returns a memory address
                 double da = lateralController(vecCI,dt,flagPID,time);
 
                 vecComm[1] = newlongcommand[1];
                 vecComm[3] = newlongcommand[0];
                 vecComm[0] = da;
+                delete[] newlongcommand; // delete pointer to avoid memory leak
 
                 double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt);
 

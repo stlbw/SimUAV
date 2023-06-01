@@ -93,7 +93,7 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
     }
     de = err_h[1] * PID(kp_h, ki_h, kd_h, tau_h, err_h[0], err_h[1], dt,time, flagPID, N_h);
 
-    double long_commands[2];
+    double* long_commands = new double[2];
 
     long_commands[0] = dth;
     long_commands[1] = de;

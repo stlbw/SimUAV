@@ -376,7 +376,6 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     for (int i = 0; i < 6; i++) { inertialForces[i] = inertialPointer[i]; } // assign values to variable
     delete[] inertialPointer; // delete pointer to avoid memory leak
 
-
     double completeForce[6] = {0};
     for (int i = 0; i < size(completeForce); i++) {
         completeForce[i] = aeroForces[i] + propForces[i] + inertialForces[i] + gravForces[i];
