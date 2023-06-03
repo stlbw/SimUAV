@@ -94,6 +94,7 @@ int main() {
         cout << "" << endl;
         // TRIM SECTION:
         double V, h;
+        // todo: get gamma
         cout << "Insert velocity [m/s]: ";
         cin >> V;
         cout << "" << endl;
@@ -138,8 +139,6 @@ int main() {
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
 
-            //todo: decide whether the integration loop should be done in main or under integrateEquationsOfMotion
-            // todo: get new DB1, DB2 at each step based on h
             double Tsim = 10.0;
             //double dt = 0.01;
             double dt = 0.02;
@@ -150,6 +149,7 @@ int main() {
             double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
             // initialize the command vector
             double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; //da,de,0,throttle
+            //double vecComm[4] = {0}; //da,de,0,throttle
 
             double stateMinusOne[12] = {0}; // i-1
             for (int j = 0; j < 12; j++) {
@@ -159,13 +159,16 @@ int main() {
 
             // create state matrix to allocate the states at each step
             double** fullStateMatrix = new double*[nStep];
-            for (int i = 0; i < 12; i++) {fullStateMatrix[i] = new double[12];}
+            for (int i = 0; i < nStep; i++) {fullStateMatrix[i] = new double[12];}
 
             // assign the first column as the trim condition
-            cout << left << setw(15) << "T"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
+            cout << left << setw(15) << "T" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
                     << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
                     << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
+
             cout << left << setw(15) << 0.0;
+            cout << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
+
             for (int i = 0; i < 12; i++) {
                 fullStateMatrix[0][i] = vecCI[i];
 
@@ -181,20 +184,19 @@ int main() {
             for (int i = 1; i <= nStep; i++) {
 
                 double time = i * dt;
-
+                /*
                 double* newlongcommand = longitudinalController(vecCI,dt,flagPID,time); // longitudinalController returns a memory address
                 double da = lateralController(vecCI,dt,flagPID,time);
-
-                vecComm[1] = newlongcommand[1];
-                vecComm[3] = newlongcommand[0];
+                vecComm[1] = newlongcommand[1]; //delta_e
+                vecComm[3] = newlongcommand[0]; //delta_throttle
                 vecComm[0] = da;
                 delete[] newlongcommand; // delete pointer to avoid memory leak
+                 */
 
 
                 double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt);
 
                 double newStates[12] = {0};
-
                 for (int j = 0; j < 12; j++) {
                     newStates[j] = newStatesPointer[j]; // save the recently calculated state vector in newStates
                     stateMinusOne[j] = vecCI[j]; // save the OLD initial condition as the (i-1)th step
@@ -202,45 +204,28 @@ int main() {
                 } // assign values to variable
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
-                flagPID = 1;
+                flagPID = 1; // after the first step, set flagPID to 1
 
                 // assign the recently calculated state to the fullStateMatrix at column i
-                cout << left << setw(15) << time;
+                cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI;
                 for (int k = 0; k < 12; k++) {
                     fullStateMatrix[i][k] = newStates[k];
                     cout << left << setw(15) << fullStateMatrix[i][k];
-
                 }
                 cout << " " << endl;
 
             }
-
-            /*for (int i = 0; i < 12; i++) {
-                for (int j = 0; j <= nStep; j++) {
-                    cout << fullStateMatrix[i][j] << "   ";
-                }
-                cout << " " << endl;
-            }
-             */
-
             delete[] fullStateMatrix; // delete matrix pointer to avoid memory overflow
-
-
-
         }
         catch (const range_error& e){
             cerr<<"Out of range: "<<e.what()<<endl; //print error
             return 1; // return from main
         }
-
     }
     catch (const runtime_error& e){
         cerr<<"Runtime error: "<<e.what()<<endl; //print error
         return 1; // return from main
     }
-
-
-
 
     return 0;
 };
