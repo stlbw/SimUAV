@@ -146,7 +146,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
 
 }
 
-double* getRemainders(const double state[10], const double command[4], const double inertiaParameters[5], const double forces[6], const double thrust) {
+double* getRemainders(const double state[10], const double command[4], const double inertiaParameters[5], const double forces[6], const double thrust, const double acceleration[6]) {
     // unpack state vector -> i-th step
     double u = state[0];
     double v = state[1];
@@ -177,9 +177,9 @@ double* getRemainders(const double state[10], const double command[4], const dou
     double L = forces[3];
     double M = forces[4];
     double N = forces[5];
-
-    double p_dot = 0; //change
-    double r_dot = 0; //change
+    // acceleration = [u_dot, v_dot, w_dot, p_dot, q_dot, r_dot]
+    double p_dot = acceleration[3];
+    double r_dot = acceleration[5];
 
     double du = (r * v - q * w) - g * sin(theta) + X / m + thrust / m;
     double dv = (p * w - r * u) + g * sin(phi) * cos(theta) + Y / m;
