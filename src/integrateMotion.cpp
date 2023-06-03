@@ -196,7 +196,7 @@ double* getRemainders(const double state[10], const double command[4], const dou
 
 
 
-    double* remainder = new double[10];
+    double* remainder = new double[12];
     remainder[0] = du;
     remainder[1] = dv;
     remainder[2] = dw;
@@ -221,7 +221,7 @@ double* getGravitationalForces (const double state[10], const double mass) {
     gravity[2] = g * mass ;
     double det = 0;
     double rotationMatrix[3][3] = {0};
-    double inverse_matrix[3][3] = {0};
+    //double inverse_matrix[3][3] = {0};
     double roll = state[6];
     double pitch = state[7];
     double yaw = state[8];
@@ -283,6 +283,7 @@ double* getGravitationalForces (const double state[10], const double mass) {
     rotationMatrix[2][1] = cosPitch * sinRoll;
     rotationMatrix[2][2] = cosPitch * cosRoll;
 
+    /*
     //finding determinant of the matrix
     for(int i = 0; i < 3; i++)
         det = det + (rotationMatrix[0][i] * (rotationMatrix[1][(i+1)%3] * rotationMatrix[2][(i+2)%3] - rotationMatrix[1][(i+2)%3] * rotationMatrix[2][(i+1)%3]));
@@ -295,11 +296,12 @@ double* getGravitationalForces (const double state[10], const double mass) {
         }
     }
     else std::cout<<"Inverse doesn't exist for this matrix";
+     */
 
-    // g_FB = L_VB ^-1 * {0 0 g}:
+    // g_FB = L_BV  * {0 0 m*g}:
     for(int m = 0; m < 3; m++){
         for (int n = 0; n < 3; n++){
-           gravityForces[m] += (inverse_matrix[m][n] * gravity[n]);
+           gravityForces[m] += (rotationMatrix[m][n] * gravity[n]);
         }
     }
 
@@ -326,6 +328,15 @@ double* getInertialForces(AeroDB db, double acceleration[6]) {
     return forces;
 }
 
+double* getAcceleration(double currentState[6], double previousState[6], double dt){
+    // { u v w p q r }
+    double* acceleration = new double[6];
+    for (int i = 0; i < 6; i++){
+        acceleration[i] = (currentState[i] - previousState[i]) / dt; // as a vector field
+    }
+    return acceleration;
+
+}
 
 /**
  * Integrates the i-th step of the equations of motion using Euler's Explicit method. Requires all parameters to be given
@@ -338,18 +349,6 @@ double* getInertialForces(AeroDB db, double acceleration[6]) {
  * @param command
  * @returns the (i+1)-th integration step
  */
-
-
-double* getAcceleration(double currentState[6], double previousState[6], double dt){
-    // { u v w p q r }
-    double* acceleration = new double[6];
-    for (int i = 0; i < 6; i++){
-        acceleration[i] = (currentState[i] - previousState[i]) / dt; // as a vector field
-    }
-    return acceleration;
-
-}
-
 
 double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt) { //double dt = 0.02
     // compute forces -> initialize vector to 0 + external function to compute it
@@ -371,6 +370,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     double h = initialConditions[9];
 
     double alpha = atan2(w, u); //[rad]
+    double alpha_deg = alpha * 180.0 / M_PI;
     double delta_e = command[1]; //[rad]
     double V = sqrt(pow(u, 2) + pow(v, 2) + pow(w, 2));
 
@@ -384,7 +384,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 
     // gravity forces
     double *gravityPointer = getGravitationalForces(initialConditions, mass); // get gravity forces and return it to aeroForces
-    for (int i = 0; i < 3; i++) { gravForces[i] = gravityPointer[i]; }
+    for (int i = 0; i < 3; i++) { gravForces[i] = gravityPointer[i]; } // the 3 first components get their value assigned, the other 3 remain 0
     delete[] gravityPointer; // delete pointer to avoid memory leak
 
     //propeller forces
@@ -412,7 +412,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     delete[] inertialPointer; // delete pointer to avoid memory leak
 
     double completeForce[6] = {0};
-    for (int i = 0; i < size(completeForce); i++) {
+    for (int i = 0; i < 6; i++) {
         completeForce[i] = aeroForces[i] + propForces[i] + inertialForces[i] + gravForces[i];
     }
 
@@ -420,7 +420,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     // FORZE INERZIALI
     // MOMENTI PROPELLER
 
-    double remainder[10] = {0};
+    double remainder[12] = {0};
     //initialize remainders vector for the i-th step
 
     // INSERITI NUOVI
@@ -431,8 +431,8 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     //
 
     double *remainderPointer = getRemainders(initialConditions, command, inertiaParameters, completeForce,
-                                             propellerData.T);
-    for (int i = 0; i < 6; i++) { remainder[i] = remainderPointer[i]; } // assign values to variable
+                                             propellerData.T, acceleration);
+    for (int i = 0; i < 12; i++) { remainder[i] = remainderPointer[i]; } // assign values to variable
     delete[] remainderPointer; // delete pointer to avoid memory leak
 
 //prova
@@ -444,7 +444,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     }
 
     // Euler's explicit method implementation
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < 12; i++) {
         currentState[i] = initialConditions[i] + dt * remainder[i];
     }
 
