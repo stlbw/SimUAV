@@ -42,7 +42,15 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double beta = asin(v / V); // v(i)/V(i) [rad]
     double rho = computeDensity(h);
     double S = db1.Ad.Wing_area; //[m2] wing area
-    
+    double b = db1.Ad.Wing_spann; // [m] wing span
+    double c = db1.Ad.Chord; // [m] mean chord
+
+
+    // make dimensionless the angular velocities p, q and r
+    double pHat = p * b / (2 * V);
+    double qHat = q * c / (2 * V);
+    double rHat = r * b / (2 * V);
+
     // XForces
     double Cxa = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, alpha_deg, h);
     double Cxb = linearInterpolation(db1.alpha, db1.fx.cx_b, db2.fx.cx_b, alpha_deg, h);
@@ -54,7 +62,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cxdelta_e = linearInterpolation(db1.alpha, db1.cf.cx_de, db2.cf.cx_de, alpha_deg, h);
     double Cxdelta_r = 0; // same as Cxdelta_a
 
-    double CxTot = Cxa * alpha + Cxb * beta + Cxp * p + Cxq * q + Cxr * r + Cxdelta_a * delta_a + Cxdelta_e * delta_e + Cxdelta_r * delta_r;
+    double CxTot = Cxa * alpha + Cxb * beta + Cxp * pHat + Cxq * qHat + Cxr * rHat + Cxdelta_a * delta_a + Cxdelta_e * delta_e + Cxdelta_r * delta_r;
     double XForce = 0.5 * rho * pow(V, 2) * S * CxTot;
     
     
@@ -69,7 +77,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cydelta_e = 0; //cannot finc Cy_deltae
     double Cydelta_r = linearInterpolation(db1.alpha, db1.cf.cy_dr, db2.cf.cy_dr, alpha_deg, h);
 
-    double CyTot = Cya * alpha + Cyb * beta + Cyp * p + Cyq * q + Cyr * r + Cydelta_a * delta_a + Cydelta_e * delta_e + Cydelta_r * delta_r;
+    double CyTot = Cya * alpha + Cyb * beta + Cyp * pHat + Cyq * qHat + Cyr * rHat + Cydelta_a * delta_a + Cydelta_e * delta_e + Cydelta_r * delta_r;
     double YForce = 0.5 * rho * pow(V, 2) * S * CyTot;
     
     //ZForces
@@ -83,7 +91,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Czdelta_e = linearInterpolation(db1.alpha, db1.cf.cz_de, db2.cf.cz_de, alpha_deg, h);
     double Czdelta_r = 0; //cannot find Cz_deltar
 
-    double CzTot = Cza * alpha + Czb * beta + Czp * p + Czq * q + Czr * r + Czdelta_a * delta_a + Czdelta_e * delta_e + Czdelta_r * delta_r;
+    double CzTot = Cza * alpha + Czb * beta + Czp * pHat + Czq * qHat + Czr * rHat + Czdelta_a * delta_a + Czdelta_e * delta_e + Czdelta_r * delta_r;
     double ZForce = 0.5 * rho * pow(V, 2) * S * CzTot;
     
     //LMoment
@@ -96,8 +104,8 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cldelta_e = 0; // cannot find Cl_deltae
     double Cldelta_r = linearInterpolation(db1.alpha, db1.cm.cl_dr, db2.cm.cl_dr, alpha_deg, h);
 
-    double ClTot = Cla * alpha + Clb * beta + Clp * p + Clq * q + Clr * r + Cldelta_a * delta_a + Cldelta_e * delta_e + Cldelta_r * delta_r;
-    double LMoment = 0.25 * rho * pow(V, 2) * S * ClTot * db1.Ad.Wing_spann;
+    double ClTot = Cla * alpha + Clb * beta + Clp * pHat + Clq * qHat + Clr * rHat + Cldelta_a * delta_a + Cldelta_e * delta_e + Cldelta_r * delta_r;
+    double LMoment = 0.5 * rho * pow(V, 2) * S * ClTot * b;
 
     //MMoment
     double Cma = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_deg, h);
@@ -110,8 +118,8 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cmdelta_e = linearInterpolation(db1.alpha, db1.cm.cm_de, db2.cm.cm_de, alpha_deg, h);
     double Cmdelta_r = 0;
 
-    double CmTot = Cma * alpha + Cmb * beta + Cmp * p + Cmq * q + Cmr * r + Cmdelta_a * delta_a + Cmdelta_e * delta_e + Cmdelta_r * delta_r;
-    double MMoment = 0.5 * rho * pow(V, 2) * S * CmTot * 0.134284878291602;
+    double CmTot = Cma * alpha + Cmb * beta + Cmp * pHat + Cmq * qHat + Cmr * rHat + Cmdelta_a * delta_a + Cmdelta_e * delta_e + Cmdelta_r * delta_r;
+    double MMoment = 0.5 * rho * pow(V, 2) * S * CmTot * c;
 
     //NMoment
     double Cna = linearInterpolation(db1.alpha, db1.ym.cn_a, db2.ym.cn_a, alpha_deg, h);
@@ -123,8 +131,8 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cndelta_e = 0; // cannot find Cn_deltae
     double Cndelta_r = linearInterpolation(db1.alpha, db1.cm.cn_dr, db2.cm.cn_dr, alpha_deg, h);
 
-    double CnTot = Cna * alpha + Cnb * beta + Cnp * p + Cnq * q + Cnr * r + Cndelta_a * delta_a + Cndelta_e * delta_e + Cndelta_r * delta_r;
-    double NMoment = 0.25 * rho * pow(V, 2) * S * CnTot * db1.Ad.Wing_spann;
+    double CnTot = Cna * alpha + Cnb * beta + Cnp * pHat + Cnq * qHat + Cnr * rHat + Cndelta_a * delta_a + Cndelta_e * delta_e + Cndelta_r * delta_r;
+    double NMoment = 0.5 * rho * pow(V, 2) * S * CnTot * b;
 
     double* vecForceMoment = new double[6];
     vecForceMoment[0] = XForce;
