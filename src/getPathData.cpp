@@ -3,14 +3,15 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include "../declaredFun.h"
 using namespace std;
 
-/*struct Path{
+struct Path{
     vector <double> Psi;
 };
 
 
-inline void save_psiRef(Path *db, string filePath) {
+void save_psiRef(Path *db, string filePath) {
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
     myfile.open(filePath); // to open the file
@@ -38,4 +39,4 @@ inline Path read_psiref(string fileName) {
     Path db; // create db object
     save_psiRef(&db, filePath);
     return db;
-}*/
+}
