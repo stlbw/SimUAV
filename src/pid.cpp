@@ -126,6 +126,7 @@ double lateralController(double state[12], double dt, double flagPID, double tim
     phi_ref = err_psi[1] * (kp_psi*err_psi[1]+kd_psi*(err_psi[1]-err_psi[0])/dt +ki_psi*err_psi[1]*dt);
 
 
+
     double err_phi[2];
     double kp_phi = 0.12;
     double kd_phi = 0.001;
