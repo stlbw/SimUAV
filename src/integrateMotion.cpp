@@ -425,7 +425,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 
     double completeForce[6] = {0};
     for (int i = 0; i < 6; i++) {
-        completeForce[i] = aeroForces[i] + propForces[i] + inertialForces[i] + gravForces[i];
+        completeForce[i] = aeroForces[i]; //+ inertialForces[i] + gravForces[i];
     }
 
 
