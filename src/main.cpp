@@ -196,6 +196,9 @@ int main() {
 
                 // get correct dba with altitude
                 h = vecCI[9]; // update altitude
+                if (h>= 200){
+                    double a = 10;
+                }
                 getAerodynamicDbWithAltitude(h, DB1, DB2, dba0, dba100, dba1000, dba2000); // returns the correct DB1 and DB2 to use for the interpolation
 
                 double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt);
