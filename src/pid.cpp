@@ -4,9 +4,9 @@
 using namespace std;
 
 double PID( double kp, double ki , double kd, double tau, double err_prev, double err_current, double dt, double time, double flagPID, double N) {
-    double pid;
+    //double pid;
 
-    double der_err = (err_current - err_prev) / dt * time;    // è così o non è così, questo è il dilemma
+    /*double der_err = ( (err_current - err_prev) / dt );    // è così o non è così, questo è il dilemma
     double I[2];
     double D[2];
     if (flagPID == 0)
@@ -49,7 +49,8 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
         err_v[1] = V_ref - V_current;
     }
 
-    theta_ref = err_v[1] * PID(kp_v, ki_v, kd_v, tau_v, err_v[0], err_v[1], dt,time, flagPID, N_v);
+
+    theta_ref =PID(kp_v, ki_v, kd_v, tau_v, err_v[0], err_v[1], dt,time, flagPID, N_v);
 
     double err_theta[2];
     double dth;
@@ -102,6 +103,7 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
 
 }
 
+
 double lateralController(double state[12], double dt, double flagPID, double time){
     double err_psi[2];
     double kp_psi = 1.5;
@@ -122,6 +124,7 @@ double lateralController(double state[12], double dt, double flagPID, double tim
         err_psi[1] = psi_ref - psi_current;
     }
     phi_ref = err_psi[1] * (kp_psi*err_psi[1]+kd_psi*(err_psi[1]-err_psi[0])/dt +ki_psi*err_psi[1]*dt);
+
 
 
     double err_phi[2];
