@@ -150,7 +150,8 @@ int main() {
             // initialize the command vector
             double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; //da,de,0,throttle
             //double vecComm[4] = {0}; //da,de,0,throttle
-
+            //vecComm[3] = y.Throttle;
+            //todo: test -> maintaining the command vector for trim, the simulation should maintain the trim itself
             double stateMinusOne[12] = {0}; // i-1
             for (int j = 0; j < 12; j++) {
                 stateMinusOne[j] = vecCI[j]; // during trim the (i-1)th state is the same as the trim. We assume the
@@ -158,8 +159,8 @@ int main() {
             }
 
             // create state matrix to allocate the states at each step
-            double** fullStateMatrix = new double*[nStep];
-            for (int i = 0; i < nStep; i++) {fullStateMatrix[i] = new double[12];}
+            double** fullStateMatrix = new double*[nStep + 1];
+            for (int i = 0; i < nStep + 1; i++) {fullStateMatrix[i] = new double[12];}
 
             // assign the first column as the trim condition
             cout << left << setw(15) << "T" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
