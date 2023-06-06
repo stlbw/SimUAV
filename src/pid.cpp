@@ -4,9 +4,9 @@
 using namespace std;
 
 double PID( double kp, double ki , double kd, double tau, double err_prev, double err_current, double dt, double time, double flagPID, double N) {
-    //double pid;
+    double pid;
 
-    /*double der_err = ( (err_current - err_prev) / dt );    // è così o non è così, questo è il dilemma
+    double der_err = ( (err_current - err_prev) / dt );    // è così o non è così, questo è il dilemma
     double I[2];
     double D[2];
     if (flagPID == 0)
