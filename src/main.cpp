@@ -139,7 +139,7 @@ int main() {
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
 
-            double Tsim = 10.0;
+            double Tsim = 20;
             //double dt = 0.01;
             double dt = 0.02;
             int nStep = static_cast<int>(Tsim / dt);
@@ -178,6 +178,9 @@ int main() {
             cout << " " << endl;
 
             double flagPID = 0;
+            double wantPID = 0;
+            cout <<'\n'<<" Do you want to implement the PID controller ? (Y/1 N/0):" << endl;
+            cin >> wantPID;
             /*Path psi0;
             psi0 = read_psiref("SQUARE_psiref.txt");*/
 
@@ -211,7 +214,9 @@ int main() {
                 } // assign values to variable
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
-                flagPID = 1; // after the first step, set flagPID to 1
+                // after the first step, set flagPID to 1
+
+                flagPID = 1;
 
                 // assign the recently calculated state to the fullStateMatrix at column i
                 cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI;

@@ -6,24 +6,19 @@ using namespace std;
 double PID( double kp, double ki , double kd, double tau, double err_prev, double err_current, double dt, double time, double flagPID, double N) {
     double pid;
 
-    double der_err = ( (err_current - err_prev) / dt );    // è così o non è così, questo è il dilemma
-    double I[2];
-    double D[2];
-    if (flagPID == 0)
-    {
-        I[0] = I[1] = ki;
-        D[0] = I[1] = kd;
+    double P=0;
+    double I=0;
+    double D=0;
+    double counter = 0;
 
-    }
-    else if (flagPID == 1)
-    {   
-        I[0] = I[1];
-        D[0] = D[1];
-        I[1] += dt * (ki * err_prev);
-        D[1] = kd * N * der_err - D[0] * N;
-    }
-    pid = kp * der_err + I[1] + D[1];
+    while (counter <time) {
 
+        I += ki*(err_current)*dt;
+        D = D - D * N * dt + kd * N * (err_current - err_prev);
+        P = kp * err_current;
+        counter+=dt;
+    }
+    pid = P + I + D;
     return pid;
 }
 
@@ -123,7 +118,7 @@ double lateralController(double state[12], double dt, double flagPID, double tim
         err_psi[0] = err_psi[1] ;
         err_psi[1] = psi_ref - psi_current;
     }
-    phi_ref = err_psi[1] * (kp_psi*err_psi[1]+kd_psi*(err_psi[1]-err_psi[0])/dt +ki_psi*err_psi[1]*dt);
+    phi_ref = err_psi[1] * (kp_psi*err_psi[1]+kd_psi*(err_psi[1]-err_psi[0])/dt + ki_psi*err_psi[1]*dt);
 
 
 
