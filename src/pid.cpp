@@ -28,7 +28,7 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
     double kp_v = -0.0021;
     double kd_v = -0.0015;
     double ki_v = -0.00087;
-    double tau_v = 0.0016;
+    double tau_v = 0.0159;
     double N_v = 1/ tau_v;
     double V_ref = 13.5;            //poi correggere da input
     double V_current = sqrt(pow(currentState[0], 2) + pow(currentState[1], 2) + pow(currentState[2], 2));
@@ -52,8 +52,8 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
 
     double kp_theta = -0.3;
     double kd_theta = -0.01;
-    double ki_theta = -3.5;
-    double tau_theta = 0.0016;
+    double ki_theta = -3.25;
+    double tau_theta = 0.0159;
     double N_theta = 1 / tau_theta;
     double theta_current = currentState[7];
 
