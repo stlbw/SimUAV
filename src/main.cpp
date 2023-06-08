@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "../declaredFun.h"
 int main() {
     cout << "---------------------------------------------------------------" << endl;
@@ -139,8 +140,26 @@ int main() {
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
 
-            double Tsim = 20;
-            //double dt = 0.01;
+            // initialize logger
+            std::ofstream outputSim("../output/simulationData.txt");
+            std::ofstream loggerRemainders("../output/logRemainders.txt");
+            std::ofstream loggerAcceleration("../output/logAcceleration.txt");
+            if (!outputSim) {
+                string error = "Could not open file simulationData.txt";
+                throw runtime_error(error);
+            }
+            if (!loggerRemainders) {
+                string error = "Could not open file logRemainders.txt";
+                throw runtime_error(error);
+            }
+            if (!loggerAcceleration) {
+                string error = "Could not open file logAcceleration.txt";
+                throw runtime_error(error);
+            }
+            printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
+
+            // SIMULATION FROM HERE
+            double Tsim = 10.0;
             double dt = 0.02;
             int nStep = static_cast<int>(Tsim / dt);
 
@@ -149,9 +168,7 @@ int main() {
             double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
             // initialize the command vector
             double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; //da,de,0,throttle
-            //double vecComm[4] = {0}; //da,de,0,throttle
-            //vecComm[3] = y.Throttle;
-            //todo: test -> maintaining the command vector for trim, the simulation should maintain the trim itself
+
             double stateMinusOne[12] = {0}; // i-1
             for (int j = 0; j < 12; j++) {
                 stateMinusOne[j] = vecCI[j]; // during trim the (i-1)th state is the same as the trim. We assume the
@@ -162,20 +179,31 @@ int main() {
             double** fullStateMatrix = new double*[nStep + 1];
             for (int i = 0; i < nStep + 1; i++) {fullStateMatrix[i] = new double[12];}
 
-            // assign the first column as the trim condition
+            // assign the header to simulation
             cout << left << setw(15) << "T" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
                     << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
                     << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
-
+            //  assign first column as the trim condition
             cout << left << setw(15) << 0.0;
             cout << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
 
+            // print to logger the trim step
+            outputSim << left << setw(15) << "T" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
+                 << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
+                 << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
+
+            outputSim << left << setw(15) << 0.0;
+            outputSim << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
+
+            // assign fullStateMatrix first column to trim and print it
             for (int i = 0; i < 12; i++) {
                 fullStateMatrix[0][i] = vecCI[i];
-
-                cout << left << setw(15) << fullStateMatrix[0][i];
+                cout << left << setw(15) << fullStateMatrix[0][i]; // print to screen
+                outputSim << left << setw(15) << fullStateMatrix[0][i]; //print to logger
             }
             cout << " " << endl;
+            outputSim << " " << endl;
+
 
             double flagPID = 0;
             double wantPID = 0;
@@ -196,15 +224,14 @@ int main() {
                 vecComm[0] = da;
                 delete[] newlongcommand; // delete pointer to avoid memory leak
                  */
-
-                // get correct dba with altitude
-                h = vecCI[9]; // update altitude
                 if (h>= 200){
                     double a = 10;
                 }
-                getAerodynamicDbWithAltitude(h, DB1, DB2, dba0, dba100, dba1000, dba2000); // returns the correct DB1 and DB2 to use for the interpolation
 
-                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt);
+                // get correct dba with altitude
+                h = vecCI[9]; // update altitude
+                getAerodynamicDbWithAltitude(h, DB1, DB2, dba0, dba100, dba1000, dba2000); // returns the correct DB1 and DB2 to use for the interpolation
+                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt, loggerRemainders, loggerAcceleration);
 
                 double newStates[12] = {0};
                 for (int j = 0; j < 12; j++) {
@@ -219,15 +246,22 @@ int main() {
                 flagPID = 1;
 
                 // assign the recently calculated state to the fullStateMatrix at column i
-                cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI;
+                cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI; //print to screen
+                outputSim << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI; // print to logger
                 for (int k = 0; k < 12; k++) {
                     fullStateMatrix[i][k] = newStates[k];
-                    cout << left << setw(15) << fullStateMatrix[i][k];
+                    cout << left << setw(15) << fullStateMatrix[i][k]; //print to screen
+                    outputSim << left << setw(15) << fullStateMatrix[i][k]; //print to logger
                 }
                 cout << " " << endl;
-
+                outputSim << " " << endl;
             }
+            //close loggers
+            outputSim.close();
+            loggerRemainders.close();
+            loggerAcceleration.close();
             delete[] fullStateMatrix; // delete matrix pointer to avoid memory overflow
+
         }
         catch (const range_error& e){
             cerr<<"Out of range: "<<e.what()<<endl; //print error
@@ -241,11 +275,3 @@ int main() {
 
     return 0;
 };
-
-// Trim Control
-//int main{
-        //cout << '\n' << " Please select the input Velocity:" <<;
-        //cin >> V;
-        //cout << '\n' << " Please select the input Height:" <<;
-        //cin>> h;
-//};

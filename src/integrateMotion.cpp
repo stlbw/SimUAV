@@ -321,6 +321,7 @@ double* getGravitationalForces (const double state[10], const double mass) {
 
 }
 
+
 double* getInertialForces(AeroDB db, double acceleration[6]) {
 
     double inertia[6] = {0};
@@ -339,6 +340,7 @@ double* getInertialForces(AeroDB db, double acceleration[6]) {
 
     return forces;
 }
+
 
 double* getAcceleration(double currentState[6], double previousState[6], double dt){
     // { u v w p q r }
@@ -362,7 +364,7 @@ double* getAcceleration(double currentState[6], double previousState[6], double 
  * @returns the (i+1)-th integration step
  */
 
-double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt) { //double dt = 0.02
+double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt, std::ofstream& loggerReminder, std::ofstream& loggerAcceleration) { //double dt = 0.02
     // compute forces -> initialize vector to 0 + external function to compute it
     // get initial conditions [i-th step]
     // compute remaining -> initialize vector to 0
@@ -415,7 +417,11 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     // initialize acceleration vectors
     double acceleration[6] = {0};
     double *accelerationPointer = getAcceleration(previousVelocity, currentVelocity, dt);
-    for (int i = 0; i < 6; i++) { acceleration[i] = accelerationPointer[i]; } // assign values to variable
+    for (int i = 0; i < 6; i++) {
+        acceleration[i] = accelerationPointer[i];
+        loggerAcceleration << left << setw(15) << acceleration[i]; //logger
+    } // assign values to variable
+    loggerAcceleration << " " << endl;
     delete[] accelerationPointer; // delete pointer to avoid memory leak
 
     //compute inertial forces
@@ -444,8 +450,13 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 
     double *remainderPointer = getRemainders(initialConditions, command, inertiaParameters, completeForce,
                                              propellerData.T, acceleration);
-    for (int i = 0; i < 12; i++) { remainder[i] = remainderPointer[i]; } // assign values to variable
+    for (int i = 0; i < 12; i++) {
+        remainder[i] = remainderPointer[i];
+        loggerReminder << left << setw(15) << remainder[i];
+    } // assign values to variable
+    loggerReminder << " " << endl;
     delete[] remainderPointer; // delete pointer to avoid memory leak
+    // print remainders to logger
 
 //prova
 
