@@ -45,7 +45,7 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
     }
 
 
-    theta_ref =PID(kp_v, ki_v, kd_v, tau_v, err_v[0], err_v[1], dt,time, flagPID, N_v);
+    theta_ref = PID(kp_v, ki_v, kd_v, tau_v, err_v[0], err_v[1], dt,time, flagPID, N_v);
 
     double err_theta[2];
     double dth;
