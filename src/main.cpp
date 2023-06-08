@@ -94,13 +94,13 @@ int main() {
         cout << "---------------------------------------------------------------" << endl;
         cout << "" << endl;
         // TRIM SECTION:
-        double V, h;
+        double V_ref, h_ref;
         // todo: get gamma
         cout << "Insert velocity [m/s]: ";
-        cin >> V;
+        cin >> V_ref;
         cout << "" << endl;
         cout << "Insert altitude [m]: ";
-        cin >> h;
+        cin >> h_ref;
         cout <<""<<endl;
         cout << "TRIM PARAMETERS: " << endl;
         cout <<""<<endl;
@@ -112,10 +112,10 @@ int main() {
             AeroDB DB2;
 
             // get correct dba with altitude
-            getAerodynamicDbWithAltitude(h, DB1, DB2, dba0, dba100, dba1000, dba2000);
+            getAerodynamicDbWithAltitude(h_ref, DB1, DB2, dba0, dba100, dba1000, dba2000);
 
             // trim angles
-            Trim_Angles a = trimAngles(DB1, DB2, V, h);
+            Trim_Angles a = trimAngles(DB1, DB2, V_ref, h_ref);
             cout << "Alpha trim [deg]: " << a.alpha_trim << endl;
             cout << "Elevator delta trim [deg]: " << a.deltae_trim << endl;
             cout << "Velocity component u [m/s]: " << a.u << endl;
@@ -123,7 +123,7 @@ int main() {
 
             //trim rpm, T and Throttle
             cout << "" << endl;
-            Trim_Engine_Propeller y = trimEnginePropeller(DB1, DB2, en0, prop0, a, V, h);
+            Trim_Engine_Propeller y = trimEnginePropeller(DB1, DB2, en0, prop0, a, V_ref, h_ref);
             cout << "RPM trim: " << y.rpm  << endl;
             cout << "Thrust trim: " << y.T  << endl;
             cout << "Torque trim: " << y.Torque << endl;
@@ -133,7 +133,7 @@ int main() {
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
 
-            longitudinalStability(DB1, DB2,prop0,a,V,h); // this function computes the Routh criteria
+            longitudinalStability(DB1, DB2,prop0,a,V_ref,h_ref); // this function computes the Routh criteria
             // for the aircraft and computes the longitudinal modes in case the criteria is respected
 
             cout << "" << endl;
@@ -165,9 +165,10 @@ int main() {
 
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
-            double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
+            double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
             // initialize the command vector
             double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; //da,de,0,throttle
+            double vecCommTrim[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; //da,de,0,throttle - used with PID
 
             double stateMinusOne[12] = {0}; // i-1
             for (int j = 0; j < 12; j++) {
@@ -209,6 +210,18 @@ int main() {
             double wantPID = 0;
             cout <<'\n'<<" Do you want to implement the PID controller ? (Y/1 N/0):" << endl;
             cin >> wantPID;
+            // initialize error variables and integrative error to be used when PID is active - store the error at the previous step
+            double err_v = 0;
+            double err_theta = 0;
+            double err_h = 0;
+            double err_psi = 0;
+            double err_phi = 0;
+            double I_v = 0;
+            double I_theta = 0;
+            double I_h = 0;
+            double I_psi = 0;
+            double I_phi = 0;
+
             /*Path psi0;
             psi0 = read_psiref("SQUARE_psiref.txt");*/
 
@@ -217,18 +230,31 @@ int main() {
 
                 double time = i * dt;
                 if (wantPID == 1) {
-                    double* newlongcommand = longitudinalController(vecCI,dt,flagPID,time); // longitudinalController returns a memory address
-                    double da = lateralController(vecCI,dt,flagPID,time);
-                    vecComm[1] = newlongcommand[1]; //delta_e
-                    vecComm[3] = newlongcommand[0]; //delta_throttle
-                    vecComm[0] = da;
+                    double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h); // longitudinalController returns a memory address
+                    double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
+                    vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
+                    vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
+                    vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
+                    // get new errors and store as previous errors for the NEXT step
+                    err_v = newlongcommand[2];
+                    err_theta = newlongcommand[3];
+                    err_h = newlongcommand[4];
+                    // the integral errors take the value from the function -> we don't add them to the previous value
+                    // because this is already done inside the controller!
+                    I_v = newlongcommand[5];
+                    I_theta = newlongcommand[6];
+                    I_h = newlongcommand[7];
+                    err_psi = newlatdircommand[1];
+                    err_phi = newlatdircommand[2];
+                    I_psi = newlatdircommand[3];
+                    I_phi = newlatdircommand[4];
                     delete[] newlongcommand; // delete pointer to avoid memory leak
                 }
 
                 double rpm = vecComm[3] * en0.laps_max; //d_th * RPM_MAX
 
                 // get correct dba with altitude
-                h = vecCI[9]; // update altitude
+                double h = vecCI[9]; // update altitude
                 getAerodynamicDbWithAltitude(h, DB1, DB2, dba0, dba100, dba1000, dba2000); // returns the correct DB1 and DB2 to use for the interpolation
                 double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, rpm, vecCI, vecComm, stateMinusOne, dt, loggerRemainders, loggerAcceleration);
 
