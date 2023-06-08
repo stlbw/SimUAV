@@ -48,7 +48,7 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
     theta_ref = PID(kp_v, ki_v, kd_v, tau_v, err_v[0], err_v[1], dt,time, flagPID, N_v);
 
     double err_theta[2];
-    double dth;
+    double de;
 
     double kp_theta = -0.3;
     double kd_theta = -0.01;
@@ -66,10 +66,19 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
         err_theta[0] = err_theta[1] ;
         err_theta[1] = theta_ref - theta_current;
     }
-    dth = err_theta[1] * PID(kp_theta, ki_theta, kd_theta, tau_theta, err_theta[0], err_theta[1], dt,time, flagPID, N_theta);
+    de = PID(kp_theta, ki_theta, kd_theta, tau_theta, err_theta[0], err_theta[1], dt,time, flagPID, N_theta);
+    // de Saturation
 
+    if(de<= -15*(M_PI/180)){
+        de=-15*(M_PI/180);
+    }
+    else if (de>= 15*(M_PI/180)){
+        de=15*(M_PI/180);
+    };
+
+    //dth_sat 0.55 -0.45
     double err_h[2];
-    double de;
+    double dth;
     double kp_h = 0.019;
     double kd_h = 0.01;
     double ki_h = 0.0002;
@@ -87,7 +96,18 @@ double* longitudinalController(double currentState[12], double dt, double flagPI
         err_h[0] = err_h[1] ;
         err_h[1] = h_ref - h_current;
     }
-    de = err_h[1] * PID(kp_h, ki_h, kd_h, tau_h, err_h[0], err_h[1], dt,time, flagPID, N_h);
+
+    dth =PID(kp_h, ki_h, kd_h, tau_h, err_h[0], err_h[1], dt,time, flagPID, N_h);
+    //dth_sat 0.55 -0.45
+    if(dth<= -0.45){
+        dth=-0.45;
+    }
+    else if (dth>= 0.55){
+        dth=0.55;
+    }
+
+
+
 
     double* long_commands = new double[2];
 
