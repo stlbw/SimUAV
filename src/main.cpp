@@ -216,22 +216,21 @@ int main() {
             for (int i = 1; i <= nStep; i++) {
 
                 double time = i * dt;
-                /*
-                double* newlongcommand = longitudinalController(vecCI,dt,flagPID,time); // longitudinalController returns a memory address
-                double da = lateralController(vecCI,dt,flagPID,time);
-                vecComm[1] = newlongcommand[1]; //delta_e
-                vecComm[3] = newlongcommand[0]; //delta_throttle
-                vecComm[0] = da;
-                delete[] newlongcommand; // delete pointer to avoid memory leak
-                 */
-                if (h>= 200){
-                    double a = 10;
+                if (wantPID == 1) {
+                    double* newlongcommand = longitudinalController(vecCI,dt,flagPID,time); // longitudinalController returns a memory address
+                    double da = lateralController(vecCI,dt,flagPID,time);
+                    vecComm[1] = newlongcommand[1]; //delta_e
+                    vecComm[3] = newlongcommand[0]; //delta_throttle
+                    vecComm[0] = da;
+                    delete[] newlongcommand; // delete pointer to avoid memory leak
                 }
+
+                double rpm = vecComm[3] * en0.laps_max; //d_th * RPM_MAX
 
                 // get correct dba with altitude
                 h = vecCI[9]; // update altitude
                 getAerodynamicDbWithAltitude(h, DB1, DB2, dba0, dba100, dba1000, dba2000); // returns the correct DB1 and DB2 to use for the interpolation
-                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, y.rpm, vecCI, vecComm, stateMinusOne, dt, loggerRemainders, loggerAcceleration);
+                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, rpm, vecCI, vecComm, stateMinusOne, dt, loggerRemainders, loggerAcceleration);
 
                 double newStates[12] = {0};
                 for (int j = 0; j < 12; j++) {

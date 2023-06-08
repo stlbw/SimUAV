@@ -395,12 +395,12 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
                                                command); // get aerodynamic forces and return it to aeroForces
     for (int i = 0; i < 6; i++) { aeroForces[i] = aeroPointer[i]; }
     delete[] aeroPointer; // delete pointer to avoid memory leak
-
+/*
     // gravity forces
     double *gravityPointer = getGravitationalForces(initialConditions, mass); // get gravity forces and return it to aeroForces
     for (int i = 0; i < 3; i++) { gravForces[i] = gravityPointer[i]; } // the 3 first components get their value assigned, the other 3 remain 0
     delete[] gravityPointer; // delete pointer to avoid memory leak
-
+*/
     //propeller forces
     propellerData = getPropellerPerformance(db1, db2, endb, pdb, alpha, delta_e, V, h, rpm);
     propForces[0] = -propellerData.T; // all other entries are set to 0
@@ -423,12 +423,12 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     } // assign values to variable
     loggerAcceleration << " " << endl;
     delete[] accelerationPointer; // delete pointer to avoid memory leak
-
+/*
     //compute inertial forces
     double *inertialPointer = getInertialForces(db1, acceleration);
     for (int i = 0; i < 6; i++) { inertialForces[i] = inertialPointer[i]; } // assign values to variable
     delete[] inertialPointer; // delete pointer to avoid memory leak
-
+*/
     double completeForce[6] = {0};
     for (int i = 0; i < 6; i++) {
         completeForce[i] = aeroForces[i]; //+ inertialForces[i] + gravForces[i];
@@ -458,7 +458,8 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     delete[] remainderPointer; // delete pointer to avoid memory leak
     // print remainders to logger
 
-//prova
+//prova3
+
 
     // Initialize current states vector with the initial conditions (safety to avoid mistakes)
     double* currentState = new double[12];
