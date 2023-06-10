@@ -160,7 +160,7 @@ int main() {
 
             // SIMULATION FROM HERE
             double Tsim = 10.0;
-            double dt = 0.02;
+            double dt = 0.01;
             int nStep = static_cast<int>(Tsim / dt);
 
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
@@ -216,22 +216,27 @@ int main() {
             double err_h = 0;
             double err_psi = 0;
             double err_phi = 0;
-            double I_v = 0;
-            double I_theta = 0;
-            double I_h = 0;
-            double I_psi = 0;
-            double I_phi = 0;
+            // Matheus Part
+            double I_v =0;          double D_v = 0;
+            double I_theta = 0;     double D_theta = 0;
+            double I_h = 0;         double D_h = 0;
+            double I_psi = 0;       double D_psi = 0;
+            double I_phi = 0;       double D_phi = 0;
 
-            /*Path psi0;
-            psi0 = read_psiref("SQUARE_psiref.txt");*/
+
+
+            //Path psi0;
+            //psi0 = read_psiref("SQUARE_psiref.txt");
 
             // LOOP INTEGRATE EQUATIONS OF MOTION
             for (int i = 1; i <= nStep; i++) {
 
                 double time = i * dt;
                 if (wantPID == 1) {
-                    double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h); // longitudinalController returns a memory address
+                    // Matheus Part
+                    double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h, D_v, D_theta, D_h); // longitudinalController returns a memory address
                     double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
+
                     vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
                     vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
                     vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
@@ -239,8 +244,10 @@ int main() {
                     err_v = newlongcommand[2];
                     err_theta = newlongcommand[3];
                     err_h = newlongcommand[4];
+                    // Matheus Part
                     // the integral errors take the value from the function -> we don't add them to the previous value
                     // because this is already done inside the controller!
+
                     I_v = newlongcommand[5];
                     I_theta = newlongcommand[6];
                     I_h = newlongcommand[7];
@@ -248,6 +255,7 @@ int main() {
                     err_phi = newlatdircommand[2];
                     I_psi = newlatdircommand[3];
                     I_phi = newlatdircommand[4];
+
                     delete[] newlongcommand; // delete pointer to avoid memory leak
                 }
 
@@ -268,7 +276,7 @@ int main() {
 
                 // after the first step, set flagPID to 1
 
-                flagPID = 1;
+                //flagPID = 1;
 
                 // assign the recently calculated state to the fullStateMatrix at column i
                 cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI; //print to screen

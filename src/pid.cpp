@@ -3,25 +3,29 @@
 
 using namespace std;
 
-double* PID( double kp, double ki , double kd, double tau, double err_prev, double err_current, double dt, double time, double flagPID, double N, double I_previous) {
-    double P=0;
-    double I=0;
-    double D=0;
-    double counter = 0;
+double* PID( double kp, double ki , double kd, double tau, double err_prev, double err_current, double dt, double time, double flagPID, double N, double I_previous, double D_previous) {
+    double P;
+    double I;
+    double D;
+    double yt;
 
-    I = I_previous + ki*(err_current)*dt;
-    D = D - D * N * dt + kd * N * (err_current - err_prev);
-    P = kp * err_current;
+    I  = I_previous + ki*(err_current)*dt;
+    yt = D_previous + dt*(N * (kd * (err_current-err_prev)/dt-D_previous));
+    D  = D_previous + dt/2 *(N*(kd*(err_current-err_prev)/dt-D_previous))+N*(kd*((err_current-err_prev)/dt)-yt);
+    P  = kp * err_current;
 
-    double* pid = new double[2];
-    pid[0] = P + I + D;
-    pid[1] = I;
-    return pid;
+
+    double* pid_information = new double[3];
+    pid_information[0] = P + I + D;
+    pid_information[1] = I;
+    pid_information[2] = D;
+    return pid_information;
 }
 
 double* longitudinalController(double V_ref, double h_ref, double currentState[12], double dt, double flagPID,
                                double time, double err_v_previous, double err_theta_previous, double err_h_previous,
-                               double I_v_previous, double I_theta_previous, double I_h_previous){
+                               double I_v_previous, double I_theta_previous, double I_h_previous,
+                               double D_v_previous, double D_theta_previous, double D_h_previous){
 
     double theta_ref;
     double kp_v = -0.0021;
@@ -45,10 +49,10 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
         err_v[1] = V_ref - V_current;
     }*/
 
-
-    double* theta_pid_pointer = PID(kp_v, ki_v, kd_v, tau_v, err_v[0], err_v[1], dt,time, flagPID, N_v, I_v_previous);
+    double* theta_pid_pointer = PID(kp_v, ki_v, kd_v, tau_v, err_v[0], err_v[1], dt,time, flagPID, N_v, I_v_previous, D_v_previous);
     theta_ref = err_v[1] * theta_pid_pointer[0];
     double I_v = theta_pid_pointer[1];
+    double D_v = theta_pid_pointer[2];
     delete[] theta_pid_pointer;
 
     double err_theta[2];
@@ -73,9 +77,10 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
         err_theta[0] = err_theta[1] ;
         err_theta[1] = theta_ref - theta_current;
     }*/
-    double* de_pid_pointer = PID(kp_theta, ki_theta, kd_theta, tau_theta, err_theta[0], err_theta[1], dt,time, flagPID, N_theta, I_theta_previous);
+    double* de_pid_pointer = PID(kp_theta, ki_theta, kd_theta, tau_theta, err_theta[0], err_theta[1], dt,time, flagPID, N_theta, I_theta_previous, D_theta_previous);
     de = err_theta[1] * de_pid_pointer[0];
     double I_theta = de_pid_pointer[1];
+    double D_theta = de_pid_pointer[2];
     delete[] de_pid_pointer;
     // de Saturation
 
@@ -86,7 +91,6 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
         de=15*(M_PI/180);
     };
 
-    //dth_sat 0.55 -0.45
     double err_h[2];
     double dth;
     double kp_h = 0.019;
@@ -110,9 +114,10 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
         err_h[1] = h_ref - h_current;
     }*/
 
-    double* dth_pid_pointer =PID(kp_h, ki_h, kd_h, tau_h, err_h[0], err_h[1], dt,time, flagPID, N_h, I_h_previous);
+    double* dth_pid_pointer =PID(kp_h, ki_h, kd_h, tau_h, err_h[0], err_h[1], dt,time, flagPID, N_h, I_h_previous, D_h_previous);
     dth = err_h[1] * dth_pid_pointer[0];
     double I_h = dth_pid_pointer[1];
+    double D_h = dth_pid_pointer[2];
     delete[] dth_pid_pointer;
 
     //dth_sat 0.55 -0.45
@@ -152,17 +157,15 @@ double* lateralController(double state[12], double dt, double flagPID, double ti
     err_psi[0] = err_psi_previous ;
     err_psi[1] = psi_ref - psi_current;
 
+    // Condition to have reasonable angles
+    if (err_psi[1] < - M_PI){
+        err_psi[1] += 2 * M_PI;
+    }
+    else if (err_psi[1] > M_PI){
+        err_psi[1] -= 2 * M_PI;
+    }
 
-    /*if (flagPID == 0)
-    {
-        err_psi[0] = 0 ;
-        err_psi[1] = psi_ref - psi_current;
-    }
-    else if (flagPID == 1){
-        err_psi[0] = err_psi[1] ;
-        err_psi[1] = psi_ref - psi_current;
-    }
-     */
+
     double I_psi = I_psi_previous + ki_psi*err_psi[1]*dt; // takes into account the previous integral increments
     double D_psi = kd_psi*(err_psi[1]-err_psi[0])/dt;
     double P_psi = kp_psi*err_psi[1];
@@ -198,6 +201,8 @@ double* lateralController(double state[12], double dt, double flagPID, double ti
     lat_commands[2] = err_phi[1];
     lat_commands[3] = I_psi;
     lat_commands[4] = I_phi;
+
+        // da saturation
 
 
     return lat_commands;
