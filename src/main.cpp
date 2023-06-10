@@ -96,14 +96,11 @@ int main() {
         // TRIM SECTION:
         double V_ref, h_ref;
         // todo: get gamma
-        cout << "Insert velocity [m/s]: ";
-        cin >> V_ref;
-        cout << "" << endl;
         cout << "Insert altitude [m]: ";
         cin >> h_ref;
         cout <<""<<endl;
-        cout << "TRIM PARAMETERS: " << endl;
-        cout <<""<<endl;
+        cout << "Insert velocity [m/s]: ";
+        cin >> V_ref;
 
         // try and catch block used to deal with errors -> this way errors are always sent back to the main
         try {
@@ -113,6 +110,21 @@ int main() {
 
             // get correct dba with altitude
             getAerodynamicDbWithAltitude(h_ref, DB1, DB2, dba0, dba100, dba1000, dba2000);
+
+            double Vmax = 25, Vmin;
+            Vmin = computeVmin(DB1,DB2,h_ref);
+            if (V_ref > Vmax){
+                cout << "The entered velocity exceeds the maximum value " << endl;
+                cout << "velocity is set to the maximum one 25 m/s" << endl;
+                V_ref = Vmax;
+            } else if (V_ref < Vmin){
+                cout << "The entered velocity is lower than the minimum value " << endl;
+                cout << "Velocity is set to the minimum one " << Vmin << endl;
+                V_ref = Vmin;
+            }
+            cout << "" << endl;
+            cout << "TRIM PARAMETERS: " << endl;
+            cout <<""<<endl;
 
             // trim angles
             Trim_Angles a = trimAngles(DB1, DB2, V_ref, h_ref);
@@ -160,7 +172,7 @@ int main() {
 
             // SIMULATION FROM HERE
             double Tsim = 10.0;
-            double dt = 0.01;
+            double dt = 0.02;
             int nStep = static_cast<int>(Tsim / dt);
 
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
@@ -216,27 +228,22 @@ int main() {
             double err_h = 0;
             double err_psi = 0;
             double err_phi = 0;
-            // Matheus Part
-            double I_v =0;          double D_v = 0;
-            double I_theta = 0;     double D_theta = 0;
-            double I_h = 0;         double D_h = 0;
-            double I_psi = 0;       double D_psi = 0;
-            double I_phi = 0;       double D_phi = 0;
+            double I_v = 0;
+            double I_theta = 0;
+            double I_h = 0;
+            double I_psi = 0;
+            double I_phi = 0;
 
-
-
-            //Path psi0;
-            //psi0 = read_psiref("SQUARE_psiref.txt");
+            /*Path psi0;
+            psi0 = read_psiref("SQUARE_psiref.txt");*/
 
             // LOOP INTEGRATE EQUATIONS OF MOTION
             for (int i = 1; i <= nStep; i++) {
 
                 double time = i * dt;
                 if (wantPID == 1) {
-                    // Matheus Part
-                    double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h, D_v, D_theta, D_h); // longitudinalController returns a memory address
+                    double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h); // longitudinalController returns a memory address
                     double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
-
                     vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
                     vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
                     vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
@@ -244,10 +251,8 @@ int main() {
                     err_v = newlongcommand[2];
                     err_theta = newlongcommand[3];
                     err_h = newlongcommand[4];
-                    // Matheus Part
                     // the integral errors take the value from the function -> we don't add them to the previous value
                     // because this is already done inside the controller!
-
                     I_v = newlongcommand[5];
                     I_theta = newlongcommand[6];
                     I_h = newlongcommand[7];
@@ -255,7 +260,6 @@ int main() {
                     err_phi = newlatdircommand[2];
                     I_psi = newlatdircommand[3];
                     I_phi = newlatdircommand[4];
-
                     delete[] newlongcommand; // delete pointer to avoid memory leak
                 }
 
@@ -274,9 +278,10 @@ int main() {
                 } // assign values to variable
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
-                // after the first step, set flagPID to 1
+                double current_V = sqrt(pow(vecCI[0],2) + pow(vecCI[1],2) + pow(vecCI[2],2));
 
-                //flagPID = 1;
+                // after the first step, set flagPID to 1
+                flagPID = 1;
 
                 // assign the recently calculated state to the fullStateMatrix at column i
                 cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI; //print to screen
@@ -288,6 +293,12 @@ int main() {
                 }
                 cout << " " << endl;
                 outputSim << " " << endl;
+
+                if (current_V > Vmax || current_V < Vmin) {
+                    cerr << "Out of range: velocity is out of bounds" << endl;
+                    return 1;
+                }
+
             }
             //close loggers
             outputSim.close();
