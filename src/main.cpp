@@ -96,14 +96,11 @@ int main() {
         // TRIM SECTION:
         double V_ref, h_ref;
         // todo: get gamma
-        cout << "Insert velocity [m/s]: ";
-        cin >> V_ref;
-        cout << "" << endl;
         cout << "Insert altitude [m]: ";
         cin >> h_ref;
         cout <<""<<endl;
-        cout << "TRIM PARAMETERS: " << endl;
-        cout <<""<<endl;
+        cout << "Insert velocity [m/s]: ";
+        cin >> V_ref;
 
         // try and catch block used to deal with errors -> this way errors are always sent back to the main
         try {
@@ -113,6 +110,21 @@ int main() {
 
             // get correct dba with altitude
             getAerodynamicDbWithAltitude(h_ref, DB1, DB2, dba0, dba100, dba1000, dba2000);
+
+            double Vmax = 25, Vmin;
+            Vmin = computeVmin(DB1,DB2,h_ref);
+            if (V_ref > Vmax){
+                cout << "The entered velocity exceeds the maximum value " << endl;
+                cout << "velocity is set to the maximum one 25 m/s" << endl;
+                V_ref = Vmax;
+            } else if (V_ref < Vmin){
+                cout << "The entered velocity is lower than the minimum value " << endl;
+                cout << "Velocity is set to the minimum one " << Vmin << endl;
+                V_ref = Vmin;
+            }
+            cout << "" << endl;
+            cout << "TRIM PARAMETERS: " << endl;
+            cout <<""<<endl;
 
             // trim angles
             Trim_Angles a = trimAngles(DB1, DB2, V_ref, h_ref);
@@ -265,6 +277,12 @@ int main() {
                     vecCI[j] = newStates[j]; // update the initial condition vector with the new states for the next loop iteration
                 } // assign values to variable
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
+
+                double current_V = sqrt(pow(vecCI[0],2) + pow(vecCI[1],2) + pow(vecCI[2],2));
+                if (current_V > Vmax || current_V < Vmin) {
+                    cerr << "Out of range: velocity is out of bounds" << endl;
+                    return 1;
+                }
 
                 // after the first step, set flagPID to 1
 

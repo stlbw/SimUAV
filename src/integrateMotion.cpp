@@ -233,7 +233,7 @@ double* getGravitationalForces (const double state[10], const double mass) {
     gravity[2] = g * mass ;
     double det = 0;
     double rotationMatrix[3][3] = {0};
-    //double inverse_matrix[3][3] = {0};
+    double inverse_matrix[3][3] = {0};
     double roll = state[6];
     double pitch = state[7];
     double yaw = state[8];
@@ -295,7 +295,7 @@ double* getGravitationalForces (const double state[10], const double mass) {
     rotationMatrix[2][1] = cosPitch * sinRoll;
     rotationMatrix[2][2] = cosPitch * cosRoll;
 
-    /*
+
     //finding determinant of the matrix
     for(int i = 0; i < 3; i++)
         det = det + (rotationMatrix[0][i] * (rotationMatrix[1][(i+1)%3] * rotationMatrix[2][(i+2)%3] - rotationMatrix[1][(i+2)%3] * rotationMatrix[2][(i+1)%3]));
@@ -308,12 +308,12 @@ double* getGravitationalForces (const double state[10], const double mass) {
         }
     }
     else std::cout<<"Inverse doesn't exist for this matrix";
-     */
+
 
     // g_FB = L_BV  * {0 0 m*g}:
     for(int m = 0; m < 3; m++){
         for (int n = 0; n < 3; n++){
-           gravityForces[m] += (rotationMatrix[m][n] * gravity[n]);
+           gravityForces[m] += (inverse_matrix[m][n] * gravity[n]);
         }
     }
 
@@ -494,7 +494,7 @@ double computeVmin (AeroDB db1, AeroDB db2, double h) {
     double g = 9.81;
     double CX = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, AlphaMax, h);
     double CZ = linearInterpolation(db1.alpha, db1.ss.cz, db2.ss.cz, AlphaMax, h);
-    double CLmax = -CX * sin(M_PI / 180 * AlphaMax) + CZ * cos(M_PI / 180 * AlphaMax);
+    double CLmax = -(CX * sin(M_PI / 180 * AlphaMax) + CZ * cos(M_PI / 180 * AlphaMax));
     double Vmin = sqrt(2 * m * g / (S * rho * CLmax));
 
     return Vmin;
