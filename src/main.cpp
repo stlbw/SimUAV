@@ -279,10 +279,6 @@ int main() {
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
                 double current_V = sqrt(pow(vecCI[0],2) + pow(vecCI[1],2) + pow(vecCI[2],2));
-                if (current_V > Vmax || current_V < Vmin) {
-                    cerr << "Out of range: velocity is out of bounds" << endl;
-                    return 1;
-                }
 
                 // after the first step, set flagPID to 1
 
@@ -298,6 +294,10 @@ int main() {
                 }
                 cout << " " << endl;
                 outputSim << " " << endl;
+                if (current_V > Vmax || current_V < Vmin) {
+                    cerr << "Out of range: velocity is out of bounds" << endl;
+                    return 1;
+                }
             }
             //close loggers
             outputSim.close();
