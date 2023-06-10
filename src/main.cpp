@@ -281,7 +281,6 @@ int main() {
                 double current_V = sqrt(pow(vecCI[0],2) + pow(vecCI[1],2) + pow(vecCI[2],2));
 
                 // after the first step, set flagPID to 1
-
                 flagPID = 1;
 
                 // assign the recently calculated state to the fullStateMatrix at column i
@@ -294,10 +293,12 @@ int main() {
                 }
                 cout << " " << endl;
                 outputSim << " " << endl;
+
                 if (current_V > Vmax || current_V < Vmin) {
                     cerr << "Out of range: velocity is out of bounds" << endl;
                     return 1;
                 }
+
             }
             //close loggers
             outputSim.close();
