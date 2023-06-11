@@ -4,10 +4,10 @@
 using namespace std;
 
 double* PID( double kp, double ki , double kd, double tau, double err_prev, double err_current, double dt, double time, double flagPID, double N, double I_previous, double D_previous) {
-    double P;
-    double I;
-    double D;
-    double yt;
+    double P = 0;
+    double I = 0;
+    double D = 0;
+    //double yt = 0;
 
     I  = I_previous + ki*(err_current)*dt;
     // yt = D_previous + dt*(N * (kd * (err_current-err_prev)/dt-D_previous));
@@ -15,6 +15,10 @@ double* PID( double kp, double ki , double kd, double tau, double err_prev, doub
     D = D_previous - kd*N*(err_current-err_prev) - D_previous * N *dt;
 
     P  = kp * err_current;
+
+    // double errorDerivative = (error - lastError_) / deltaTime;
+    // double filteredErrorDerivative = (1.0 - filterCoefficient_) * errorDerivative
+       //                              + filterCoefficient_ * lastErrorDerivative_;
 
 
     double* pid_information = new double[3];
@@ -81,7 +85,7 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
         err_theta[1] = theta_ref - theta_current;
     }*/
     double* de_pid_pointer = PID(kp_theta, ki_theta, kd_theta, tau_theta, err_theta[0], err_theta[1], dt,time, flagPID, N_theta, I_theta_previous, D_theta_previous);
-    de = err_theta[1] * de_pid_pointer[0];
+    de = de_pid_pointer[0];
     double I_theta = de_pid_pointer[1];
     double D_theta = de_pid_pointer[2];
     delete[] de_pid_pointer;
@@ -89,9 +93,11 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
 
     if(de<= -15*(M_PI/180)){
         de=-15*(M_PI/180);
+        cout << "COMANDO SATURATO --> delta_e = delta_e_min" << endl;
     }
     else if (de>= 15*(M_PI/180)){
         de=15*(M_PI/180);
+        cout << "COMANDO SATURATO --> delta_e = delta_e_max" << endl;
     };
 
     double err_h[2];
@@ -118,7 +124,7 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
     }*/
 
     double* dth_pid_pointer =PID(kp_h, ki_h, kd_h, tau_h, err_h[0], err_h[1], dt,time, flagPID, N_h, I_h_previous, D_h_previous);
-    dth = err_h[1] * dth_pid_pointer[0];
+    dth = dth_pid_pointer[0];
     double I_h = dth_pid_pointer[1];
     double D_h = dth_pid_pointer[2];
     delete[] dth_pid_pointer;
@@ -130,6 +136,8 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
     }
     else if (dth>= 0.55){
         dth=0.55;
+        cout << "delta_throttle SATURATA -> delta_th = 0.55" << endl;
+
     }
 
     double* long_commands = new double[8];

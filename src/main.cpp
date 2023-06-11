@@ -299,10 +299,11 @@ int main() {
                 cout << " " << endl;
                 outputSim << " " << endl;
 
-                if (current_V > Vmax || current_V < Vmin) {
-                    cerr << "Out of range: velocity is out of bounds" << endl;
-                    return 1;
+                /*if (current_V > Vmax || current_V < 8.0) {
+                    string error = "Out of range: velocity is out of bounds. V = " + to_string(current_V) + " m/s";
+                    throw range_error(error);
                 }
+                 */
 
             }
             //close loggers

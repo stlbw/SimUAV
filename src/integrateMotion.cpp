@@ -402,9 +402,13 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     delete[] gravityPointer; // delete pointer to avoid memory leak
 */
     //propeller forces
-    propellerData = getPropellerPerformance(db1, db2, endb, pdb, alpha, delta_e, V, h, rpm);
-    propForces[0] = -propellerData.T; // all other entries are set to 0
-    //L, M, N propeller? -> all zero
+    if (rpm != 0) {
+        propellerData = getPropellerPerformance(db1, db2, endb, pdb, alpha, delta_e, V, h, rpm);
+        propForces[0] = -propellerData.T; // all other entries are set to 0
+        //L, M, N propeller? -> all zero
+    }
+
+
 
     // initialize velocity vectors
     double previousVelocity[6] = {0};
