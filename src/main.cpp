@@ -171,8 +171,8 @@ int main() {
             printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
 
             // SIMULATION FROM HERE
-            double Tsim = 50.0;
-            double dt = 0.02;
+            double Tsim = 200.0;
+            double dt = 0.01;
             int nStep = static_cast<int>(Tsim / dt);
 
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
@@ -234,9 +234,16 @@ int main() {
             double I_psi = 0;
             double I_phi = 0;
 
-            pidController PID_v(-0.0021, -0.00087, -0.0015, 0.0159);
-            pidController PID_theta(-0.3, -3.25,-0.01,  0.0159);
-            pidController PID_h(0.019, 0.0002,0.01,  0.1592);
+            pidController PID_v(-0.0021, -0.00087, -0.0015);
+            pidController PID_theta(-0.3, -3.25,-0.01);
+            pidController PID_h(0.019, 0.0002,0.01);
+            pidController PID_psi(1.5, 0.005, 0.01);
+            pidController PID_phi(0.12, 0.0005, 0.001);
+
+            PID_v.setDerivativeFilter(true, 0.0159);
+            PID_theta.setDerivativeFilter(true, 0.0159);
+            PID_h.setDerivativeFilter(true, 0.1592);
+
 
             /*Path psi0;
             psi0 = read_psiref("SQUARE_psiref.txt");*/
@@ -269,9 +276,9 @@ int main() {
                     }
                     double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h,D_v, D_theta, D_h ); // longitudinalController returns a memory address
                     double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
-                    vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
-                    vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
-                    vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
+                    vecComm[1] = delta_e_test;//vecCommTrim[1] + newlongcommand[1]; //delta_elevator
+                    vecComm[3] = delta_th_test;//vecCommTrim[3] + newlongcommand[0]; //delta_throttle
+                    vecComm[0] = 0;//vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
 
                     //vecComm[1] = delta_e_test;//newlongcommand[1]; //delta_elevator
                     //vecComm[3] = delta_th_test;//newlongcommand[0]; //delta_throttle
