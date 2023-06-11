@@ -171,7 +171,7 @@ int main() {
             printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
 
             // SIMULATION FROM HERE
-            double Tsim = 10.0;
+            double Tsim = 250.0;
             double dt = 0.02;
             int nStep = static_cast<int>(Tsim / dt);
 
@@ -228,9 +228,9 @@ int main() {
             double err_h = 0;
             double err_psi = 0;
             double err_phi = 0;
-            double I_v = 0;
-            double I_theta = 0;
-            double I_h = 0;
+            double I_v = 0; double D_v = 0;
+            double I_theta = 0; double D_theta = 0;
+            double I_h = 0; double D_h = 0;
             double I_psi = 0;
             double I_phi = 0;
 
@@ -242,11 +242,16 @@ int main() {
 
                 double time = i * dt;
                 if (wantPID == 1) {
-                    double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h); // longitudinalController returns a memory address
+                    double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h,D_v, D_theta, D_h ); // longitudinalController returns a memory address
                     double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
-                    vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
-                    vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
-                    vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
+                    //vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
+                    //vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
+                    //vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
+
+                    vecComm[1] = newlongcommand[1]; //delta_elevator
+                    vecComm[3] = newlongcommand[0]; //delta_throttle
+                    vecComm[0] = newlatdircommand[0]; //delta_aileron
+
                     // get new errors and store as previous errors for the NEXT step
                     err_v = newlongcommand[2];
                     err_theta = newlongcommand[3];

@@ -10,8 +10,10 @@ double* PID( double kp, double ki , double kd, double tau, double err_prev, doub
     double yt;
 
     I  = I_previous + ki*(err_current)*dt;
-    yt = D_previous + dt*(N * (kd * (err_current-err_prev)/dt-D_previous));
-    D  = D_previous + dt/2 *(N*(kd*(err_current-err_prev)/dt-D_previous))+N*(kd*((err_current-err_prev)/dt)-yt);
+    // yt = D_previous + dt*(N * (kd * (err_current-err_prev)/dt-D_previous));
+   // D  = D_previous + dt/2 *(N*(kd*(err_current-err_prev)/dt-D_previous))+N*(kd*(err_current-err_prev)/dt-yt);
+    D = D_previous - kd*N*(err_current-err_prev) - D_previous * N *dt;
+
     P  = kp * err_current;
 
 
@@ -34,7 +36,8 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
     double tau_v = 0.0159;
     double N_v = 1/ tau_v;
     //double V_ref = 13.5;            //poi correggere da input
-    double V_current = sqrt(pow(currentState[0], 2) + pow(currentState[1], 2) + pow(currentState[2], 2));
+    //double V_current = sqrt(pow(currentState[0], 2) + pow(currentState[1], 2) + pow(currentState[2], 2));
+    double V_current = currentState[0];
     double err_v [2];
 
     err_v[0] = err_v_previous ;
@@ -50,7 +53,7 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
     }*/
 
     double* theta_pid_pointer = PID(kp_v, ki_v, kd_v, tau_v, err_v[0], err_v[1], dt,time, flagPID, N_v, I_v_previous, D_v_previous);
-    theta_ref = err_v[1] * theta_pid_pointer[0];
+    theta_ref = -theta_pid_pointer[0];  //todo: segno meno
     double I_v = theta_pid_pointer[1];
     double D_v = theta_pid_pointer[2];
     delete[] theta_pid_pointer;
@@ -120,9 +123,10 @@ double* longitudinalController(double V_ref, double h_ref, double currentState[1
     double D_h = dth_pid_pointer[2];
     delete[] dth_pid_pointer;
 
-    //dth_sat 0.55 -0.45
-    if(dth<= -0.45){
-        dth=-0.45;
+    //dth_sat 0.55 -0.45 --> MUST DA RIVEDERE.
+    if(dth <= -0.45){
+        dth = -0.45;
+        cout << "delta_throttle SATURATA -> delta_th = -0.45" << endl;
     }
     else if (dth>= 0.55){
         dth=0.55;
