@@ -171,7 +171,7 @@ int main() {
             printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
 
             // SIMULATION FROM HERE
-            double Tsim = 250.0;
+            double Tsim = 50.0;
             double dt = 0.02;
             int nStep = static_cast<int>(Tsim / dt);
 
@@ -234,6 +234,10 @@ int main() {
             double I_psi = 0;
             double I_phi = 0;
 
+            pidController PID_v(-0.0021, -0.00087, -0.0015, 0.0159);
+            pidController PID_theta(-0.3, -3.25,-0.01,  0.0159);
+            pidController PID_h(0.019, 0.0002,0.01,  0.1592);
+
             /*Path psi0;
             psi0 = read_psiref("SQUARE_psiref.txt");*/
 
@@ -241,16 +245,37 @@ int main() {
             for (int i = 1; i <= nStep; i++) {
 
                 double time = i * dt;
-                if (wantPID == 1) {
+                if (wantPID == 1 && i ) {
+                    double theta_ref_test = PID_v.compute(V_ref, vecCI[0], dt);
+                    double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
+                    if(delta_e_test<= -15*(M_PI/180)){
+                        delta_e_test=-15*(M_PI/180);
+                        cout << "COMANDO SATURATO --> delta_e = delta_e_min" << endl;
+                    }
+                    else if (delta_e_test>= 15*(M_PI/180)){
+                        delta_e_test=15*(M_PI/180);
+                        cout << "COMANDO SATURATO --> delta_e = delta_e_max" << endl;
+                    }
+                    double delta_th_test = PID_h.compute(h_ref, vecCI[9], dt);
+                    //dth_sat 0.55 -0.45 --> MUST DA RIVEDERE.
+                    if(delta_th_test <= -0.45){
+                        delta_th_test = -0.45;
+                        cout << "delta_throttle SATURATA -> delta_th = -0.45" << endl;
+                    }
+                    else if (delta_th_test>= 0.55){
+                        delta_th_test=0.55;
+                        cout << "delta_throttle SATURATA -> delta_th = 0.55" << endl;
+
+                    }
                     double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h,D_v, D_theta, D_h ); // longitudinalController returns a memory address
                     double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
                     vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
                     vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
                     vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
 
-                    vecComm[1] = newlongcommand[1]; //delta_elevator
-                    vecComm[3] = newlongcommand[0]; //delta_throttle
-                    vecComm[0] = newlatdircommand[0]; //delta_aileron
+                    //vecComm[1] = delta_e_test;//newlongcommand[1]; //delta_elevator
+                    //vecComm[3] = delta_th_test;//newlongcommand[0]; //delta_throttle
+                    //vecComm[0] = newlatdircommand[0]; //delta_aileron
 
                     // get new errors and store as previous errors for the NEXT step
                     err_v = newlongcommand[2];
