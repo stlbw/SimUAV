@@ -244,9 +244,9 @@ int main() {
                 if (wantPID == 1) {
                     double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h,D_v, D_theta, D_h ); // longitudinalController returns a memory address
                     double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
-                    //vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
-                    //vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
-                    //vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
+                    vecComm[1] = vecCommTrim[1] + newlongcommand[1]; //delta_elevator
+                    vecComm[3] = vecCommTrim[3] + newlongcommand[0]; //delta_throttle
+                    vecComm[0] = vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
 
                     vecComm[1] = newlongcommand[1]; //delta_elevator
                     vecComm[3] = newlongcommand[0]; //delta_throttle
