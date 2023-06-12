@@ -22,6 +22,14 @@ double getThrottle(double rpm_trim, double rpm_min, double rpm_max){
     return Throttle_trim;
 }
 
+double getRpm(double throttle, double rpmMin, double rpmMax) {
+    double throttleMin = 0.1;
+    double throttleMax = 1;
+    double m = (rpmMax - rpmMin) / (throttleMax - throttleMin);
+    double rpm = m * (throttle - throttleMax) + rpmMax;
+    return rpm;
+}
+
 Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
     Trim_Engine_Propeller enginePerformanceTrim;
     Propel propelResult;

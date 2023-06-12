@@ -254,7 +254,7 @@ int main() {
                 if (wantPID == 1 && i ) {
                     double theta_ref_test = PID_v.compute(V_ref, vecCI[0], dt);
                     double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
-                    double phi_test = PID_psi.compute(psi0.Psi[i],vecCI[8],dt);
+                    double phi_test = PID_psi.compute(psi0.Psi[i] * M_PI/180,vecCI[8],dt);
                     double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
                     if(delta_e_test<= -15*(M_PI/180)){
                         delta_e_test=-15*(M_PI/180);
