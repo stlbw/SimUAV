@@ -251,7 +251,7 @@ int main() {
             for (int i = 1; i <= nStep; i++) {
 
                 double time = i * dt;
-                if (wantPID == 1 && i ) {
+                if (wantPID == 1) {
                     double theta_ref_test = PID_v.compute(V_ref, vecCI[0], dt);
                     double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
                     double phi_test = PID_psi.compute(psi0.Psi[i] * M_PI/180,vecCI[8],dt);
@@ -311,7 +311,7 @@ int main() {
                     delete[] newlongcommand; // delete pointer to avoid memory leak
                 }
 
-                double rpm = vecComm[3] * en0.laps_max; //d_th * RPM_MAX
+                double rpm = getRpm(vecComm[3], en0.laps_min, en0.laps_max);
 
                 // get correct dba with altitude
                 double h = vecCI[9]; // update altitude
@@ -342,11 +342,11 @@ int main() {
                 cout << " " << endl;
                 outputSim << " " << endl;
 
-                /*if (current_V > Vmax || current_V < 8.0) {
+                if (current_V > Vmax || current_V < 8.0) {
                     string error = "Out of range: velocity is out of bounds. V = " + to_string(current_V) + " m/s";
                     throw range_error(error);
                 }
-                 */
+
 
             }
             //close loggers
