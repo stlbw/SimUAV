@@ -254,8 +254,7 @@ int main() {
                 if (wantPID == 1) {
                     double theta_ref_test = PID_v.compute(V_ref, vecCI[0], dt);
                     double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
-                    double phi_test = PID_psi.compute(psi0.Psi[i] * M_PI/180,vecCI[8],dt);
-                    double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
+
                     if(delta_e_test<= -15*(M_PI/180)){
                         delta_e_test=-15*(M_PI/180);
                         cout << "COMANDO SATURATO --> delta_e = delta_e_min" << endl;
@@ -264,17 +263,9 @@ int main() {
                         delta_e_test=15*(M_PI/180);
                         cout << "COMANDO SATURATO --> delta_e = delta_e_max" << endl;
                     }
-                    double delta_th_test = PID_h.compute(h_ref, vecCI[9], dt);
-                    //dth_sat 0.55 -0.45 --> MUST DA RIVEDERE.
-                    if(delta_th_test <= -0.45){
-                        delta_th_test = -0.45;
-                        cout << "delta_throttle SATURATA -> delta_th = -0.45" << endl;
-                    }
-                    else if (delta_th_test>= 0.55){
-                        delta_th_test=0.55;
-                        cout << "delta_throttle SATURATA -> delta_th = 0.55" << endl;
 
-                    }
+                    double phi_test = PID_psi.compute(psi0.Psi[i] ,vecCI[8],dt);
+                    double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
 
                     if(delta_a_test <= -20*(M_PI/180)){
                         delta_a_test = -20*(M_PI/180);
@@ -285,8 +276,20 @@ int main() {
                         cout << "COMANDO SATURATO --> delta_a = delta_a_max" << endl;
                     }
 
-                    double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h,D_v, D_theta, D_h ); // longitudinalController returns a memory address
-                    double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
+                    double delta_th_test = PID_h.compute(h_ref, vecCI[9], dt);
+
+                    //dth_sat 0.55 -0.45 --> MUST DA RIVEDERE.
+                    if(delta_th_test <= -0.45){
+                        delta_th_test = -0.45;
+                        cout << "delta_throttle SATURATA -> delta_th = -0.45" << endl;
+                    }
+                    else if (delta_th_test>= 0.55){
+                        delta_th_test=0.55;
+                        cout << "delta_throttle SATURATA -> delta_th = 0.55" << endl;
+                    }
+
+                    //double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h,D_v, D_theta, D_h ); // longitudinalController returns a memory address
+                    //double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
                     vecComm[1] = delta_e_test;//vecCommTrim[1] + newlongcommand[1]; //delta_elevator
                     vecComm[3] = delta_th_test;//vecCommTrim[3] + newlongcommand[0]; //delta_throttle
                     vecComm[0] = delta_a_test;//vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
@@ -296,7 +299,7 @@ int main() {
                     //vecComm[0] = newlatdircommand[0]; //delta_aileron
 
                     // get new errors and store as previous errors for the NEXT step
-                    err_v = newlongcommand[2];
+                    /*err_v = newlongcommand[2];
                     err_theta = newlongcommand[3];
                     err_h = newlongcommand[4];
                     // the integral errors take the value from the function -> we don't add them to the previous value
@@ -308,7 +311,7 @@ int main() {
                     err_phi = newlatdircommand[2];
                     I_psi = newlatdircommand[3];
                     I_phi = newlatdircommand[4];
-                    delete[] newlongcommand; // delete pointer to avoid memory leak
+                    delete[] newlongcommand; */ // delete pointer to avoid memory leak
                 }
 
                 double rpm = getRpm(vecComm[3], en0.laps_min, en0.laps_max);
@@ -342,7 +345,7 @@ int main() {
                 cout << " " << endl;
                 outputSim << " " << endl;
 
-                if (current_V > Vmax || current_V < 8.0) {
+                if (current_V > Vmax || current_V < 8.0) { // da cambiare in Vmin?
                     string error = "Out of range: velocity is out of bounds. V = " + to_string(current_V) + " m/s";
                     throw range_error(error);
                 }
