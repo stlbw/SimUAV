@@ -171,7 +171,7 @@ int main() {
             printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
 
             // SIMULATION FROM HERE
-            double Tsim = 200.0;
+            double Tsim = 150.0;
             double dt = 0.01;
             int nStep = static_cast<int>(Tsim / dt);
 
@@ -244,9 +244,8 @@ int main() {
             PID_theta.setDerivativeFilter(true, 0.0159);
             PID_h.setDerivativeFilter(true, 0.1592);
 
-
-            /*Path psi0;
-            psi0 = read_psiref("SQUARE_psiref.txt");*/
+            Path psi0;
+            psi0 = read_psiref("SQUARE_psiref.txt");
 
             // LOOP INTEGRATE EQUATIONS OF MOTION
             for (int i = 1; i <= nStep; i++) {
@@ -255,6 +254,8 @@ int main() {
                 if (wantPID == 1 && i ) {
                     double theta_ref_test = PID_v.compute(V_ref, vecCI[0], dt);
                     double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
+                    double phi_test = PID_psi.compute(psi0.Psi[i],vecCI[8],dt);
+                    double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
                     if(delta_e_test<= -15*(M_PI/180)){
                         delta_e_test=-15*(M_PI/180);
                         cout << "COMANDO SATURATO --> delta_e = delta_e_min" << endl;
@@ -274,11 +275,21 @@ int main() {
                         cout << "delta_throttle SATURATA -> delta_th = 0.55" << endl;
 
                     }
+
+                    if(delta_a_test <= -20*(M_PI/180)){
+                        delta_a_test = -20*(M_PI/180);
+                        cout << "COMANDO SATURATO --> delta_a = delta_a_min" << endl;
+                    }
+                    else if (delta_a_test>= 20*(M_PI/180)){
+                        delta_a_test = 20*(M_PI/180);
+                        cout << "COMANDO SATURATO --> delta_a = delta_a_max" << endl;
+                    }
+
                     double* newlongcommand = longitudinalController(V_ref, h_ref, vecCI,dt,flagPID,time, err_v, err_theta, err_h, I_v, I_theta, I_h,D_v, D_theta, D_h ); // longitudinalController returns a memory address
                     double* newlatdircommand = lateralController(vecCI,dt,flagPID,time, err_psi, err_phi, I_psi, I_phi);
                     vecComm[1] = delta_e_test;//vecCommTrim[1] + newlongcommand[1]; //delta_elevator
                     vecComm[3] = delta_th_test;//vecCommTrim[3] + newlongcommand[0]; //delta_throttle
-                    vecComm[0] = 0;//vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
+                    vecComm[0] = delta_a_test;//vecCommTrim[0] + newlatdircommand[0]; //delta_aileron
 
                     //vecComm[1] = delta_e_test;//newlongcommand[1]; //delta_elevator
                     //vecComm[3] = delta_th_test;//newlongcommand[0]; //delta_throttle
