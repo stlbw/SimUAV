@@ -193,7 +193,7 @@ int main() {
             for (int i = 0; i < nStep + 1; i++) {fullStateMatrix[i] = new double[12];}
 
             // assign the header to simulation
-            cout << left << setw(15) << "T" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
+            cout << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
                     << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
                     << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
             //  assign first column as the trim condition
@@ -201,7 +201,7 @@ int main() {
             cout << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
 
             // print to logger the trim step
-            outputSim << left << setw(15) << "T" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
+            outputSim << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
                  << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
                  << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
 
@@ -218,10 +218,15 @@ int main() {
             outputSim << " " << endl;
 
 
-            double flagPID = 0;
+           // double flagPID = 0;
             double wantPID = 0;
+            double wantPrint=0;
+            double runningflag=0;
             cout <<'\n'<<" Do you want to implement the PID controller ? (Y/1 N/0):" << endl;
             cin >> wantPID;
+            cout <<'\n'<<"The results are gonna be printed on the 'simylationData.txt' file"<< endl;
+            cout << '\n'<< "Do you want to print the results also on this screen? (Y/1 N/0):"<<endl;
+            cin >>wantPrint;
             // initialize error variables and integrative error to be used when PID is active - store the error at the previous step
             double err_v = 0;
             double err_theta = 0;
@@ -332,25 +337,31 @@ int main() {
                 double current_V = sqrt(pow(vecCI[0],2) + pow(vecCI[1],2) + pow(vecCI[2],2));
 
                 // after the first step, set flagPID to 1
-                flagPID = 1;
+                // flagPID = 1;
 
                 // assign the recently calculated state to the fullStateMatrix at column i
-                cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI; //print to screen
-                outputSim << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI; // print to logger
-                for (int k = 0; k < 12; k++) {
-                    fullStateMatrix[i][k] = newStates[k];
-                    cout << left << setw(15) << fullStateMatrix[i][k]; //print to screen
-                    outputSim << left << setw(15) << fullStateMatrix[i][k]; //print to logger
+                if (wantPrint==1) { cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI;
                 }
-                cout << " " << endl;
+                else if (wantPrint==0 & runningflag==0){
+                    cout << '\n'<< " Running..."<< endl;
+                runningflag=1;
+                }//print to screen
+                outputSim << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI; // print to logger
+
+                   for (int k = 0; k < 12; k++) {
+                       fullStateMatrix[i][k] = newStates[k];
+                       if (wantPrint==1) {
+                           cout << left << setw(15) << fullStateMatrix[i][k];
+                           cout << " " << endl;
+                       } //print to screen
+                       outputSim << left << setw(15) << fullStateMatrix[i][k]; //print to logger
+               }
                 outputSim << " " << endl;
 
                 if (current_V > Vmax || current_V < 8.0) { // da cambiare in Vmin?
                     string error = "Out of range: velocity is out of bounds. V = " + to_string(current_V) + " m/s";
                     throw range_error(error);
                 }
-
-
             }
             //close loggers
             outputSim.close();
