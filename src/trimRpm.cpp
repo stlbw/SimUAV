@@ -26,7 +26,7 @@ double getRpm(double throttle, double rpmMin, double rpmMax) {
     double throttleMin = 0.1;
     double throttleMax = 1;
     double m = (rpmMax - rpmMin) / (throttleMax - throttleMin);
-    double rpm = m * (throttle - throttleMax) + rpmMax;
+    double rpm = m * throttle;
     return rpm;
 }
 
