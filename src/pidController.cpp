@@ -27,12 +27,12 @@ public:
         double output ;
 
         if (flagFilter_ && filterConstant_ != 0.0) {
-            double filteredDerivative = (filterConstant_ * lastErrorDerivative_ + dt * derivative) / (filterConstant_ + dt);
-            output = kp_ * error + ki_ * integralErrorSum_ + kd_ * filteredDerivative;
-            lastErrorDerivative_ = filteredDerivative;
-        }
-        else {
-            output = kp_ * error + ki_ * integralErrorSum_ + kd_ * derivative;
+            double N = 1 / filterConstant_;
+            double derivative = lastErrorDerivative_ - kd_ * N * (error - lastError_) - lastErrorDerivative_ * N * dt;
+            integralErrorSum_ += ki_ * error * dt;
+
+            output = kp_ * error + integralErrorSum_ + derivative;
+
             lastErrorDerivative_ = derivative;
         }
 
@@ -40,13 +40,7 @@ public:
         return output;
         //END CHANGES
 
-        //double N = 1 / filterConstant_;
-        //double derivative = lastErrorDerivative_ - kd_ * N * (error - lastError_) - lastErrorDerivative_ * N * dt;
-        //integralErrorSum_ += ki_ * error * dt;
 
-        //double output = kp_ * error + integralErrorSum_ + derivative;
-
-        //lastErrorDerivative_ = derivative;
 
 
 
