@@ -16,10 +16,12 @@ struct Propel {
 /**
  * Computes propeller performance using a simpolified Glauert's Blade Element Theory for each station of the propeller
  * defined in the propeller database and returns a struct of type Propel
- * @param db
+ * @param db1
+ * @param db2
  * @param endb
  * @param pdb
- * @param angles
+ * @param alpha given in DEG
+ * @param delta_e given in DEG
  * @param V
  * @param h
  * @param rpm

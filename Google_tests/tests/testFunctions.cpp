@@ -50,7 +50,7 @@ TEST(TrimTest, CanComputeAlphaTrim) {
     double V = 15;
     double h = 100;
     double tol = 0.05;
-    ASSERT_NEAR(trimAngles(db1, db2, V, h).alpha_trim, 2.36, tol);
+    ASSERT_NEAR(trimAngles(db1, db2, V, h, 0).alpha_trim, 2.36, tol);
 }
 
 TEST(TrimTest, CanComputeDeltaTrim) {
@@ -60,7 +60,17 @@ TEST(TrimTest, CanComputeDeltaTrim) {
     double V = 15;
     double h = 100;
     double tol = 0.05;
-    ASSERT_NEAR(trimAngles(db1, db2, V, h).deltae_trim, -2.16, tol);
+    ASSERT_NEAR(trimAngles(db1, db2, V, h, 0).deltae_trim, -2.16, tol);
+}
+
+TEST(TrimTest, CanConvertRpm) {
+    double rpmMin = 3600;
+    double rpmMax = 30000;
+    double rpmAvg = 8300;
+    ASSERT_NEAR(getRpm(0.1, rpmMin, rpmMax), 3600, 1);
+    ASSERT_NEAR(getRpm(1, rpmMin, rpmMax), 30000, 1);
+    ASSERT_NEAR(getRpm(0.229545, rpmMin, rpmMax), 7400, 1);
+
 }
 
 TEST(IntegrateMotion, CanMaintainTrim) {

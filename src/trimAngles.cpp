@@ -14,7 +14,7 @@ struct Trim_Angles{
 
 
 // Prima approssimazione
-Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_0 = 0) {
+Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_0) {
     // Primo tentativo gamma_0=0 --> alpha = theta
 
     double alpha_min;
@@ -49,8 +49,9 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
     double Cm_deltae;
 
     bool foundAlpha = false;
+    alpha_int = alpha_min;
 
-    for (alpha_int = alpha_min; alpha_int <= alpha_max; alpha_int += incr_alpha) {
+    while (alpha_int <= alpha_max) {
         Cm_ss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_int, h);
         Cm_alpha = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_int, h);
         Cm_deltae = linearInterpolation(db1.alpha, db1.cm.cm_de, db2.cm.cm_de, alpha_int, h);
@@ -71,6 +72,7 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
             Cm_deltae = linearInterpolation(db1.alpha, db1.cm.cm_de, db2.cm.cm_de, alpha_int, h);
             angles.deltae_trim = (-(Cm_ss + Cm_alpha * angles.alpha_trim* M_PI /180) / Cm_deltae) *180 / M_PI;
         }
+        alpha_int += incr_alpha;
     }
     //throw error if alpha_trim cannot be found
     if(!foundAlpha) {
@@ -87,15 +89,13 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
         throw range_error(error);
     }
 
-    angles.theta_trim = angles.alpha_trim + gamma_0; // theta = alpha + gamma
+    angles.theta_trim = angles.alpha_trim + gamma_0; // theta = alpha + gamma [DEG]
     angles.u = V*cos(angles.alpha_trim * M_PI / 180.0);
     angles.w = V*sin(angles.alpha_trim * M_PI / 180.0);
 
     return angles;
 }
 
-
-// Da fare: far inserire le velocità e la quota di volo all'utente
 // Slide 50 3 opzioni per il deltae
 
 
