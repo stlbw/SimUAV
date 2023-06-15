@@ -31,7 +31,12 @@ void save_psiRef(Path *db, string filePath) {
         }
         myfile.close();
         for (int i=0; i <= length; i++) {
-            db->Psi[i]=db->Psi[i]*M_PI/180;
+            if (abs(db->Psi[i]) < 1){
+                db->Psi[i] = db->Psi[i] * 180/M_PI;
+            }
+            else{
+                db->Psi[i] = (db->Psi[i]-2*M_PI)*180/M_PI;
+            }
         }
     }
     else {
