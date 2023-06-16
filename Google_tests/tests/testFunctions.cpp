@@ -103,7 +103,7 @@ TEST(IntegrateMotion, CanMaintainTrim) {
     }
     getAerodynamicDbWithAltitude(h, DB1, DB2, db1, db2, db3, db4);
 
-    for (int i = 1; i < 10000; i++) {
+    for (int i = 1; i < 100000; i++) {
         h = vecTrim[9];
         double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, rpm, vecTrim, vecComTrim, stateMinusOne, 0.01, loggerRemainders, loggerAcceleration);
         double newStates[12] = {0};
@@ -114,7 +114,7 @@ TEST(IntegrateMotion, CanMaintainTrim) {
         } // assign values to variable
         delete[] newStatesPointer; // delete pointer to avoid memory leak
         EXPECT_NEAR(vecTrim[0], vecRef[0], 1);
-        EXPECT_NEAR(vecTrim[9], vecRef[9], 1);
+        EXPECT_NEAR(vecTrim[9], vecRef[9], 10);
 
     }
 

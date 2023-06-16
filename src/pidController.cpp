@@ -48,6 +48,14 @@ public:
 
     double computePIDSimple(double referencePoint, double currentValue, double dt) {
         double error = referencePoint - currentValue;
+        if (flagErrorCheck_) {
+            if (error < - M_PI) {
+                error +=  2*M_PI;
+            }
+            else if (error > M_PI) {
+                error -= 2*M_PI;
+            }
+        }
         double derivative = (error - lastError_) / dt;
 
         integralErrorSum_ += error * dt;
@@ -97,6 +105,10 @@ public:
         if (errorCheck) {
             flagErrorCheck_ = true;
         }
+    }
+
+    void resetIntegrativeError() {
+        integralErrorSum_ = 0;
     }
 private:
     double kp_;

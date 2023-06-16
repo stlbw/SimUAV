@@ -30,7 +30,7 @@ void save_psiRef(Path *db, string filePath) {
             }
         }
         myfile.close();
-
+/*
         for (int i=0; i <= length; i++) {
             if (db->Psi[i] < - M_PI){
                 db->Psi[i] += 2 * M_PI;
@@ -39,7 +39,7 @@ void save_psiRef(Path *db, string filePath) {
                 db->Psi[i] -= 2 * M_PI;
             }
         }
-
+*/
     }
     else {
         string errorMessage = "Could not open " + filePath;

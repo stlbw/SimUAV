@@ -62,7 +62,7 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
         Cz_tot = Cz_ss + Cz_alpha * alpha_int / 180 * M_PI + Cz_deltae * deltae_int / 180 * M_PI;
 
         // MASS and WING AREA are also CONSTANT in the database, no need to interpolate
-        if (abs(db1.Ad.Mass * g * cos(alpha_int / 180 * M_PI) + 0.5 * Cz_tot * rho * db1.Ad.Wing_area * pow(V, 2)) <
+        if (abs(db1.Ad.Mass * g * cos(alpha_int / 180 * M_PI) + 0.5 * Cz_tot * rho * db1.Ad.Wing_area * V * V) <
             res){
             angles.alpha_trim = alpha_int;
             foundAlpha = true; // change the flag's state once a possible trim condition is found

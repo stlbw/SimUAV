@@ -84,7 +84,7 @@ double linearInterpolation(vector <double> alpha, vector<double> var1, vector<do
           dH = (h - 1000.0);
      }
      else {
-         string error = "Could not interpolate database as the altitude exceeds the maximum altitude. Declared h = " +
+         string error = "Could not interpolate database as the altitude exceeds the allowed altitude range. Declared h = " +
                  to_string(h) + " m.";
          throw range_error(error);
      }
@@ -94,7 +94,7 @@ double linearInterpolation(vector <double> alpha, vector<double> var1, vector<do
  }
 
  /**
-  * Selects the correct databases to interpolate from based on the altitude. This function receives the databses for
+  * Selects the correct databases to interpolate from based on the altitude. This function receives the databases for
   * sea-level, 100m, 1000m and 2000m and the altitude. Returns the range of databases for the desired altitude as db1 and db2
   * @param h
   * @param db1 lower-bound database

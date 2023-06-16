@@ -177,7 +177,7 @@ int main() {
 
             TrimCondition ss;
             ss.alphaDeg = a.alpha_trim;
-            ss.V = sqrt(pow(a.u, 2) + pow(a.w, 2));
+            ss.V = sqrt(a.u * a.u + a.w * a.w);
             ss.h = h_ref;
             ss.rho = computeDensity(h_ref);
 
@@ -211,16 +211,16 @@ int main() {
             printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
 
             // SIMULATION FROM HERE
-            double Tsim = 1000.0;
-            double dt = 0.02;
+            double Tsim = 150.0;
+            double dt = 0.01;
             int nStep = static_cast<int>(Tsim / dt);
 
             Path psi0;
-            psi0 = read_psiref("SQUARE_psiref.txt");
+            psi0 = read_psiref("SNAKE_psiref.txt");
 
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
-            double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
+            double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), psi0.Psi[2000], h_ref, 0, -300}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
             //The choice of 2000-1 is because the simulation starts after 20 sec
 
             // initialize the command vector
@@ -283,42 +283,60 @@ int main() {
             PID_theta.setDerivativeFilter(true, 0.0159);
             PID_h.setDerivativeFilter(true, 0.1592);
 
-            //PID_psi.setErrorCheck(true);
+            PID_psi.setErrorCheck(true);
             //PID_phi.setErrorCheck(true);
 
 
             // LOOP INTEGRATE EQUATIONS OF MOTION
-            for (int i = 0; i <= nStep; i++) {
+            for (int i = 1; i <= nStep; i++) {
 
                 double time = i * dt;
                 if (wantPID == 1) {
-                    double vTot = ::sqrt(pow(vecCI[0], 2) + pow(vecCI[1], 2) + pow(vecCI[2], 2));
-                    double theta_ref_test = PID_v.computeNewTest(V_ref, vecCI[0], dt);
-                    double delta_e_test = PID_theta.computeNewTest(theta_ref_test, vecCI[7], dt);
-                    double delta_th_test = PID_h.computeNewTest(h_ref, vecCI[9], dt);
+                    double theta_ref_test = PID_v.computePIDSimple(V_ref, vecCI[0], dt);
+                    double delta_e_test = PID_theta.computePIDSimple(theta_ref_test, vecCI[7], dt);
+                    double delta_th_test = PID_h.computePIDSimple(h_ref, vecCI[9], dt);
+                    double delta_a_test = 0;
+                    if (i >= 2000) {
+                        vecCI[8] = psi0.Psi[i - 1];
+                        double phi_test = PID_psi.computePIDSimple(psi0.Psi[i],vecCI[8],dt);
+                        delta_a_test = PID_phi.computePIDSimple(phi_test,vecCI[6],dt);
+                    }
 
-                    //double phi_test = PID_psi.compute(psi0.Psi[i],vecCI[8],dt);
-                    //double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
 
-                    vecComm[0] = 0;//delta_a_test; //delta_aileron
+                    vecComm[0] = delta_a_test;//delta_a_test; //delta_aileron
                     vecComm[1] = delta_e_test; //delta_elevator
                     vecComm[3] = delta_th_test; //delta_throttle
                     if(vecComm[3] <= 0.1){
                         vecComm[3] = 0.1;
                         cout << "delta_throttle SATURATA -> delta_th = 0.1" << endl;
+                        PID_h.resetIntegrativeError();
                     }
                     else if (vecComm[3]>= 1.0) {
                         vecComm[3]=1.0;
                         cout << "delta_throttle SATURATA -> delta_th = 1.0" << endl;
+                        PID_h.resetIntegrativeError();
                     }
 
                     if(vecComm[1] <= -20 * M_PI / 180){
                         vecComm[1] = -20 * M_PI / 180;
                         cout << "delta_e SATURATA -> delta_e min" << endl;
+                        PID_theta.resetIntegrativeError();
                     }
                     else if (vecComm[1]>= 20 * M_PI / 180) {
                         vecComm[1]=20 * M_PI / 180;
                         cout << "delta_e SATURATA -> delta_e max" << endl;
+                        PID_theta.resetIntegrativeError();
+
+                    }
+                    if(vecComm[0] <= -20 * M_PI / 180){
+                        vecComm[0] = -20 * M_PI / 180;
+                        cout << "delta_a SATURATA -> delta_a min" << endl;
+                        PID_phi.resetIntegrativeError();
+                    }
+                    else if (vecComm[0]>= 20 * M_PI / 180) {
+                        vecComm[0]=20 * M_PI / 180;
+                        cout << "delta_a SATURATA -> delta_a max" << endl;
+                        PID_phi.resetIntegrativeError();
                     }
 
                 }
@@ -338,7 +356,7 @@ int main() {
                 } // assign values to variable
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
-                double current_V = sqrt(pow(vecCI[0],2) + pow(vecCI[1],2) + pow(vecCI[2],2));
+                double current_V = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
 
 
                 // assign the recently calculated state to the fullStateMatrix at column i
@@ -361,7 +379,7 @@ int main() {
                if (wantPrint == 1) {cout << " " << endl;}
                outputSim << " " << endl;
 
-                if (current_V > Vmax || current_V < 8.0) { // da cambiare in Vmin?
+                if (current_V > Vmax || current_V < Vmin) { // da cambiare in Vmin?
                     string error = "Out of range: velocity is out of bounds. V = " + to_string(current_V) + " m/s";
                     throw range_error(error);
                 }
