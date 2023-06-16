@@ -215,9 +215,10 @@ double* getRemainders(const double state[10], const double command[4], const dou
     double dphi = p + q * sin(phi) * tan(theta) + r * cos(phi) * tan(theta);
     double dtheta = q * cos(phi) - r * sin(phi);
     double dpsi = q * sin(phi) / cos(theta) + r * cos(phi) / cos(theta);
-    double dh = -u * sin(theta) + v * cos(theta) * sin(phi) + w * cos(theta) * cos(phi);
+    double dz = -u * sin(theta) + v * cos(theta) * sin(phi) + w * cos(theta) * cos(phi);
     double dx = u * cos(theta) * cos(psi) + v * (sin(phi) * sin(theta) * cos(psi) - cos(phi) * sin(psi)) + w * (cos(phi) * sin(theta) * cos(psi) + sin(phi) * sin(psi));
-    double dy = u * cos(theta) * sin(psi) + v * (sin(phi) * sin(theta) * sin(psi) + cos(phi) * cos(psi)) + w * (cos(phi) * sin(theta) * sin(psi) + sin(phi) * cos(psi));
+    double dy = u * cos(theta) * sin(psi) + v * (sin(phi) * sin(theta) * sin(psi) + cos(phi) * cos(psi)) + w * (cos(phi) * sin(theta) * sin(psi) - sin(phi) * cos(psi));
+    double dh = -dz;
 
     double* remainder = new double[12];
     remainder[0] = du;
