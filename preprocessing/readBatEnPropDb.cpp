@@ -18,14 +18,6 @@ struct EngineDB{
     // reduction_rate is not considered
 };
 
-// Contains nested struct for each topic contained in the battery and engine files
-
- //DEPRECATED
-  //struct GeneralDB{
-    //BatteryDB Bat;
-    //EngineDB En;
-//};
-
 // Definition of the variables for reading the file: propeller
 struct Propeller_Geometry{
     double diameter, diameter_ogive, np, inertia, nstation;
@@ -42,7 +34,6 @@ struct Propeller_Specifics{
     vector <double> BA;
 };
 
-// Contains nested struct for each topic contained in the propeller file
 struct PropDB {
     int length;
     Propeller_Geometry Pg;
@@ -55,13 +46,10 @@ void save_battery(BatteryDB *db, string filePath) {
     string text;
     ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
     myfile.open(filePath); // to open the file
-    // if the file is correctly open...
     if(myfile.is_open()) {
-        cout << "Reading database " << filePath << endl; // print what the program is reading
-        // read line by line and based on the keyword save variables accordingly
+        cout << "Reading database " << filePath << endl;
         while (!myfile.eof()) {
             getline(myfile, text);
-            // read and save all aircraft description data
             if (text.find("CAPACITA' NOMINALE \t[mAh]") != string::npos) {
                 istringstream A(text);
                 A >> db->C;
@@ -81,15 +69,12 @@ void save_battery(BatteryDB *db, string filePath) {
 // Function for saving variable from the file: engine
 void save_engine(EngineDB *db,string filePath) {
     string text;
-    ifstream myfile; // ifstream is a file input stream that allows us to read any information contained in the file
+    ifstream myfile;
     myfile.open(filePath); // to open the file
-    // if the file is correctly open...
     if(myfile.is_open()) {
         cout << "Reading database " << filePath << endl; // print what the program is reading
-        // read line by line and based on the keyword save variables accordingly
         while (!myfile.eof()) {
             getline(myfile, text);
-            // read and save all aircraft description data
             if (text.find("NUMERO DI GIRI MINIMO DEL MOTORE  [rpm]") != string::npos) {
                 istringstream A(text);
                 A >> db->laps_min;
@@ -123,14 +108,11 @@ void save_propeller(PropDB *db, string filePath) {
     string text;
     ifstream myfile;
     myfile.open(filePath); // to open the file
-    // if the file is correctly open...
     if(myfile.is_open()) {
         std::vector<std::string> nameVar {""}; // declare vector to store variables
-        cout << "Reading database " << filePath << endl; // print what the program is reading
-        // read line by line and based on the keyword save variables accordingly
+        cout << "Reading database " << filePath << endl;
         while (!myfile.eof()) {
             getline(myfile, text);
-            // read and save all aircraft description data
             if (text.find("DIAMETRO [m]") != string::npos) {
                 istringstream A(text);
                 A >> db->Pg.diameter;
@@ -173,24 +155,12 @@ void save_propeller(PropDB *db, string filePath) {
                 // we change the state of the flag, in this way we save only useful data
                 if (text.find("CSI") != string::npos) {
                     nameVar = {"CSI", "RD", "CH AD", "BA"}; // clean variable to receive new values
-                    /*string textToken;
-                    stringstream st(text);
-                    while (getline(st, textToken, ' ')) {
-                        if (!textToken.empty()) {
-                            nameVar.push_back(textToken);
-                        }
-                    }*/
                 } else if (text.find("********************************") == string::npos && text.find("CSI") == string::npos) {
                     string token;
                     stringstream s(text);
                     int i = 0;
                     while (getline(s, token, '\t')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if (nameVar[i].find("CSI") != string::npos) {
                                 db->Ps.CSI.push_back(stof(token));
                                 i++;

@@ -135,9 +135,6 @@ struct Flags {
     // ControlMoment and Rotary
 };
 
-// in C++ structures have the same level if hierarchy as classes thus it is needed to create an object of class
-// <<aerodyn>> to be accessed outside it
-
 /** Gets the sampling size of angle of attack from file*/
 int getAoALength(string filePath) {
     ifstream myfile;
@@ -154,7 +151,6 @@ int getAoALength(string filePath) {
                 while (getline(s, token, ' ')) {
                     if (!token.empty()) {
                         vecLen = stoi(token);
-                        //db->length = stoi(token);
                         myfile.close(); // close file
                         return vecLen;
                     }
@@ -176,34 +172,44 @@ void updateFlag(Flags *f, string text) {
     if(text.find("STEADY STATE COEFFICIENTS") != string::npos) {
         f->flag_ss = 1;
         f->flag_fx = f->flag_fy = f->flag_fz = f->flag_roll = f->flag_pitch = f->flag_yaw = f->flag_cf = f->flag_cm = f->flag_rotary = 0;
-    } else if(text.find("X  FORCE DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("X  FORCE DERIVATIVES") != string::npos) {
         f->flag_fx = 1;
         f->flag_ss = f->flag_fy = f->flag_fz = f->flag_roll = f->flag_pitch = f->flag_yaw = f->flag_cf = f->flag_cm = f->flag_rotary = 0;
-    } else if(text.find("Y  FORCE DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("Y  FORCE DERIVATIVES") != string::npos) {
         f->flag_fy = 1;
         f->flag_fx = f->flag_ss = f->flag_fz = f->flag_roll = f->flag_pitch = f->flag_yaw = f->flag_cf = f->flag_cm = f->flag_rotary = 0;
-    } else if(text.find("Z  FORCE DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("Z  FORCE DERIVATIVES") != string::npos) {
         f->flag_fz = 1;
         f->flag_fx = f->flag_fy = f->flag_ss = f->flag_roll = f->flag_pitch = f->flag_yaw = f->flag_cf = f->flag_cm = f->flag_rotary = 0;
-    } else if(text.find("ROLLING MOMENT DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("ROLLING MOMENT DERIVATIVES") != string::npos) {
         f->flag_roll = 1;
         f->flag_fx = f->flag_fy = f->flag_fz = f->flag_ss = f->flag_pitch = f->flag_yaw = f->flag_cf = f->flag_cm = f->flag_rotary = 0;
-    } else if(text.find("PITCHING MOMENT DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("PITCHING MOMENT DERIVATIVES") != string::npos) {
         f->flag_pitch = 1;
         f->flag_fx = f->flag_fy = f->flag_fz = f->flag_roll = f->flag_ss = f->flag_yaw = f->flag_cf = f->flag_cm = f->flag_rotary = 0;
-    } else if(text.find("YAWING MOMENT DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("YAWING MOMENT DERIVATIVES") != string::npos) {
         f->flag_yaw = 1;
         f->flag_fx = f->flag_fy = f->flag_fz = f->flag_roll = f->flag_pitch = f->flag_ss = f->flag_cf = f->flag_cm = f->flag_rotary = 0;
-    } else if(text.find("CONTROL FORCE DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("CONTROL FORCE DERIVATIVES") != string::npos) {
         f->flag_cf = 1;
         f->flag_fx = f->flag_fy = f->flag_fz = f->flag_roll = f->flag_pitch = f->flag_yaw = f->flag_ss = f->flag_cm = f->flag_rotary = 0;
-    } else if(text.find("CONTROL MOMENT DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("CONTROL MOMENT DERIVATIVES") != string::npos) {
         f->flag_cm = 1;
         f->flag_fx = f->flag_fy = f->flag_fz = f->flag_roll = f->flag_pitch = f->flag_yaw = f->flag_cf = f->flag_ss = f->flag_rotary = 0;
-    } else if(text.find("ROTARY DERIVATIVES") != string::npos) {
+    }
+    else if(text.find("ROTARY DERIVATIVES") != string::npos) {
         f->flag_rotary = 1;
         f->flag_fx = f->flag_fy = f->flag_fz = f->flag_roll = f->flag_pitch = f->flag_yaw = f->flag_cf = f->flag_cm = f->flag_ss = 0;
-    } else {};
+    }
+    else {};
 }
 
 /** Reads and saves aerodynamic database to a nested struct
@@ -619,11 +625,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));
@@ -671,11 +672,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));
@@ -720,11 +716,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));
@@ -769,11 +760,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));
@@ -818,11 +804,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));
@@ -851,7 +832,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     }
                 }
             }
-
             bool found = text.find("NUMBER OF ANGLES OF ATTACK") !=string::npos; // find where AoA is written to allocate memory for the variables
             //cout << "" << text << "\n"; //prints out the database lines
         }
@@ -862,7 +842,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
         string errorMessage = "Could not open " + filePath;
         throw runtime_error(errorMessage);
     }
-
 }
 
 /* Read a string containing a file name and its extension and check for its existence on the database directory.
