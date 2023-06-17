@@ -408,7 +408,7 @@ void printProp(PropDB db, string dbName, char switchCase) {
 
 void printHeaderLogger(std::ofstream& loggerRemainder, std::ofstream& loggerAcceleration) {
     loggerRemainder << left << setw(15) << "du" << left << setw(15) << "dv"  << left << setw(15) << "dw" << left << setw(15) << "dp" << left << setw(15) << "dq" << left << setw(15) << "dr"
-         << left << setw(15) << "dphi" << left << setw(15) << "dpsi" << left << setw(15) << "dtheta" << left << setw(15) << "dh"
+         << left << setw(15) << "dphi" << left << setw(15) << "dtheta" << left << setw(15) << "dpsi" << left << setw(15) << "dh"
          << left << setw(15) << "dx" << left << setw(15) << "dy" << endl;
 
     loggerAcceleration << left << setw(15) << "u_dot" << left << setw(15) << "v_dot"  << left << setw(15) << "w_dot"

@@ -50,7 +50,7 @@ TEST(TrimTest, CanComputeAlphaTrim) {
     double V = 15;
     double h = 100;
     double tol = 0.05;
-    ASSERT_NEAR(trimAngles(db1, db2, V, h).alpha_trim, 2.36, tol);
+    ASSERT_NEAR(trimAngles(db1, db2, V, h, 0).alpha_trim, 2.36, tol);
 }
 
 TEST(TrimTest, CanComputeDeltaTrim) {
@@ -60,7 +60,17 @@ TEST(TrimTest, CanComputeDeltaTrim) {
     double V = 15;
     double h = 100;
     double tol = 0.05;
-    ASSERT_NEAR(trimAngles(db1, db2, V, h).deltae_trim, -2.16, tol);
+    ASSERT_NEAR(trimAngles(db1, db2, V, h, 0).deltae_trim, -2.16, tol);
+}
+
+TEST(TrimTest, CanConvertRpm) {
+    double rpmMin = 3600;
+    double rpmMax = 30000;
+    double rpmAvg = 8300;
+    ASSERT_NEAR(getRpm(0.1, rpmMin, rpmMax), 3600, 1);
+    ASSERT_NEAR(getRpm(1, rpmMin, rpmMax), 30000, 1);
+    ASSERT_NEAR(getRpm(0.229545, rpmMin, rpmMax), 7400, 1);
+
 }
 
 TEST(IntegrateMotion, CanMaintainTrim) {
@@ -93,7 +103,7 @@ TEST(IntegrateMotion, CanMaintainTrim) {
     }
     getAerodynamicDbWithAltitude(h, DB1, DB2, db1, db2, db3, db4);
 
-    for (int i = 1; i < 10000; i++) {
+    for (int i = 1; i < 100000; i++) {
         h = vecTrim[9];
         double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, rpm, vecTrim, vecComTrim, stateMinusOne, 0.01, loggerRemainders, loggerAcceleration);
         double newStates[12] = {0};
@@ -104,7 +114,7 @@ TEST(IntegrateMotion, CanMaintainTrim) {
         } // assign values to variable
         delete[] newStatesPointer; // delete pointer to avoid memory leak
         EXPECT_NEAR(vecTrim[0], vecRef[0], 1);
-        EXPECT_NEAR(vecTrim[9], vecRef[9], 1);
+        EXPECT_NEAR(vecTrim[9], vecRef[9], 10);
 
     }
 

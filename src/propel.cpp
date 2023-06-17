@@ -16,10 +16,12 @@ struct Propel {
 /**
  * Computes propeller performance using a simpolified Glauert's Blade Element Theory for each station of the propeller
  * defined in the propeller database and returns a struct of type Propel
- * @param db
+ * @param db1
+ * @param db2
  * @param endb
  * @param pdb
- * @param angles
+ * @param alpha  -> given in DEG
+ * @param delta_e  -> given in DEG
  * @param V
  * @param h
  * @param rpm
@@ -84,12 +86,12 @@ Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb
     double a_0 = pdb.Pc.a0; // [rad]
     double omega;
 
-    double S = db1.Ad.Wing_area; //0.24704
+   /* double S = db1.Ad.Wing_area; //0.24704
     double cx_alpha = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, alpha_trim, h); //0.2115
     double cx_de = linearInterpolation(db1.alpha, db1.cf.cx_de, db2.cf.cx_de, alpha_trim, h); // 0.04029
     double cx_ss = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, alpha_trim, h); // -0.010595
     double Cx_tot = cx_ss+cx_alpha*alpha_trim/180*M_PI+ cx_de*deltae_trim/180*M_PI;
-
+*/
     double n = rpm/60; // [giri/s]
     omega = n*2*M_PI; // [rad/s]
 

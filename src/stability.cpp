@@ -133,7 +133,7 @@ Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles ang
     //double h = 100;
     double rho = computeDensity(h);
     //double C_We = 0.2842;
-    double C_We = (db1.Ad.Mass * g) / (0.5 * rho * pow(V, 2) * db1.Ad.Wing_area); // MASS and WING AREA constant
+    double C_We = (db1.Ad.Mass * g) / (0.5 * rho * V * V * db1.Ad.Wing_area); // MASS and WING AREA constant
     double C_Le = C_We;
     double C_Xe = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, angles.alpha_trim, h); // CX coef in steady-state for the trim condition
     double C_De = -C_Xe;
@@ -152,7 +152,7 @@ Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles ang
     double aeroCoefVec[10] = {C_We, C_Le, C_De, C_Tu, Cl_alpha, Cd_alpha, Cm_alpha, Cm_q, Cl1_alpha, Cm1_alpha};
     //**************************************************
     double chord = db1.Ad.Chord;
-    double Iy = 8 * db1.Ad.Jy / (rho * db1.Ad.Wing_area * pow(chord, 3)); // dimensionless inertia
+    double Iy = 8 * db1.Ad.Jy / (rho * db1.Ad.Wing_area * chord * chord * chord); // dimensionless inertia
     double mu = 2 * db1.Ad.Mass / (rho * db1.Ad.Wing_area * chord); //dimensionless mass parameter
     //**************************************************
 
