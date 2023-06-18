@@ -15,12 +15,12 @@ struct Aircraft_description {               //define all data description with a
             cog_updated=-100, pilot_position_x=-100, pilot_position_y=-100, pilot_position_z=-100;
 } ;
 struct Deflection_limits {
-    double Elevator_max=-100, Elevator_min=-100, Ailerons=-100, Rudder=-100, Flap_up=-100, Flap_down=-100;
+    double Elevator_max = -100, Elevator_min = -100, Ailerons = -100, Rudder = -100, Flap_up = -100, Flap_down = -100;
 } ;
 struct Fuel_Mass {
-    double Mass_switch=-100, Fuel_weight_fraction=-100;
+    double Mass_switch = -100, Fuel_weight_fraction = -100;
 } ;
-// declare structures to achieved nested structure from the most inner to the most outer for the aerodynamic database
+
 struct  SSCoef {
     vector <double> cx;
     vector <double> cy;
@@ -30,74 +30,74 @@ struct  SSCoef {
     vector <double> cn;
 };
 struct  XForce {
-    vector <double> cx_a;
+    vector <double> cx_a ;
     vector <double> cx_ap;
-    vector <double> cx_u;
-    vector <double> cx_q;
-    vector <double> cx_b;
-    vector <double> cx_p;
-    vector <double> cx_r;
+    vector <double> cx_u ;
+    vector <double> cx_q ;
+    vector <double> cx_b ;
+    vector <double> cx_p ;
+    vector <double> cx_r ;
 };
 struct  YForce {
-    vector <double> cy_b;
+    vector <double> cy_b ;
     vector <double> cy_bp;
-    vector <double> cy_p;
-    vector <double> cy_r;
-    vector <double> cy_a;
-    vector <double> cy_q;
+    vector <double> cy_p ;
+    vector <double> cy_r ;
+    vector <double> cy_a ;
+    vector <double> cy_q ;
 };
 struct  ZForce {
-    vector <double> cz_a;
+    vector <double> cz_a ;
     vector <double> cz_ap;
-    vector <double> cz_u;
-    vector <double> cz_q;
-    vector <double> cz_b;
-    vector <double> cz_p;
-    vector <double> cz_r;
+    vector <double> cz_u ;
+    vector <double> cz_q ;
+    vector <double> cz_b ;
+    vector <double> cz_p ;
+    vector <double> cz_r ;
 
 };
 struct  RollMoment {
-    vector <double> cl_b;
+    vector <double> cl_b ;
     vector <double> cl_bp;
-    vector <double> cl_p;
-    vector <double> cl_r;
-    vector <double> cl_a;
-    vector <double> cl_q;
+    vector <double> cl_p ;
+    vector <double> cl_r ;
+    vector <double> cl_a ;
+    vector <double> cl_q ;
 
 };
 struct  PitchMoment {
-    vector <double> cm_a;
+    vector <double> cm_a ;
     vector <double> cm_ap;
-    vector <double> cm_u;
-    vector <double> cm_q;
-    vector <double> cm_b;
-    vector <double> cm_p;
-    vector <double> cm_r;
+    vector <double> cm_u ;
+    vector <double> cm_q ;
+    vector <double> cm_b ;
+    vector <double> cm_p ;
+    vector <double> cm_r ;
 
 };
 struct  YawMoment {
-    vector <double> cn_b;
+    vector <double> cn_b ;
     vector <double> cn_bp;
-    vector <double> cn_p;
-    vector <double> cn_r;
-    vector <double> cn_a;
-    vector <double> cn_q;
+    vector <double> cn_p ;
+    vector <double> cn_r ;
+    vector <double> cn_a ;
+    vector <double> cn_q ;
 };
 struct  ControlForce {
-    vector <double> cx_de;
+    vector <double> cx_de ;
     vector <double> cx_dle;
-    vector <double> cz_de;
+    vector <double> cz_de ;
     vector <double> cz_dle;
-    vector <double> cy_da;
-    vector <double> cy_dr;
+    vector <double> cy_da ;
+    vector <double> cy_dr ;
 };
 struct  ControlMoment {
-    vector <double> cl_da;
-    vector <double> cl_dr;
-    vector <double> cm_de;
+    vector <double> cl_da ;
+    vector <double> cl_dr ;
+    vector <double> cm_de ;
     vector <double> cm_dle;
-    vector <double> cn_da;
-    vector <double> cn_dr;
+    vector <double> cn_da ;
+    vector <double> cn_dr ;
 };
 struct  Rotary {
     vector <double> cx_om;
@@ -108,32 +108,26 @@ struct  Rotary {
     vector <double> cn_om;
 };
 
-/**
- * Contains nested struct for each topic contained in the aerodynamic database
- *
- */
 struct AeroDB {
     int length;
     vector <double> alpha;
-    Aircraft_description Ad; // Aircraft description
-    Deflection_limits Dl; // Deflection limits
-    Fuel_Mass Fm; //Fuel Mass
-    SSCoef ss; // steady state coefficients
-    XForce fx; // X Forces (Aerodynamic derivatives)
-    YForce fy; // Y Forces (Aerodynamic derivatives)
-    ZForce fz; // Y Forces (Aerodynamic derivatives)
-    RollMoment rm; // Roll moment (Aerodynamic derivatives)
-    PitchMoment pm; // Pitch moment (Aerodynamic derivatives)
-    YawMoment ym; // Yaw moment (Aerodynamic derivatives)
-    ControlForce cf; // Control force derivatives
-    ControlMoment cm; // Control moment derivatives
-    Rotary rt; // Rotary derivatives
+    Aircraft_description Ad;                    // Aircraft description
+    Deflection_limits Dl;                       // Deflection limits
+    Fuel_Mass Fm;                               //Fuel Mass
+    SSCoef ss;                                  // steady state coefficients
+    XForce fx;                                  // X Forces (Aerodynamic derivatives)
+    YForce fy;                                  // Y Forces (Aerodynamic derivatives)
+    ZForce fz;                                  // Y Forces (Aerodynamic derivatives)
+    RollMoment rm;                              // Roll moment (Aerodynamic derivatives)
+    PitchMoment pm;                             // Pitch moment (Aerodynamic derivatives)
+    YawMoment ym;                               // Yaw moment (Aerodynamic derivatives)
+    ControlForce cf;                            // Control force derivatives
+    ControlMoment cm;                           // Control moment derivatives
+    Rotary rt;                                  // Rotary derivatives
 };
 struct Flags {
     int flag_ss, flag_fx, flag_fy, flag_fz, flag_roll, flag_pitch, flag_yaw, flag_cf, flag_cm, flag_rotary;
-    // declared flags for steady-state, XForces, YForces, ZForces, Roll, Pitch, Yaw, ControlForces,
-    // ControlMoment and Rotary
-};
+    };
 
 /** Gets the sampling size of angle of attack from file*/
 int getAoALength(string filePath) {
@@ -166,7 +160,6 @@ int getAoALength(string filePath) {
 }
 
 /** Receives the datastructure containing the flags and initialize them according to the file.
- * Used to know what part of the database is being read without the dependence on the line number
  */
 void updateFlag(Flags *f, string text) {
     if(text.find("STEADY STATE COEFFICIENTS") != string::npos) {
@@ -469,7 +462,8 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                             nameVar.push_back(textToken);
                         }
                     }
-                }else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
+                }
+                    else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
                     string token;
                     stringstream s(text);
                     int i = 0;
@@ -518,7 +512,8 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                             nameVar.push_back(textToken);
                         }
                     }
-                }else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
+                }
+                    else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
                     string token;
                     stringstream s(text);
                     int i = 0;
@@ -570,7 +565,8 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                             nameVar.push_back(textToken);
                         }
                     }
-                }else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
+                }
+                else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
                     string token;
                     stringstream s(text);
                     int i = 0;
@@ -619,7 +615,8 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                             nameVar.push_back(textToken);
                         }
                     }
-                }else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
+                }
+                else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
                     string token;
                     stringstream s(text);
                     int i = 0;
@@ -798,7 +795,8 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                             nameVar.push_back(textToken);
                         }
                     }
-                }else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
+                }
+                else if(text.find("*") == string::npos && text.find("ALPHA") == string::npos) {
                     string token;
                     stringstream s(text);
                     int i = 0;
@@ -837,14 +835,14 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
         }
         chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         cout << "\tFinished reading database. Time took: " << chrono::duration_cast<std::chrono::milliseconds>(end - begin).count() << " ms." << endl;
-        //todo find a way to check if all variables in a struct are initialized
+
     } else {
         string errorMessage = "Could not open " + filePath;
         throw runtime_error(errorMessage);
     }
 }
 
-/* Read a string containing a file name and its extension and check for its existence on the database directory.
+/** Read a string containing a file name and its extension and check for its existence on the database directory.
  If the file is contained in database, print its content to the screen.
  */
 AeroDB readData(string fileName, bool t = false) {

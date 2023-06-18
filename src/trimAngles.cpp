@@ -22,8 +22,6 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
     alpha_min = db1.alpha.front();
     alpha_max = db1.alpha.back();
 
-    // since the mobile surface angles do not change with altitude, they do not need to be interpolated. They are coincident independently of the database used
-    // REPORT: make sure this is explicitly written
     double deltae_min;
     double deltae_max;
     deltae_min = db1.Dl.Elevator_min;
@@ -74,7 +72,8 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
         }
         alpha_int += incr_alpha;
     }
-    //throw error if alpha_trim cannot be found
+
+    // throw error if alpha_trim cannot be found
     if(!foundAlpha) {
         string error = "Could not find alpha between alpha_min = " + to_string(alpha_min) + " [deg] and alpha_max = " +
                                                                                             to_string(alpha_max) +
@@ -82,6 +81,7 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
                                                                                                                    to_string(h) +" [m]";
         throw range_error(error);
     }
+
     // if alpha is correct, check if delta_trim respects its boundaries, otherwise throw error.
     if(angles.deltae_trim > deltae_max || angles.deltae_trim < deltae_min) {
         string error = "Delta_trim is out of bounds [" + to_string(deltae_min) + ", " + to_string(deltae_max) + "]. Delta_trim = " +

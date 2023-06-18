@@ -67,7 +67,7 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     double n = enginePerformanceTrim.rpm / 60; // [rpm]
     double omega = n * 2 * M_PI; // [rad/s]
     double P_max = 160; // [W]
-    double P_d = propelResult.Q * omega / 1000; // [W] Q = Torque
+    double P_d = propelResult.Q * omega / 1000; // [W]
     enginePerformanceTrim.Torque = propelResult.Q;
 
     enginePerformanceTrim.Throttle = getThrottle(enginePerformanceTrim.rpm, rpm_min, rpm_max);

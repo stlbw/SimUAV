@@ -396,41 +396,41 @@ int main() {
                     double phi_test = PID_psi.compute(psi0.Psi[k],vecCI[8],dt);
                     double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
 
-                    vecComm[0] = delta_a_test;//delta_a_test; //delta_aileron
-                    vecComm[1] = delta_e_test; //delta_elevator
-                    vecComm[3] = delta_th_test; //delta_throttle
+                    vecComm[0] = delta_a;
+                    vecComm[1] = delta_e;
+                    vecComm[3] = delta_th;
 
                 }
 
                 // SATURAZIONI
                 if(vecComm[3] <= 0.1){
                     vecComm[3] = 0.1;
-                    cout << "delta_throttle SATURATA -> delta_th = 0.1" << endl;
+                    cout << "saturation on delta throttle -> delta throttle = 0.1" << endl;
                     PID_h.resetIntegrativeError();
                 }
                 else if (vecComm[3] >= 1.0) {
                     vecComm[3] = 1.0;
-                    cout << "delta_throttle SATURATA -> delta_th = 1.0" << endl;
+                    cout << "saturation on delta throttle -> delta throttle = 1.0" << endl;
                     PID_h.resetIntegrativeError();
                 }
                 if(vecComm[1] <= -10 * M_PI / 180){
                     vecComm[1] = -10 * M_PI / 180;
-                    cout << "delta_e SATURATA -> delta_e min" << endl;
+                    cout << "saturation on delta elevator -> delta elevator min" << endl;
                     PID_theta.resetIntegrativeError();
                 }
                 else if (vecComm[1] >= 10 * M_PI / 180) {
                     vecComm[1] = 10 * M_PI / 180;
-                    cout << "delta_e SATURATA -> delta_e max" << endl;
+                    cout << "saturation on delta elevator -> delta elevator max" << endl;
                     PID_theta.resetIntegrativeError();
                 }
                 if(vecComm[0] <= -10 * M_PI / 180){
                     vecComm[0] = -10 * M_PI / 180;
-                    cout << "delta_a SATURATA -> delta_a min" << endl;
+                    cout << "saturation on delta aileron -> delta aileron min" << endl;
                     PID_phi.resetIntegrativeError();
                 }
                 else if (vecComm[0] >= 10 * M_PI / 180) {
                     vecComm[0] = 10 * M_PI / 180;
-                    cout << "delta_a SATURATA -> delta_a max" << endl;
+                    cout << "saturation on delta aileron -> delta aileron max" << endl;
                     PID_phi.resetIntegrativeError();
                 }
 
@@ -447,23 +447,24 @@ int main() {
                     stateMinusOne[j] = vecCI[j]; // save the OLD initial condition as the (i-1)th step
                     vecCI[j] = newStates[j]; // update the initial condition vector with the new states for the next loop iteration
                 } // assign values to variable
+
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
                 double current_V = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
 
-                // assign the recently calculated state to the fullStateMatrix at column i
-                if (wantPrint==1) {
+
+                if (wantPrint == 1) {
                     cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI;
                 }
-                else if (wantPrint==0 & runningflag==0){
+                else if (wantPrint == 0 & runningflag == 0){
                     cout << '\n'<< " Running..."<< endl;
-                runningflag=1;
+                runningflag = 1;
                 }//print to screen
                 outputSim << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI; // print to logger
 
                for (int k = 0; k < 12; k++) {
                    fullStateMatrix[i][k] = newStates[k];
-                   if (wantPrint==1) {
+                   if (wantPrint == 1) {
                        cout << left << setw(15) << fullStateMatrix[i][k];
                    } //print to screen
                    outputSim << left << setw(15) << fullStateMatrix[i][k]; //print to logger
@@ -476,7 +477,7 @@ int main() {
                     throw range_error(error);
                 }
             }
-            //close loggers
+
             outputSim.close();
             loggerRemainders.close();
             loggerAcceleration.close();
@@ -488,7 +489,7 @@ int main() {
             return 1; // return from main
         }
     }
-    catch (const runtime_error& e){
+         catch (const runtime_error& e){
         cerr<<"Runtime error: "<<e.what()<<endl; //print error
         return 1; // return from main
     }
