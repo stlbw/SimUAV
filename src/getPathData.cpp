@@ -8,6 +8,7 @@ using namespace std;
 
 struct Path{
     vector <double> Psi;
+    double sizePsi;
 };
 
 
@@ -30,16 +31,8 @@ void save_psiRef(Path *db, string filePath) {
             }
         }
         myfile.close();
-/*
-        for (int i=0; i <= length; i++) {
-            if (db->Psi[i] < - M_PI){
-                db->Psi[i] += 2 * M_PI;
-            }
-            else if (db->Psi[i] > M_PI){
-                db->Psi[i] -= 2 * M_PI;
-            }
-        }
-*/
+        db->sizePsi = length;
+
     }
     else {
         string errorMessage = "Could not open " + filePath;

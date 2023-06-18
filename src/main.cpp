@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "../declaredFun.h"
+
 int main() {
     cout << "---------------------------------------------------------------" << endl;
     cout << "\t\t\t Flight Simulator - MH850-3" << endl;
@@ -130,13 +131,13 @@ int main() {
 
         }
 
-        // try and catch block used to deal with errors -> this way errors are always sent back to the main
+
         try {
             // declared db for interpolation
             AeroDB DB1;
             AeroDB DB2;
 
-            // get correct dba with altitude
+
             getAerodynamicDbWithAltitude(h_ref, DB1, DB2, dba0, dba100, dba1000, dba2000);
 
             double Vmax = 25;
@@ -222,13 +223,6 @@ int main() {
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
             double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
 
-            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, -300, 0};
-            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, 0, -300};
-            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), psi0.Psi[2000-1], h_ref, 0, 0};
-            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), psi0.Psi[2000-1], h_ref, -300, 0};
-            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), psi0.Psi[2000-1], h_ref, 0, -300};
-            //The choice of 2000-1 is because the simulation starts after 20 sec
-
             // initialize the command vector
             double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; //da,de,0,throttle
 
@@ -271,9 +265,106 @@ int main() {
            // double flagPID = 0;
             double wantPrint=0;
             double runningflag=0;
-            int wantPID = 0;
-            cout <<'\n'<<" Do you want to implement the PID controller ? (Y/1 N/0):" << endl;
-            cin >> wantPID;
+
+            cout <<'\n'<< "Choose the desired path:Trim (T), Butterfly(B), Diamond(D), Snake(K), Square(Q), Other (O)"<< endl;
+
+                int wantPID = 0;
+                double flagbutterfly = 0;
+                double flagsquare = 0;
+                char letterCheckSwitch;
+                cin >> letterCheckSwitch; // get user input
+                switch (letterCheckSwitch) {
+                    case 'T':
+                        wantPID = 0;
+                        cout << "Insert the simulation Time :  ";
+                        cin >> Tsim;
+                        nStep = Tsim / dt;
+                        break;
+                    case 'B':
+                        wantPID = 1;
+                        cout << "Choose the butterfly path 1/2: ";
+                        cin >> flagbutterfly;
+                        if (flagbutterfly == 1) {
+                            psi0 = read_psiref("BUTTERFLY_psiref.txt");
+
+                            Tsim = (psi0.sizePsi - 1) * dt;
+                            nStep = (Tsim / dt)-2000;
+                            cout << "Simulation Time :  " << Tsim << endl;
+                            cout << " Waypoints:" << endl;
+                            cout << " E =  {0 -250  250  -250  250}" << endl;
+                            cout << " N =  {0  250  250  -250 -250}" << endl;
+                        } else if (flagbutterfly == 2) {
+                            psi0 = read_psiref("BUTTERFLY_psiref.txt");
+                            Tsim = (psi0.sizePsi - 1) * dt;
+                            nStep = (Tsim / dt)-2000;
+                            cout << "Simulation Time :  " << Tsim << endl;
+                            cout << " Waypoints:" << endl;
+                            cout << " E =  {0 -320  320 -320  320}" << endl;
+                            cout << " N =  {0  320 -320 -320 -320}" << endl;
+                        } else {
+                            cerr
+                                    << "Could not read the input. Please make sure to add the correct number and press ENTER."
+                                    << endl;
+                        }
+                        break;
+                    case 'D':
+                        wantPID = 1;
+                        psi0 = read_psiref("DIAMOND_psiref.txt");
+                        Tsim = (psi0.sizePsi - 1) * dt;
+                        nStep = (Tsim / dt)-2000;
+                        cout << " Waypoints:" << endl;
+                        cout << " E =  {0 -300  0   300   0 }" << endl;
+                        cout << " N =  {0  0   300   0  -300}" << endl;
+                        break;
+                    case 'K':
+                        wantPID = 1;
+                        psi0 = read_psiref("SNAKE_psiref.txt");
+                        Tsim = (psi0.sizePsi - 1) * dt;
+                        nStep = (Tsim / dt)-2000;
+                        cout << "Simulation Time :  " << Tsim << endl;
+                        cout << " Waypoints:" << endl;
+                        cout << " E =  {0 -250  0    0   250  250  500  500 -250}" << endl;
+                        cout << " N =  {0  250 250 -250 -250  250  250 -250 -250}" << endl;
+                        break;
+                    case 'Q':
+                        wantPID = 1;
+                        cout << "Choose the square path 1/2: ";
+                        cin >> flagsquare;
+                        if (flagsquare == 1) {
+                            psi0 = read_psiref("SQUARE_psiref.txt");
+                            Tsim = (psi0.sizePsi - 1) * dt;
+                            nStep = (Tsim / dt)-2000;
+                            cout << "Simulation Time :  " << Tsim << endl;
+                            cout << " Waypoints:" << endl;
+                            cout << " E =  {0  -300  0  300   0 }" << endl;
+                            cout << " N =  {0    0  300  0  -300}" << endl;
+                        } else if (flagsquare == 2) {
+                            psi0 = read_psiref("SQUARE2_psiref.txt");
+                            Tsim = (psi0.sizePsi - 1) * dt;
+                            nStep = (Tsim / dt)-2000;
+                            cout << "Simulation Time :  " << Tsim << endl;
+                            cout << " Waypoints:" << endl;
+                            cout << " E =  {0 -250 250  250  -250 }" << endl;
+                            cout << " N =  {0  250 250 -250  -250 }" << endl;
+                        } else {
+                            cerr
+                                    << "Could not read the input. Please make sure to add the correct number and press ENTER."
+                                    << endl;
+                        }
+                        break;
+                    /*case 'O':
+                        cout << "Please upload the txt file of the psi angle values in the correct folder";
+
+                        //psi0 = read_psiref("DIAMOND_psiref.txt");
+                        //Tsim = (sizeof(psi0) - 1) / dt;
+                        //int nStep = static_cast<int>(Tsim / dt)-2000;*/
+
+                    default:
+                        cerr << "Could not read the input. Please make sure to add the correct letter and press ENTER."
+                             << endl;
+                        break;
+                }
+
             cout <<'\n'<<"The results are gonna be printed on the 'simulationData.txt' file"<< endl;
             cout << '\n'<< "Do you want to print the results also on this screen? (Y/1 N/0):"<<endl;
             cin >>wantPrint;

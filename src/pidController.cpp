@@ -23,12 +23,12 @@ public:
 
         //CAMBIATO DA QUA
         //double derivative = (error - lastError_) / dt;
-        integralErrorSum_ += ((error+lastError_)/2) * dt;
+        integralErrorSum_ += ki_ * error * dt;
         double output ;
 
         if (flagFilter_ && filterConstant_ != 0.0) {
             double N = 1 / filterConstant_;
-            double derivative = lastErrorDerivative_ - kd_ * N * (error - lastError_) - lastErrorDerivative_ * N * dt;
+            double derivative = lastErrorDerivative_ - kd_ * N * (lastError_) - lastErrorDerivative_ * N * dt;
             integralErrorSum_ += ki_ * error * dt;
 
             output = kp_ * error + integralErrorSum_ + derivative;
@@ -93,6 +93,7 @@ public:
         output = P + integralErrorSum_ + D;
         return output;
     }
+
 
     void setDerivativeFilter(bool flagFilter, double filterConstant) {
         if (flagFilter) {
