@@ -26,11 +26,11 @@ double getRpm(double throttle, double rpmMin, double rpmMax) {
     double throttleMin = 0.1;
     double throttleMax = 1;
     double m = (rpmMax - rpmMin) / (throttleMax - throttleMin);
-    double rpm = m * (throttle - throttleMin) + rpmMin;
+    double rpm = m * throttle;
     return rpm;
 }
 
-Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h, double gamma_0){
+Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
     Trim_Engine_Propeller enginePerformanceTrim;
     Propel propelResult;
 
@@ -44,6 +44,7 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     double alpha_trim = angles.alpha_trim; // [deg] 2.36
     double deltae_trim= angles.deltae_trim; // [deg]-2.16
     double g = 9.81; // [m/s^2]
+    double gamma_0 = 0;
     double res = 0.02; // [N]
 
     double S = db1.Ad.Wing_area; //0.24704
@@ -53,15 +54,15 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     double Cx_tot= cx_ss+cx_alpha*alpha_trim/180*M_PI+ cx_de*deltae_trim/180*M_PI;
     enginePerformanceTrim.T = db1.Ad.Mass*g*sin(alpha_trim/180*M_PI+gamma_0/180*M_PI)-0.5*Cx_tot*rho*S*V*V; //mass 0.9726
 
-    rpm = rpm_min;
-    while (rpm <= rpm_max) {
+    for(rpm = rpm_min; rpm <= rpm_max; rpm += delta_rpm){
+
         propelResult = getPropellerPerformance(db1, db2, endb, pdb, angles.alpha_trim, angles.deltae_trim, V, h, rpm);
 
         if(abs(enginePerformanceTrim.T-propelResult.T) < res){
             enginePerformanceTrim.rpm = rpm;
         }
-        rpm += delta_rpm;
     }
+
 
     double n = enginePerformanceTrim.rpm / 60; // [rpm]
     double omega = n * 2 * M_PI; // [rad/s]
