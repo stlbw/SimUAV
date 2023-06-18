@@ -30,7 +30,7 @@ double getRpm(double throttle, double rpmMin, double rpmMax) {
     return rpm;
 }
 
-Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h){
+Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, Trim_Angles angles, double V, double h, double gamma_0){
     Trim_Engine_Propeller enginePerformanceTrim;
     Propel propelResult;
 
@@ -44,7 +44,7 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     double alpha_trim = angles.alpha_trim; // [deg] 2.36
     double deltae_trim= angles.deltae_trim; // [deg]-2.16
     double g = 9.81; // [m/s^2]
-    double gamma_0 = 0;
+    //double gamma_0 = 0;
     double res = 0.02; // [N]
 
     double S = db1.Ad.Wing_area; //0.24704

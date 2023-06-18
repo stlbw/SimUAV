@@ -212,12 +212,6 @@ int main() {
             printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
 
             // SIMULATION FROM HERE
-            double Tsim = 150.0;
-            double dt = 0.01;
-            int nStep = static_cast<int>(Tsim / dt)-2000;
-
-            Path psi0;
-            psi0 = read_psiref("SQUARE_psiref.txt");
 
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
@@ -232,37 +226,12 @@ int main() {
                 // simulation starts at the last trim state (i=0) and before that we assume infinite trim states take place
             }
 
-            // create state matrix to allocate the states at each step
-            double** fullStateMatrix = new double*[nStep + 1];
-            for (int i = 0; i < nStep + 1; i++) {fullStateMatrix[i] = new double[12];}
+            Path psi0;
+            int Tsim = 0;
+            int nStep = 0;
+            double dt = 0.01;
 
-            // assign the header to simulation
-            cout << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
-                    << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
-                    << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
-            //  assign first column as the trim condition
-            cout << left << setw(15) << 0.0;
-            cout << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
-
-            // print to logger the trim step
-            outputSim << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
-                 << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
-                 << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
-
-            outputSim << left << setw(15) << 0.0;
-            outputSim << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
-
-            // assign fullStateMatrix first column to trim and print it
-            for (int i = 0; i < 12; i++) {
-                fullStateMatrix[0][i] = vecCI[i];
-                cout << left << setw(15) << fullStateMatrix[0][i]; // print to screen
-                outputSim << left << setw(15) << fullStateMatrix[0][i]; //print to logger
-            }
-            cout << " " << endl;
-            outputSim << " " << endl;
-
-
-           // double flagPID = 0;
+            // double flagPID = 0;
             double wantPrint=0;
             double runningflag=0;
 
@@ -370,6 +339,35 @@ int main() {
             cin >>wantPrint;
             // initialize error variables and integrative error to be used when PID is active - store the error at the previous step
 
+            // create state matrix to allocate the states at each step
+            double** fullStateMatrix = new double*[nStep + 1];
+            for (int i = 0; i < nStep + 1; i++) {fullStateMatrix[i] = new double[12];}
+
+            // assign the header to simulation
+            cout << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
+                 << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
+                 << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
+            //  assign first column as the trim condition
+            cout << left << setw(15) << 0.0;
+            cout << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
+
+            // print to logger the trim step
+            outputSim << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
+                      << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
+                      << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
+
+            outputSim << left << setw(15) << 0.0;
+            outputSim << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
+
+            // assign fullStateMatrix first column to trim and print it
+            for (int i = 0; i < 12; i++) {
+                fullStateMatrix[0][i] = vecCI[i];
+                cout << left << setw(15) << fullStateMatrix[0][i]; // print to screen
+                outputSim << left << setw(15) << fullStateMatrix[0][i]; //print to logger
+            }
+            cout << " " << endl;
+            outputSim << " " << endl;
+
             pidController PID_v(-0.0021, -0.00087, -0.0015);
             pidController PID_theta(-0.3, -3.25,-0.01);
             pidController PID_h(0.019, 0.0002,0.01);
@@ -381,8 +379,6 @@ int main() {
             PID_h.setDerivativeFilter(true, 0.1592);
 
             PID_psi.setErrorCheck(true);
-            //PID_phi.setErrorCheck(true);
-
 
             // LOOP INTEGRATE EQUATIONS OF MOTION
             int k = 0;
@@ -397,32 +393,11 @@ int main() {
                 if (wantPID == 1) {
                     double V_current = sqrt(vecCI[0]*vecCI[0]+vecCI[1]*vecCI[1]+vecCI[2]*vecCI[2]);
 
-                    /*double theta_ref_test = PID_v.computePIDSimple(V_ref, vecCI[0], dt);
-                    //double theta_ref_test = PID_v.computePIDSimple(V_ref, V_current , dt);
-                    double delta_e_test = PID_theta.computePIDSimple(theta_ref_test, vecCI[7], dt);
-                    double delta_th_test = PID_h.computePIDSimple(h_ref, vecCI[9], dt);
-                    //double delta_a_test = 0;
-                    //vecCI[8] = psi0.Psi[k - 1];
-                    //double phi_test = PID_psi.computePIDSimple(psi0.Psi[k],vecCI[8],dt);
-                    double phi_test = PID_psi.computePIDSimple(psi0.Psi[k+2000-1],vecCI[8],dt);
-                    double delta_a_test = PID_phi.computePIDSimple(phi_test,vecCI[6],dt);*/
-
-                    /*double theta_ref_test = PID_v.computeNewTest(V_ref, vecCI[0], dt);
-                    //double theta_ref_test = PID_v.computeNewTest(V_ref, V_current, dt);
-                    double delta_e_test = PID_theta.computeNewTest(theta_ref_test, vecCI[7], dt);
-                    double delta_th_test = PID_h.computeNewTest(h_ref, vecCI[9], dt);
-                    //double phi_test = PID_psi.computeNewTest(psi0.Psi[k],vecCI[8],dt);
-                    double phi_test = PID_psi.computeNewTest(psi0.Psi[k+2000-1],vecCI[8],dt);
-                    double delta_a_test = PID_phi.computeNewTest(phi_test,vecCI[6],dt);*/
-
-                    /*double theta_ref_test = PID_v.compute(V_ref, vecCI[0], dt);
-                    //double theta_ref_test = PID_v.computeNewTest(V_ref, V_current, dt);
+                    double theta_ref_test = PID_v.compute(V_ref, V_current, dt);
                     double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
                     double delta_th_test = PID_h.compute(h_ref, vecCI[9], dt);
-                    //double phi_test = PID_psi.computeNewTest(psi0.Psi[k],vecCI[8],dt);
                     double phi_test = PID_psi.compute(psi0.Psi[k+2000-1],vecCI[8],dt);
-                    double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);*/
-
+                    double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
 
                     vecComm[0] = delta_a_test;//delta_a_test; //delta_aileron
                     vecComm[1] = delta_e_test; //delta_elevator
@@ -440,32 +415,30 @@ int main() {
                         PID_h.resetIntegrativeError();
                     }
 
-                    if(vecComm[1] <= -10 * M_PI / 180){
-                        vecComm[1] = -10 * M_PI / 180;
-                        cout << "delta_e SATURATA -> delta_e min" << endl;
-                        PID_theta.resetIntegrativeError();
-                    }
-                    else if (vecComm[1] >= 10 * M_PI / 180) {
-                        vecComm[1] = 10 * M_PI / 180;
-                        cout << "delta_e SATURATA -> delta_e max" << endl;
-                        PID_theta.resetIntegrativeError();
+                }
 
-                    }
-                    if(vecComm[0] <= -10 * M_PI / 180){
-                        vecComm[0] = -10 * M_PI / 180;
-                        cout << "delta_a SATURATA -> delta_a min" << endl;
-                        PID_phi.resetIntegrativeError();
-                    }
-                    else if (vecComm[0] >= 10 * M_PI / 180) {
-                        vecComm[0] = 10 * M_PI / 180;
-                        cout << "delta_a SATURATA -> delta_a max" << endl;
-                        PID_phi.resetIntegrativeError();
-                    }
-
+                if(vecComm[1] <= -10 * M_PI / 180){
+                    vecComm[1] = -10 * M_PI / 180;
+                    cout << "delta_e SATURATA -> delta_e min" << endl;
+                    PID_theta.resetIntegrativeError();
+                }
+                else if (vecComm[1] >= 10 * M_PI / 180) {
+                    vecComm[1] = 10 * M_PI / 180;
+                    cout << "delta_e SATURATA -> delta_e max" << endl;
+                    PID_theta.resetIntegrativeError();
+                }
+                if(vecComm[0] <= -10 * M_PI / 180){
+                    vecComm[0] = -10 * M_PI / 180;
+                    cout << "delta_a SATURATA -> delta_a min" << endl;
+                    PID_phi.resetIntegrativeError();
+                }
+                else if (vecComm[0] >= 10 * M_PI / 180) {
+                    vecComm[0] = 10 * M_PI / 180;
+                    cout << "delta_a SATURATA -> delta_a max" << endl;
+                    PID_phi.resetIntegrativeError();
                 }
 
                 double rpm = getRpm(vecComm[3], en0.laps_min, en0.laps_max);
-                //double rpm =  3600+(30000-3600)*(vecComm[3]-0.1)/(1-0.1);
 
                 // get correct dba with altitude
                 double h = vecCI[9]; // update altitude
@@ -503,7 +476,7 @@ int main() {
                if (wantPrint == 1) {cout << " " << endl;}
                outputSim << " " << endl;
 
-                if (current_V > Vmax || current_V < Vmin) { // da cambiare in Vmin?
+                if (current_V > Vmax || current_V < Vmin) {
                     string error = "Out of range: velocity is out of bounds. V = " + to_string(current_V) + " m/s";
                     throw range_error(error);
                 }

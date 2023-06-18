@@ -7,6 +7,8 @@ add_executable(SimUAV src/main.cpp declaredFun.h)
 
 # Get the absolute path to the "database" directory
 set(DATABASE_DIR "${CMAKE_SOURCE_DIR}/database")
+set(PATH_DIR "${CMAKE_SOURCE_DIR}/path")
 
 # Add a compile-time definition for the database directory path
 target_compile_definitions(SimUAV PRIVATE DATABASE_DIR="${DATABASE_DIR}")
+target_compile_definitions(SimUAV PRIVATE PATH_DIR="${PATH_DIR}")

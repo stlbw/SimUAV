@@ -11,9 +11,7 @@
 #include "src/trimRpm.cpp"
 #include "src/stability.cpp"
 #include "src/integrateMotion.cpp"
-#include "src/pid.cpp"
 #include "src/getPathData.cpp"
-//#include "pidController/pidTest.cpp"
 #include "src/pidController.cpp"
 
 #endif

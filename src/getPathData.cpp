@@ -42,7 +42,7 @@ void save_psiRef(Path *db, string filePath) {
 }
 
 Path read_psiref(string fileName) {
-    string filePath = string(DATABASE_DIR) + "/" + fileName;
+    string filePath = string(PATH_DIR) + "/" + fileName;
     Path db; // create db object
     save_psiRef(&db, filePath);
     return db;

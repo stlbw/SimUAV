@@ -9,7 +9,7 @@ public:
         : kp_(kp), ki_(ki), kd_(kd), filterConstant_(0.0), integralErrorSum_(0.0), lastError_(0.0),
         lastErrorDerivative_(0.0), flagFilter_(false), flagErrorCheck_(false) {}
 
-    double compute(double referencePoint, double currentValue, double dt) {
+    /*double compute(double referencePoint, double currentValue, double dt) {
         double error = referencePoint - currentValue;
         // add check on error for PSI -> must set the flag using setErrorCheck method
         if (flagErrorCheck_) {
@@ -44,7 +44,7 @@ public:
 
 
 
-    }
+    }*/
 
     double computePIDSimple(double referencePoint, double currentValue, double dt) {
         double error = referencePoint - currentValue;
@@ -69,7 +69,7 @@ public:
 
     }
 
-    double computeNewTest(double referencePoint, double currentValue, double dt) {
+    double compute(double referencePoint, double currentValue, double dt) {
         double error = referencePoint - currentValue;
         if (flagErrorCheck_) {
             if (error < - M_PI) {
