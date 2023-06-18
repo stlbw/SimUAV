@@ -58,8 +58,11 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double qHat = q * c / (2 * V);
     double rHat = r * b / (2 * V);
 
+    double alpha_trim = ss.alphaDeg;
+
+
     // XForces
-    double Cxss = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, alpha_deg, h);
+    double Cxss = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, alpha_trim, h);
 
     double Cxa = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, alpha_deg, h);
     double Cxb = linearInterpolation(db1.alpha, db1.fx.cx_b, db2.fx.cx_b, alpha_deg, h);
@@ -77,7 +80,8 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     
     
     //YForces
-    double Cyss = linearInterpolation(db1.alpha, db1.ss.cy, db2.ss.cy, alpha_deg, h);
+    double Cyss = linearInterpolation(db1.alpha, db1.ss.cy, db2.ss.cy, alpha_trim, h);
+    //double Cyss = linearInterpolation(db1.alpha, db1.ss.cy, db2.ss.cy, alpha_deg, h);
 
     double Cya = linearInterpolation(db1.alpha, db1.fy.cy_a, db2.fy.cy_a, alpha_deg, h);
     double Cyb = linearInterpolation(db1.alpha, db1.fy.cy_b, db2.fy.cy_b, alpha_deg, h);
@@ -94,7 +98,8 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double YForce = 0.5 * rho * V * V * S * CyTot;
     
     //ZForces
-    double Czss = linearInterpolation(db1.alpha, db1.ss.cz, db2.ss.cz, alpha_deg, h);
+    double Czss = linearInterpolation(db1.alpha, db1.ss.cz, db2.ss.cz, alpha_trim, h);
+    //double Czss = linearInterpolation(db1.alpha, db1.ss.cz, db2.ss.cz, alpha_deg, h);
 
     double Cza = linearInterpolation(db1.alpha, db1.fz.cz_a, db2.fz.cz_a, alpha_deg, h);
     double Czb = linearInterpolation(db1.alpha, db1.fz.cz_b, db2.fz.cz_b, alpha_deg, h);
@@ -111,7 +116,8 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double ZForce = 0.5 * rho * V * V * S * CzTot;
     
     //LMoment
-    double Clss = linearInterpolation(db1.alpha, db1.ss.cl, db2.ss.cl, alpha_deg, h);
+    double Clss = linearInterpolation(db1.alpha, db1.ss.cl, db2.ss.cl, alpha_trim, h);
+    //double Clss = linearInterpolation(db1.alpha, db1.ss.cl, db2.ss.cl, alpha_deg, h);
 
     double Cla = linearInterpolation(db1.alpha, db1.rm.cl_a, db2.rm.cl_a, alpha_deg, h);
     double Clb = linearInterpolation(db1.alpha, db1.rm.cl_b, db2.rm.cl_b, alpha_deg, h);
@@ -127,7 +133,8 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double LMoment = 0.5 * rho * V * V * S * ClTot * b;
 
     //MMoment
-    double Cmss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_deg, h);
+    double Cmss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_trim, h);
+    //double Cmss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_deg, h);
 
     double Cma = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_deg, h);
     double Cmb = linearInterpolation(db1.alpha, db1.pm.cm_b, db2.pm.cm_b, alpha_deg, h);
@@ -144,7 +151,9 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double MMoment = 0.5 * rho * V * V * S * CmTot * c;
 
     //NMoment
-    double Cnss = linearInterpolation(db1.alpha, db1.ss.cn, db2.ss.cn, alpha_deg, h);
+    double Cnss = linearInterpolation(db1.alpha, db1.ss.cn, db2.ss.cn, alpha_trim, h);
+    //double Cnss = linearInterpolation(db1.alpha, db1.ss.cn, db2.ss.cn, alpha_deg, h);
+
 
     double Cna = linearInterpolation(db1.alpha, db1.ym.cn_a, db2.ym.cn_a, alpha_deg, h);
     double Cnb = linearInterpolation(db1.alpha, db1.ym.cn_b, db2.ym.cn_b, alpha_deg, h);
@@ -219,6 +228,7 @@ double* getRemainders(const double state[10], const double command[4], const dou
     double dx = u * cos(theta) * cos(psi) + v * (sin(phi) * sin(theta) * cos(psi) - cos(phi) * sin(psi)) + w * (cos(phi) * sin(theta) * cos(psi) + sin(phi) * sin(psi));
     double dy = u * cos(theta) * sin(psi) + v * (sin(phi) * sin(theta) * sin(psi) + cos(phi) * cos(psi)) + w * (cos(phi) * sin(theta) * sin(psi) - sin(phi) * cos(psi));
     double dh = -dz;
+
 
     double* remainder = new double[12];
     remainder[0] = du;

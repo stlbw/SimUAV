@@ -211,9 +211,9 @@ int main() {
             printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
 
             // SIMULATION FROM HERE
-            double Tsim = 280.0;
+            double Tsim = 150.0;
             double dt = 0.01;
-            int nStep = static_cast<int>(Tsim / dt);
+            int nStep = static_cast<int>(Tsim / dt)-2000;
 
             Path psi0;
             psi0 = read_psiref("SQUARE_psiref.txt");
@@ -221,6 +221,12 @@ int main() {
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
             double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
+
+            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, -300, 0};
+            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, 0, -300};
+            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), psi0.Psi[2000-1], h_ref, 0, 0};
+            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), psi0.Psi[2000-1], h_ref, -300, 0};
+            //double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), psi0.Psi[2000-1], h_ref, 0, -300};
             //The choice of 2000-1 is because the simulation starts after 20 sec
 
             // initialize the command vector
@@ -298,47 +304,69 @@ int main() {
                 }
 
                 if (wantPID == 1) {
-                    double theta_ref_test = PID_v.computePIDSimple(V_ref, vecCI[0], dt);
+                    double V_current = sqrt(vecCI[0]*vecCI[0]+vecCI[1]*vecCI[1]+vecCI[2]*vecCI[2]);
+
+                    /*double theta_ref_test = PID_v.computePIDSimple(V_ref, vecCI[0], dt);
+                    //double theta_ref_test = PID_v.computePIDSimple(V_ref, V_current , dt);
                     double delta_e_test = PID_theta.computePIDSimple(theta_ref_test, vecCI[7], dt);
                     double delta_th_test = PID_h.computePIDSimple(h_ref, vecCI[9], dt);
                     //double delta_a_test = 0;
-                    vecCI[8] = psi0.Psi[k - 1];
-                    double phi_test = PID_psi.computePIDSimple(psi0.Psi[k],vecCI[8],dt);
-                    double delta_a_test = PID_phi.computePIDSimple(phi_test,vecCI[6],dt);
+                    //vecCI[8] = psi0.Psi[k - 1];
+                    //double phi_test = PID_psi.computePIDSimple(psi0.Psi[k],vecCI[8],dt);
+                    double phi_test = PID_psi.computePIDSimple(psi0.Psi[k+2000-1],vecCI[8],dt);
+                    double delta_a_test = PID_phi.computePIDSimple(phi_test,vecCI[6],dt);*/
+
+                    /*double theta_ref_test = PID_v.computeNewTest(V_ref, vecCI[0], dt);
+                    //double theta_ref_test = PID_v.computeNewTest(V_ref, V_current, dt);
+                    double delta_e_test = PID_theta.computeNewTest(theta_ref_test, vecCI[7], dt);
+                    double delta_th_test = PID_h.computeNewTest(h_ref, vecCI[9], dt);
+                    //double phi_test = PID_psi.computeNewTest(psi0.Psi[k],vecCI[8],dt);
+                    double phi_test = PID_psi.computeNewTest(psi0.Psi[k+2000-1],vecCI[8],dt);
+                    double delta_a_test = PID_phi.computeNewTest(phi_test,vecCI[6],dt);*/
+
+                    /*double theta_ref_test = PID_v.compute(V_ref, vecCI[0], dt);
+                    //double theta_ref_test = PID_v.computeNewTest(V_ref, V_current, dt);
+                    double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
+                    double delta_th_test = PID_h.compute(h_ref, vecCI[9], dt);
+                    //double phi_test = PID_psi.computeNewTest(psi0.Psi[k],vecCI[8],dt);
+                    double phi_test = PID_psi.compute(psi0.Psi[k+2000-1],vecCI[8],dt);
+                    double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);*/
 
 
                     vecComm[0] = delta_a_test;//delta_a_test; //delta_aileron
                     vecComm[1] = delta_e_test; //delta_elevator
                     vecComm[3] = delta_th_test; //delta_throttle
+
+                    // SATURAZIONI
                     if(vecComm[3] <= 0.1){
                         vecComm[3] = 0.1;
                         cout << "delta_throttle SATURATA -> delta_th = 0.1" << endl;
                         PID_h.resetIntegrativeError();
                     }
-                    else if (vecComm[3]>= 1.0) {
-                        vecComm[3]=1.0;
+                    else if (vecComm[3] >= 1.0) {
+                        vecComm[3] = 1.0;
                         cout << "delta_throttle SATURATA -> delta_th = 1.0" << endl;
                         PID_h.resetIntegrativeError();
                     }
 
-                    if(vecComm[1] <= -20 * M_PI / 180){
-                        vecComm[1] = -20 * M_PI / 180;
+                    if(vecComm[1] <= -10 * M_PI / 180){
+                        vecComm[1] = -10 * M_PI / 180;
                         cout << "delta_e SATURATA -> delta_e min" << endl;
                         PID_theta.resetIntegrativeError();
                     }
-                    else if (vecComm[1]>= 20 * M_PI / 180) {
-                        vecComm[1]=20 * M_PI / 180;
+                    else if (vecComm[1] >= 10 * M_PI / 180) {
+                        vecComm[1] = 10 * M_PI / 180;
                         cout << "delta_e SATURATA -> delta_e max" << endl;
                         PID_theta.resetIntegrativeError();
 
                     }
-                    if(vecComm[0] <= -20 * M_PI / 180){
-                        vecComm[0] = -20 * M_PI / 180;
+                    if(vecComm[0] <= -10 * M_PI / 180){
+                        vecComm[0] = -10 * M_PI / 180;
                         cout << "delta_a SATURATA -> delta_a min" << endl;
                         PID_phi.resetIntegrativeError();
                     }
-                    else if (vecComm[0]>= 20 * M_PI / 180) {
-                        vecComm[0]=20 * M_PI / 180;
+                    else if (vecComm[0] >= 10 * M_PI / 180) {
+                        vecComm[0] = 10 * M_PI / 180;
                         cout << "delta_a SATURATA -> delta_a max" << endl;
                         PID_phi.resetIntegrativeError();
                     }
@@ -346,6 +374,7 @@ int main() {
                 }
 
                 double rpm = getRpm(vecComm[3], en0.laps_min, en0.laps_max);
+                //double rpm =  3600+(30000-3600)*(vecComm[3]-0.1)/(1-0.1);
 
                 // get correct dba with altitude
                 double h = vecCI[9]; // update altitude
