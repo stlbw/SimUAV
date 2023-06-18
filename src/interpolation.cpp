@@ -1,6 +1,3 @@
-//
-// Created by Matheus Padilha on 05/04/23.
-//
 #include <vector>
 #include "../declaredFun.h"
 using namespace std;
@@ -34,8 +31,8 @@ using namespace std;
          // gets the first angle of attack bigger than the aoa desired and establishes the 2 extreme interpolation points
          for(int i = 0; i < alpha.size(); i++) {
              if (alpha[i] > aoa) {
-                 alphaUp= alpha[i]; // upper bound
-                 alphaLow = alpha[i  - 1]; // lower bound
+                 alphaUp = alpha[i]; // upper bound
+                 alphaLow = alpha[i - 1]; // lower bound
                  pos = i;
                  break; // once this condition is met once -> exit the loop
              }
@@ -62,7 +59,7 @@ using namespace std;
   * @return
   */
 double linearInterpolation(vector <double> alpha, vector<double> var1, vector<double> var2, double aoa, double h) {
-     if(var1.size() != alpha.size() || var2.size() != alpha.size()){
+     if (var1.size() != alpha.size() || var2.size() != alpha.size()){
          string error = "Cannot interpolate database as the variables do not have the same size.";
          throw range_error(error);
      }

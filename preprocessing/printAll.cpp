@@ -14,8 +14,8 @@ using namespace std;
  * @param printToFile
  */
 void printDba(AeroDB db, string dbName, char switchCase) {
-    int displayData; //qty of elements to be displayed for first and last elements
-    if(switchCase == '1') {displayData = 3;} else {displayData = db.length;} // set size of vectors to be printed
+    int displayData; // qty of elements to be displayed for first and last elements
+    if (switchCase == '1') {displayData = 3;} else {displayData = db.length;} // set size of vectors to be printed
 
 
     cout << "" << endl;
@@ -49,7 +49,6 @@ void printDba(AeroDB db, string dbName, char switchCase) {
     cout << left << setw(50) << "JY" << left << setw(25) << db.Ad.Jy << endl;
     cout << left << setw(50) << "JZ" << left << setw(25) << db.Ad.jz << endl;
     cout << left << setw(50) << "JXZ" << left << setw(25) << db.Ad.jxz << endl;
-    // skipped some variables
 
     if (db.Ad.option_cog_update == 1) {
         cout << left << setw(50) << "OPTION FOR C.G. UPDATE" << left << setw(25) << "YES" << endl;

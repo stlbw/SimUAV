@@ -1,11 +1,5 @@
-//
-// Created by Matheus Padilha on 30/04/23.
-//
 #include <cmath>
 #include "../declaredFun.h"
-
-
-
 
 /**
  * Evaluate the aerodynamic forces given a initial condition and the command vector. Uses linear interpolation and the
@@ -105,9 +99,9 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Czq  = linearInterpolation(db1.alpha, db1.fz.cz_q, db2.fz.cz_q, alpha_deg, h);
     double Czr  = linearInterpolation(db1.alpha, db1.fz.cz_r, db2.fz.cz_r, alpha_deg, h);
 
-    double Czdelta_a = 0; //cannot find Cz_deltaa
+    double Czdelta_a = 0;
     double Czdelta_e = linearInterpolation(db1.alpha, db1.cf.cz_de, db2.cf.cz_de, alpha_deg, h);
-    double Czdelta_r = 0; //cannot find Cz_deltar
+    double Czdelta_r = 0;
 
     double CzTot = Czss + Cza * alpha + Czb * beta + Czp * pHat + Czq * qHat + Czr * rHat + Czdelta_a * delta_a + Czdelta_e * delta_e + Czdelta_r * delta_r;
     double ZForce = 0.5 * rho * V * V * S * CzTot;
@@ -123,7 +117,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Clr = linearInterpolation(db1.alpha, db1.rm.cl_r, db2.rm.cl_r, alpha_deg, h);
 
     double Cldelta_a = linearInterpolation(db1.alpha, db1.cm.cl_da, db2.cm.cl_da, alpha_deg, h);
-    double Cldelta_e = 0; // cannot find Cl_deltae
+    double Cldelta_e = 0;
     double Cldelta_r = linearInterpolation(db1.alpha, db1.cm.cl_dr, db2.cm.cl_dr, alpha_deg, h);
 
     double ClTot = Clss + Cla * alpha + Clb * beta + Clp * pHat + Clq * qHat + Clr * rHat + Cldelta_a * delta_a + Cldelta_e * delta_e + Cldelta_r * delta_r;
@@ -157,7 +151,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double Cnr = linearInterpolation(db1.alpha, db1.ym.cn_r, db2.ym.cn_r, alpha_deg, h);
 
     double Cndelta_a = linearInterpolation(db1.alpha, db1.cm.cn_da, db2.cm.cn_da, alpha_deg, h);
-    double Cndelta_e = 0; // cannot find Cn_deltae
+    double Cndelta_e = 0;
     double Cndelta_r = linearInterpolation(db1.alpha, db1.cm.cn_dr, db2.cm.cn_dr, alpha_deg, h);
 
     double CnTot   = Cnss + Cna * alpha + Cnb * beta + Cnp * pHat + Cnq * qHat + Cnr * rHat + Cndelta_a * delta_a + Cndelta_e * delta_e + Cndelta_r * delta_r;
@@ -333,6 +327,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
         previousVelocity[i] = previousState[i]; // (i-1)-th step
         currentVelocity[i] = initialConditions[i]; // i-th step
     }
+
     // initialize acceleration vectors
     double acceleration[6] = {0};
     double *accelerationPointer = getAcceleration(previousVelocity, currentVelocity, dt);

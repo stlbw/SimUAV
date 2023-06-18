@@ -1,7 +1,3 @@
-//
-// Created by Matheus Padilha on 05/04/23.
-//
-
 #include "../declaredFun.h"
 #include <math.h>
 #include<iostream>
@@ -13,10 +9,7 @@ struct Trim_Angles{
 };
 
 
-// Prima approssimazione
 Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_0) {
-    // Primo tentativo gamma_0=0 --> alpha = theta
-
     double alpha_min;
     double alpha_max;
     alpha_min = db1.alpha.front();
@@ -37,7 +30,6 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
     double incr_alpha = 0.02;
     double res = 0.5;
     Trim_Angles angles;
-    //double deltae_trim;
     double Cz_tot;
     double Cz_ss;
     double Cz_alpha;
@@ -68,7 +60,7 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
             Cm_ss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_int, h);
             Cm_alpha = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_int, h);
             Cm_deltae = linearInterpolation(db1.alpha, db1.cm.cm_de, db2.cm.cm_de, alpha_int, h);
-            angles.deltae_trim = (-(Cm_ss + Cm_alpha * angles.alpha_trim* M_PI /180) / Cm_deltae) *180 / M_PI;
+            angles.deltae_trim = (-(Cm_ss + Cm_alpha * angles.alpha_trim * M_PI /180) / Cm_deltae) * 180 / M_PI;
         }
         alpha_int += incr_alpha;
     }
@@ -90,13 +82,11 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
     }
 
     angles.theta_trim = angles.alpha_trim + gamma_0; // theta = alpha + gamma [DEG]
-    angles.u = V*cos(angles.alpha_trim * M_PI / 180.0);
-    angles.w = V*sin(angles.alpha_trim * M_PI / 180.0);
+    angles.u = V * cos(angles.alpha_trim * M_PI / 180.0);
+    angles.w = V * sin(angles.alpha_trim * M_PI / 180.0);
 
     return angles;
 }
-
-// Slide 50 3 opzioni per il deltae
 
 
 

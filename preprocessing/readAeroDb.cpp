@@ -6,13 +6,14 @@
 #include <chrono>
 #include "../declaredFun.h"
 using namespace std;
-//dclare structures to achieved nested structure from the most inner to the most outer for the static database
-struct Aircraft_description {               //define all data description with an irreal value to use it as flag
-    double Mass=-100, Wing_spann=-100, Wing_area=-100, Chord=-100, Mach_drag_rise=-100,
-            Thrust_axis_offset_x=-100, Thrust_axis_offset_y=-100, Thrust_axis_offset_z=-100,
-            Thrust_axis_ang_off_xy=-100, Thrust_axis_ang_off_xz=-100, numb_aoa=-100,
-            rotary_deriv=-100, COG=-100, Jx=-100, Jy=-100, jz=-100, jxz=-100, option_cog_update=-100,
-            cog_updated=-100, pilot_position_x=-100, pilot_position_y=-100, pilot_position_z=-100;
+
+//declare structures to achieve nested structure from the most inner to the most outer for the static database
+struct Aircraft_description {               //define all data description with a wrong value to use it as flag
+    double Mass = -100, Wing_spann = -100, Wing_area = -100, Chord = -100, Mach_drag_rise = -100,
+            Thrust_axis_offset_x = -100, Thrust_axis_offset_y = -100, Thrust_axis_offset_z = -100,
+            Thrust_axis_ang_off_xy = -100, Thrust_axis_ang_off_xz = -100, numb_aoa = -100,
+            rotary_deriv = -100, COG = -100, Jx = -100, Jy = -100, jz = -100, jxz = -100, option_cog_update = -100,
+            cog_updated = -100, pilot_position_x = -100, pilot_position_y = -100, pilot_position_z = -100;
 } ;
 struct Deflection_limits {
     double Elevator_max = -100, Elevator_min = -100, Ailerons = -100, Rudder = -100, Flap_up = -100, Flap_down = -100;
@@ -364,11 +365,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() <= db->length) {
                                     db->alpha.push_back(stof(token));
@@ -394,8 +390,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                                 db->ss.cn.push_back(stof(token));
                                 i++;
                             }
-
-                            //db->length = stoi(token);
                         }
                     }
                 }
@@ -416,11 +410,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));
@@ -469,11 +458,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));
@@ -519,11 +503,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));
@@ -572,11 +551,6 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
                     int i = 0;
                     while (getline(s, token, ' ')) {
                         if (!token.empty()) {
-                            /*if(token.find("\r") != string::npos) {
-                                string lineSkip = "\r";
-                                string::size_type i = token.find(lineSkip);
-                                token.erase(i, lineSkip.length());
-                            }*/
                             if(nameVar[i].find("ALPHA") != string::npos) {
                                 if(db->alpha.size() < db->length) {
                                     db->alpha.push_back(stof(token));

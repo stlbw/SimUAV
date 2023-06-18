@@ -33,8 +33,8 @@ int main() {
         prop0 = readProp("propeller.ini"); // Open database, read it and save data to struct of type PropDB
 
 
-        cout << ">> Finished reading all databases."<<endl;
-        cout <<'\n'<<" Please select how should the information be displayed and press ENTER:" << endl;
+        cout << ">> Finished reading all databases." << endl;
+        cout << '\n' << " Please select how should the information be displayed and press ENTER:" << endl;
         cout << "\t1 - Partial (simplified) version" << endl;
         cout << "\t2 - Print full database to screen" << endl;
         cout << "\t3 - Save database to file" << endl;
@@ -94,64 +94,74 @@ int main() {
         cout << "" << endl;
         cout << "---------------------------------------------------------------" << endl;
         cout << "" << endl;
-        // TRIM SECTION:
-        double V_ref, h_ref;
-        double gamma_0 = 0;
-        // todo: get gamma
-        double flagStartSimulation = 1;
-        while(flagStartSimulation != 0) {
-            cout << "Insert altitude [m]: ";
-            cin >> h_ref;
-            cout <<""<<endl;
-            cout << "Insert velocity [m/s]: ";
-            cin >> V_ref;
-            cout <<""<<endl;
-
-            // ask user gamma_0
-            int flag_gamma;
-            cout <<""<<endl;
-            cout << "Simulation will be executed with gamma_0 = 0 [deg]. \nPress 0 to continue or 1 to enter a specific value: ";
-            cin >> flag_gamma;
-            if (flag_gamma == 1){
-                cout << "Please enter the new value for gamma_0 in DEGREES [deg]: ";
-                cin >> gamma_0;
-            }
-            cout << "" << endl;
-            cout << "---------------------------------------------------------------" << endl;
-            cout << "" << endl;
-            cout << "The simulation will run with the following parameters: ";
-            cout << "" << endl;
-            cout << "V_ref = "<< V_ref << " [m/s]" << endl;
-            cout << "h_ref = " << h_ref << " [m]" << endl;
-            cout << "gamma_0 = " << gamma_0 << " [deg]" << endl;
-            cout << "" << endl;
-            cout << "Press 0 to start the simulation, 1 to change the parameters.";
-            cout << "" << endl;
-            cin >> flagStartSimulation;
-
-        }
-
 
         try {
+
+            // TRIM SECTION:
+            double V_ref, h_ref;
+            double gamma_0 = 0;
+            double delta_rpm = 100;
+            double flagStartSimulation = 1;
             // declared db for interpolation
             AeroDB DB1;
             AeroDB DB2;
 
-
-            getAerodynamicDbWithAltitude(h_ref, DB1, DB2, dba0, dba100, dba1000, dba2000);
-
             double Vmax = 25;
-            double Vmin = computeVmin(DB1,DB2,h_ref);
-            if (V_ref > Vmax){
-                cout << "The entered velocity exceeds the maximum value " << endl;
-                cout << "velocity is set to the maximum one 25 m/s" << endl;
-                V_ref = Vmax;
-            } else if (V_ref < Vmin){
-                cout << "The entered velocity is lower than the minimum value " << endl;
-                cout << "Velocity is set to the minimum one " << Vmin << endl;
-                V_ref = Vmin;
-            }
+            double Vmin = 0;
 
+            while(flagStartSimulation != 0) {
+                cout << "Insert altitude [m]: ";
+                cin >> h_ref;
+                cout << "" << endl;
+                cout << "Insert velocity [m/s]: ";
+                cin >> V_ref;
+                cout << "" << endl;
+
+                getAerodynamicDbWithAltitude(h_ref, DB1, DB2, dba0, dba100, dba1000, dba2000);
+
+                Vmin = computeVmin(DB1,DB2,h_ref);
+
+                if (V_ref > Vmax){
+                    cout << "The entered velocity exceeds the maximum value " << endl;
+                    cout << "velocity is set to the maximum one 25 m/s" << endl;
+                    V_ref = Vmax;
+                } else if (V_ref < Vmin){
+                    cout << "The entered velocity is lower than the minimum value " << endl;
+                    cout << "Velocity is set to the minimum one " << Vmin << endl;
+                    V_ref = Vmin;
+                }
+
+                // ask user gamma_0
+                int flag_gamma, flag_rpm;
+                cout << "" << endl;
+                cout << "Simulation will be executed with gamma_0 = 0 [deg]. \nPress 0 to continue or 1 to enter a specific value: ";
+                cin >> flag_gamma;
+                if (flag_gamma == 1) {
+                    cout << "Please enter the new value for gamma_0 in DEGREES [deg]: ";
+                    cin >> gamma_0;
+                }
+                cout << "" << endl;
+
+                cout
+                        << "Simulation will be executed with delta_rpm = 100. \nPress 0 to continue or 1 to enter a specific value: ";
+                cin >> flag_rpm;
+                if (flag_rpm == 1) {
+                    cout << "Please enter the new value for delta_rpm: ";
+                    cin >> delta_rpm;
+                }
+                cout << "" << endl;
+                cout << "---------------------------------------------------------------" << endl;
+                cout << "" << endl;
+                cout << "The simulation will run with the following parameters: ";
+                cout << "" << endl;
+                cout << "V_ref = " << V_ref << " [m/s]" << endl;
+                cout << "h_ref = " << h_ref << " [m]" << endl;
+                cout << "gamma_0 = " << gamma_0 << " [deg]" << endl;
+                cout << "" << endl;
+                cout << "Press 0 to start the simulation, 1 to change the parameters.";
+                cout << "" << endl;
+                cin >> flagStartSimulation;
+            }
 
             cout << "" << endl;
             cout << "---------------------------------------------------------------" << endl;
@@ -170,7 +180,7 @@ int main() {
 
             //trim rpm, T and Throttle
             cout << "" << endl;
-            Trim_Engine_Propeller y = trimEnginePropeller(DB1, DB2, en0, prop0, a, V_ref, h_ref, gamma_0);
+            Trim_Engine_Propeller y = trimEnginePropeller(DB1, DB2, en0, prop0, a, V_ref, h_ref, gamma_0,delta_rpm);
             cout << "RPM trim: " << y.rpm  << endl;
             cout << "Thrust trim: " << y.T  << endl;
             cout << "Torque trim: " << y.Torque << endl;
@@ -209,15 +219,15 @@ int main() {
                 string error = "Could not open file logAcceleration.txt";
                 throw runtime_error(error);
             }
-            printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
+            printHeaderLogger(loggerRemainders, loggerAcceleration); // prints header for both loggers
 
             // SIMULATION FROM HERE
-            //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
+
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
             double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
 
             // initialize the command vector
-            double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; //da,de,0,throttle
+            double vecComm[4] = {0, (a.deltae_trim * M_PI / 180.0), 0, y.Throttle}; // [da,de,0,throttle]
 
             double stateMinusOne[12] = {0}; // i-1
             for (int j = 0; j < 12; j++) {
@@ -228,9 +238,11 @@ int main() {
             Path psi0;
             int Tsim = 0;
             int nStep = 0;
-            double dt = 0.01;
+            double dt = 0;
+            cout << "Choose the integration step (recommended 0.01): ";
+            cin >> dt;
 
-            // double flagPID = 0;
+
             double wantPrint = 0;
             double runningflag = 0;
 
@@ -255,7 +267,7 @@ int main() {
                         if (flagbutterfly == 1) {
                             psi0 = read_psiref("BUTTERFLY_psiref.txt");
                             Tsim = (psi0.sizePsi - 1) * dt;
-                            nStep = (Tsim / dt)-2000;
+                            nStep = (Tsim / dt) - 2000;
                             cout << "Simulation Time :  " << Tsim << endl;
                             cout << " Waypoints:" << endl;
                             cout << " E =  {0 -250  250  -250  250}" << endl;
@@ -263,7 +275,7 @@ int main() {
                         } else if (flagbutterfly == 2) {
                             psi0 = read_psiref("BUTTERFLY_psiref.txt");
                             Tsim = (psi0.sizePsi - 1) * dt;
-                            nStep = (Tsim / dt)-2000;
+                            nStep = (Tsim / dt) - 2000;
                             cout << "Simulation Time :  " << Tsim << endl;
                             cout << " Waypoints:" << endl;
                             cout << " E =  {0 -320  320 -320  320}" << endl;
@@ -278,7 +290,7 @@ int main() {
                         wantPID = 1;
                         psi0 = read_psiref("DIAMOND_psiref.txt");
                         Tsim = (psi0.sizePsi - 1) * dt;
-                        nStep = (Tsim / dt)-2000;
+                        nStep = (Tsim / dt) - 2000;
                         cout << " Waypoints:" << endl;
                         cout << " E =  {0 -300  0   300   0 }" << endl;
                         cout << " N =  {0  0   300   0  -300}" << endl;
@@ -287,7 +299,7 @@ int main() {
                         wantPID = 1;
                         psi0 = read_psiref("SNAKE_psiref.txt");
                         Tsim = (psi0.sizePsi - 1) * dt;
-                        nStep = (Tsim / dt)-2000;
+                        nStep = (Tsim / dt) - 2000;
                         cout << "Simulation Time :  " << Tsim << endl;
                         cout << " Waypoints:" << endl;
                         cout << " E =  {0 -250  0    0   250  250  500  500 -250}" << endl;
@@ -300,7 +312,7 @@ int main() {
                         if (flagsquare == 1) {
                             psi0 = read_psiref("SQUARE_psiref.txt");
                             Tsim = (psi0.sizePsi - 1) * dt;
-                            nStep = (Tsim / dt)-2000;
+                            nStep = (Tsim / dt) - 2000;
                             cout << "Simulation Time :  " << Tsim << endl;
                             cout << " Waypoints:" << endl;
                             cout << " E =  {0  -300  0  300   0 }" << endl;
@@ -308,7 +320,7 @@ int main() {
                         } else if (flagsquare == 2) {
                             psi0 = read_psiref("SQUARE2_psiref.txt");
                             Tsim = (psi0.sizePsi - 1) * dt;
-                            nStep = (Tsim / dt)-2000;
+                            nStep = (Tsim / dt) - 2000;
                             cout << "Simulation Time :  " << Tsim << endl;
                             cout << " Waypoints:" << endl;
                             cout << " E =  {0 -250 250  250  -250 }" << endl;
@@ -333,7 +345,7 @@ int main() {
                 }
 
             // create state matrix to allocate the states at each step
-            double** fullStateMatrix = new double*[nStep + 1];
+            double** fullStateMatrix = new double* [nStep + 1];
             for (int i = 0; i < nStep + 1; i++) {fullStateMatrix[i] = new double[12];}
 
             // assign the header to simulation
@@ -362,8 +374,8 @@ int main() {
             cout << " " << endl;
             outputSim << " " << endl;
 
-            cout <<'\n'<<"The results are gonna be printed on the 'simulationData.txt' file"<< endl;
-            cout << '\n'<< "Do you want to print the results also on this screen? (Y/1 N/0):"<<endl;
+            cout <<'\n' << "The results are gonna be printed on the 'simulationData.txt' file" << endl;
+            cout << '\n' << "Do you want to print the results also on this screen? (Y/1 N/0):" << endl;
             cin >> wantPrint;
 
             pidController PID_v(-0.0021, -0.00087, -0.0015);
@@ -379,7 +391,7 @@ int main() {
             PID_psi.setErrorCheck(true);
 
             // LOOP INTEGRATE EQUATIONS OF MOTION
-            int k = 2000-1;
+            int k = 2000 - 1;
             for (int i = 1; i <= nStep; i++) {
                 double time = i * dt;
                 k ++;
@@ -388,13 +400,13 @@ int main() {
                 }
 
                 if (wantPID == 1) {
-                    double V_current = sqrt(vecCI[0]*vecCI[0]+vecCI[1]*vecCI[1]+vecCI[2]*vecCI[2]);
+                    double V_current = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
 
-                    double theta_ref_test = PID_v.compute(V_ref, V_current, dt);
-                    double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
-                    double delta_th_test = PID_h.compute(h_ref, vecCI[9], dt);
-                    double phi_test = PID_psi.compute(psi0.Psi[k],vecCI[8],dt);
-                    double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
+                    double theta_ref = PID_v.compute(V_ref, V_current, dt);
+                    double delta_e = PID_theta.compute(theta_ref, vecCI[7], dt);
+                    double delta_th = PID_h.compute(h_ref, vecCI[9], dt);
+                    double phi = PID_psi.compute(psi0.Psi[k],vecCI[8],dt);
+                    double delta_a = PID_phi.compute(phi,vecCI[6],dt);
 
                     vecComm[0] = delta_a;
                     vecComm[1] = delta_e;
@@ -402,7 +414,7 @@ int main() {
 
                 }
 
-                // SATURAZIONI
+                // Saturations
                 if(vecComm[3] <= 0.1){
                     vecComm[3] = 0.1;
                     cout << "saturation on delta throttle -> delta throttle = 0.1" << endl;

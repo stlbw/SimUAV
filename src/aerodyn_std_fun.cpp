@@ -1,6 +1,3 @@
-//
-// Created by Matheus Padilha on 19/04/23.
-//
 #include <cmath>
 /**
  * Computes the air density at a certain altitude using a simplified mathematical model

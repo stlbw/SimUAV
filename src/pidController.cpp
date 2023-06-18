@@ -1,7 +1,3 @@
-//
-// Created by giaca on 11/06/2023.
-//
-
 #include "pidController.h"
 class pidController {
 public:
@@ -9,51 +5,14 @@ public:
         : kp_(kp), ki_(ki), kd_(kd), filterConstant_(0.0), integralErrorSum_(0.0), lastError_(0.0),
         lastErrorDerivative_(0.0), flagFilter_(false), flagErrorCheck_(false) {}
 
-    /*double compute(double referencePoint, double currentValue, double dt) {
-        double error = referencePoint - currentValue;
-        // add check on error for PSI -> must set the flag using setErrorCheck method
-        if (flagErrorCheck_) {
-            if (error < - M_PI) {
-                error +=  2*M_PI;
-            }
-            else if (error > M_PI) {
-                error -= 2*M_PI;
-            }
-        }
-
-        //CAMBIATO DA QUA
-        //double derivative = (error - lastError_) / dt;
-        integralErrorSum_ += ki_ * error * dt;
-        double output ;
-
-        if (flagFilter_ && filterConstant_ != 0.0) {
-            double N = 1 / filterConstant_;
-            double derivative = lastErrorDerivative_ - kd_ * N * (lastError_) - lastErrorDerivative_ * N * dt;
-            integralErrorSum_ += ki_ * error * dt;
-
-            output = kp_ * error + integralErrorSum_ + derivative;
-
-            lastErrorDerivative_ = derivative;
-        }
-
-        lastError_ = error;
-        return output;
-        //END CHANGES
-
-
-
-
-
-    }*/
-
-    double computePIDSimple(double referencePoint, double currentValue, double dt) {
+    /*double computePIDSimple(double referencePoint, double currentValue, double dt) {
         double error = referencePoint - currentValue;
         if (flagErrorCheck_) {
             if (error < - M_PI) {
-                error +=  2*M_PI;
+                error +=  2 * M_PI;
             }
             else if (error > M_PI) {
-                error -= 2*M_PI;
+                error -= 2 * M_PI;
             }
         }
         double derivative = (error - lastError_) / dt;
@@ -67,7 +26,7 @@ public:
         lastError_ = error;
         return output;
 
-    }
+    }*/
 
     double compute(double referencePoint, double currentValue, double dt) {
         double error = referencePoint - currentValue;
@@ -87,7 +46,7 @@ public:
 
         lastError_ = error;
         lastErrorDerivative_ = D;
-        integralErrorSum_ += ki_ * lastError_ * dt; // I
+        integralErrorSum_ += ki_ * lastError_ * dt;
 
         double output;
         output = P + integralErrorSum_ + D;

@@ -1,15 +1,8 @@
-//
-// Created by Matheus Padilha on 29/04/23.
-//
-
 #include "../declaredFun.h"
 #include <cmath>
 #include <math.h>
 #include<iostream>
 
-// MODO FUGOIDE E CORTO PERIODO
-
-// We have a subsonic vehicle
 struct Modes{
     double omega_ph, zeta_ph, T_ph, t_dim_ph ;
     double omega_sp,zeta_sp,T_sp, t_dim_sp ;
@@ -72,55 +65,11 @@ bool routhCriteria(double Iy, double rho, double mu, double V, double chord, dou
     if(checkStaticStability) { staticCheck = "verified";} else { staticCheck = "not verified";}
     if(checkDynamicStability) { dynamicCheck = "verified";} else { dynamicCheck = "not verified";}
     cout << "ROUTH CRITERIA FOR LONGITUDINAL STABILITY:" << endl;
-    cout << "Longitudinal Static Stability: "<< staticCheck << endl;
-    cout << "Longitudinal Dynamic Stability: "<< dynamicCheck << endl;
+    cout << "Longitudinal Static Stability: " << staticCheck << endl;
+    cout << "Longitudinal Dynamic Stability: " << dynamicCheck << endl;
     cout << endl;
 
-    double routhCoef[6] = {A1, B1, C1, D1, E1, R}; // todo: understand if it needs to be returned
-
-    // evaluate the short and phugoid modes using the complete
-    /*
-    if (checkDynamicStability) {
-        // iff the dynamic stability criteria is respected (complex conjugate solutions), the short period and phugoid exist and can be calculated
-        double t_char = chord / (2 * V); // time constant (tempo caratteristico)
-
-        // PHUGOID
-        double ph_Re = - ((C1 * D1 - B1 * E1) / pow(C1, 2)) / 2;
-        double ph_Im = sqrt(abs(pow(((C1 * D1 - B1 * E1) / pow(C1, 2)), 2) - 4 * 1 * (E1 / C1))) / 2; // the absolute value is needed to avoid having to use complex functions
-
-        double eigenvalueModule_ph = sqrt(pow(ph_Re, 2) + pow(ph_Im, 2));
-        double omega_n_ph = eigenvalueModule_ph / t_char; // natural frequency [rad/s]
-        double damp_ph = - ph_Re / eigenvalueModule_ph; // damping factor
-        double T_ph = (2 * M_PI) / ph_Im * t_char; // period [s]
-        double timeHalfAmplitude_ph = log(0.5) / ph_Re * t_char; // time to half amplitude [s]
-
-        // SHORT PERIOD
-        double sp_Re = - (B1 / A1) / 2;
-        double sp_Im = sqrt(abs(pow((B1 / A1), 2) - 4 * 1 * (C1 / A1))) / 2;
-
-        double eigenvalueModule_sp = sqrt(pow(sp_Re, 2) + pow(sp_Im, 2));
-        double omega_n_sp = eigenvalueModule_sp / t_char; // natural frequency [rad/s]
-        double damp_sp = - sp_Re / eigenvalueModule_sp; // damping factor
-        double T_sp = (2 * M_PI) / sp_Im * t_char; // period [s]
-        double timeHalfAmplitude_sp = log(0.5) / sp_Re * t_char; // time to half amplitude [s]
-
-        //todo: decide whether this part has to be printed and where (main?)
-        cout << "PHUGOID: " << endl;
-        cout << "Frequency [rad/s]: " << omega_n_ph <<endl;
-        cout << "Damping ratio: " << damp_ph <<endl;
-        cout << "Time to half the amplitude [s]: " << timeHalfAmplitude_ph <<endl;
-        cout << "Period [s]: " << T_ph <<endl;
-        cout << "" << endl;
-        cout << "SHORT PERIOD:" << endl;
-        cout << "Frequency [rad/s]: " << omega_n_sp <<endl;
-        cout << "Damping ratio: " << damp_sp <<endl;
-        cout << "Time to half the amplitude [s]: " << timeHalfAmplitude_sp <<endl;
-        cout << "Period [s]: " << T_sp <<endl;
-        cout << "" << endl;
-        cout << "" << endl;
-
-    }
-     */
+    double routhCoef[6] = {A1, B1, C1, D1, E1, R};
 
     return checkDynamicStability;
 
@@ -129,18 +78,14 @@ bool routhCriteria(double Iy, double rho, double mu, double V, double chord, dou
 Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles angles, double V, double h) {
     double C_Du = 0, C_mu = 0, C_Lu = 0; // these derivatives are 0 because it is a subsonic vehicle
     double g = 9.81;
-    //double V = 15;
-    //double h = 100;
     double rho = computeDensity(h);
-    //double C_We = 0.2842;
     double C_We = (db1.Ad.Mass * g) / (0.5 * rho * V * V * db1.Ad.Wing_area); // MASS and WING AREA constant
     double C_Le = C_We;
     double C_Xe = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, angles.alpha_trim, h); // CX coef in steady-state for the trim condition
     double C_De = -C_Xe;
-    double k = 0.0382; //every flight condition
-    double Cl1_alpha = 3.25; // discordanza valori tra slide 53 e 57
+    double k = 0.0382; // for every flight condition
+    double Cl1_alpha = 3.25;
     double C_Tu = -0.0382;
-    //double C_Tu = -3 * C_De;
     double Cz_alpha = linearInterpolation(db1.alpha, db1.fz.cz_a, db2.fz.cz_a, angles.alpha_trim, h);
     double Cx_alpha = linearInterpolation(db1.alpha, db1.fx.cx_a, db2.fx.cx_a, angles.alpha_trim, h);
     double Cl_alpha = Cx_alpha * sin(angles.alpha_trim * M_PI / 180.0) - Cz_alpha * cos(angles.alpha_trim * M_PI / 180.0) ;
@@ -150,18 +95,19 @@ Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles ang
     double Cm_q = linearInterpolation(db1.alpha, db1.pm.cm_q, db2.pm.cm_q, angles.alpha_trim, h);
     double Cm1_alpha = linearInterpolation(db1.alpha, db1.pm.cm_ap, db2.pm.cm_ap, angles.alpha_trim, h) ;
     double aeroCoefVec[10] = {C_We, C_Le, C_De, C_Tu, Cl_alpha, Cd_alpha, Cm_alpha, Cm_q, Cl1_alpha, Cm1_alpha};
+
     //**************************************************
     double chord = db1.Ad.Chord;
     double Iy = 8 * db1.Ad.Jy / (rho * db1.Ad.Wing_area * chord * chord * chord); // dimensionless inertia
-    double mu = 2 * db1.Ad.Mass / (rho * db1.Ad.Wing_area * chord); //dimensionless mass parameter
+    double mu = 2 * db1.Ad.Mass / (rho * db1.Ad.Wing_area * chord); // dimensionless mass parameter
     //**************************************************
 
     // Routh Criteria
     bool checkRouth = routhCriteria(Iy, rho, mu, V, chord, aeroCoefVec);
 
     // Approximated Solution
-
     if (checkRouth) {
+
         // PHUGOID
         double t_car = chord / (2 * V);
         double omega_ph_ad = C_We / (sqrt(2) * mu); // dimensionless omega - phugoid mode
@@ -175,9 +121,9 @@ Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles ang
 
         //**************************************************
         // SHORT PERIOD
-        double omega_sp_ad = sqrt(- Cm_alpha/ Iy);
+        double omega_sp_ad = sqrt(-Cm_alpha / Iy);
         double omega_sp_n = omega_sp_ad / t_car;
-        md.zeta_sp = (Iy*Cl_alpha-2*mu*(Cm_q+Cm1_alpha))/(2*sqrt(-2*mu*Iy*(2*mu*Cm_alpha+Cm_q*Cl_alpha)));
+        md.zeta_sp = (Iy * Cl_alpha - 2 * mu * (Cm_q + Cm1_alpha)) / (2 * sqrt(-2 * mu * Iy * (2 * mu * Cm_alpha + Cm_q * Cl_alpha)));
         double sp_Re = -md.zeta_sp * omega_sp_n;
         md.omega_sp = omega_sp_n * sqrt(fabs(md.zeta_sp * md.zeta_sp - 1));
         md.t_dim_sp = log(0.5) / sp_Re;
@@ -197,7 +143,6 @@ Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles ang
         cout << "Time to half the amplitude [s]: " << md.t_dim_sp <<endl;
         cout << "Period [s]: " << md.T_sp <<endl;
     }
-
 
 
     return md;
