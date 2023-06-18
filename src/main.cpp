@@ -212,7 +212,6 @@ int main() {
             printHeaderLogger(loggerRemainders, loggerAcceleration); //prints header for both loggers
 
             // SIMULATION FROM HERE
-
             //initialize the initial conditions vector used for the integration of the aircraft's equations of motion
             // IMPORTANT: integrateEquationsOfMotion receives all values in SI units -> make sure angles are in RAD
             double vecCI[12] = {a.u, 0, a.w, 0, 0, 0, 0, (a.theta_trim * M_PI / 180.0), 0, h_ref, 0, 0}; // [u, v, w, p, q, r, phi, theta, psi, h, x, y]
@@ -232,8 +231,8 @@ int main() {
             double dt = 0.01;
 
             // double flagPID = 0;
-            double wantPrint=0;
-            double runningflag=0;
+            double wantPrint = 0;
+            double runningflag = 0;
 
             cout <<'\n'<< "Choose the desired path:Trim (T), Butterfly(B), Diamond(D), Snake(K), Square(Q), Other (O)"<< endl;
 
@@ -255,7 +254,6 @@ int main() {
                         cin >> flagbutterfly;
                         if (flagbutterfly == 1) {
                             psi0 = read_psiref("BUTTERFLY_psiref.txt");
-
                             Tsim = (psi0.sizePsi - 1) * dt;
                             nStep = (Tsim / dt)-2000;
                             cout << "Simulation Time :  " << Tsim << endl;
@@ -334,11 +332,6 @@ int main() {
                         break;
                 }
 
-            cout <<'\n'<<"The results are gonna be printed on the 'simulationData.txt' file"<< endl;
-            cout << '\n'<< "Do you want to print the results also on this screen? (Y/1 N/0):"<<endl;
-            cin >>wantPrint;
-            // initialize error variables and integrative error to be used when PID is active - store the error at the previous step
-
             // create state matrix to allocate the states at each step
             double** fullStateMatrix = new double*[nStep + 1];
             for (int i = 0; i < nStep + 1; i++) {fullStateMatrix[i] = new double[12];}
@@ -359,6 +352,7 @@ int main() {
             outputSim << left << setw(15) << 0.0;
             outputSim << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
 
+
             // assign fullStateMatrix first column to trim and print it
             for (int i = 0; i < 12; i++) {
                 fullStateMatrix[0][i] = vecCI[i];
@@ -367,6 +361,10 @@ int main() {
             }
             cout << " " << endl;
             outputSim << " " << endl;
+
+            cout <<'\n'<<"The results are gonna be printed on the 'simulationData.txt' file"<< endl;
+            cout << '\n'<< "Do you want to print the results also on this screen? (Y/1 N/0):"<<endl;
+            cin >> wantPrint;
 
             pidController PID_v(-0.0021, -0.00087, -0.0015);
             pidController PID_theta(-0.3, -3.25,-0.01);
@@ -381,9 +379,8 @@ int main() {
             PID_psi.setErrorCheck(true);
 
             // LOOP INTEGRATE EQUATIONS OF MOTION
-            int k = 0;
+            int k = 2000-1;
             for (int i = 1; i <= nStep; i++) {
-
                 double time = i * dt;
                 k ++;
                 if (k > 15000) {
@@ -396,27 +393,26 @@ int main() {
                     double theta_ref_test = PID_v.compute(V_ref, V_current, dt);
                     double delta_e_test = PID_theta.compute(theta_ref_test, vecCI[7], dt);
                     double delta_th_test = PID_h.compute(h_ref, vecCI[9], dt);
-                    double phi_test = PID_psi.compute(psi0.Psi[k+2000-1],vecCI[8],dt);
+                    double phi_test = PID_psi.compute(psi0.Psi[k],vecCI[8],dt);
                     double delta_a_test = PID_phi.compute(phi_test,vecCI[6],dt);
 
                     vecComm[0] = delta_a_test;//delta_a_test; //delta_aileron
                     vecComm[1] = delta_e_test; //delta_elevator
                     vecComm[3] = delta_th_test; //delta_throttle
 
-                    // SATURAZIONI
-                    if(vecComm[3] <= 0.1){
-                        vecComm[3] = 0.1;
-                        cout << "delta_throttle SATURATA -> delta_th = 0.1" << endl;
-                        PID_h.resetIntegrativeError();
-                    }
-                    else if (vecComm[3] >= 1.0) {
-                        vecComm[3] = 1.0;
-                        cout << "delta_throttle SATURATA -> delta_th = 1.0" << endl;
-                        PID_h.resetIntegrativeError();
-                    }
-
                 }
 
+                // SATURAZIONI
+                if(vecComm[3] <= 0.1){
+                    vecComm[3] = 0.1;
+                    cout << "delta_throttle SATURATA -> delta_th = 0.1" << endl;
+                    PID_h.resetIntegrativeError();
+                }
+                else if (vecComm[3] >= 1.0) {
+                    vecComm[3] = 1.0;
+                    cout << "delta_throttle SATURATA -> delta_th = 1.0" << endl;
+                    PID_h.resetIntegrativeError();
+                }
                 if(vecComm[1] <= -10 * M_PI / 180){
                     vecComm[1] = -10 * M_PI / 180;
                     cout << "delta_e SATURATA -> delta_e min" << endl;
@@ -454,7 +450,6 @@ int main() {
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
                 double current_V = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
-
 
                 // assign the recently calculated state to the fullStateMatrix at column i
                 if (wantPrint==1) {

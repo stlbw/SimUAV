@@ -132,7 +132,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
 
     //MMoment
     //double Cmss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_trim, h_trim);
-    double Cmss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha, h);
+    double Cmss = linearInterpolation(db1.alpha, db1.ss.cm, db2.ss.cm, alpha_deg, h);
 
     double Cma = linearInterpolation(db1.alpha, db1.pm.cm_a, db2.pm.cm_a, alpha_deg, h);
     double Cmb = linearInterpolation(db1.alpha, db1.pm.cm_b, db2.pm.cm_b, alpha_deg, h);
