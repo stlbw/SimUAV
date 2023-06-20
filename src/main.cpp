@@ -479,7 +479,7 @@ int main() {
 
             pidController PID_v(-0.0021, -0.00087, -0.0015);
             pidController PID_theta(-0.3, -3.25,-0.01);
-            pidController PID_h(0.019, 0.0002,0.01);
+            pidController PID_h(-0.019, -0.0002,-0.01);
             pidController PID_psi(1.5, 0.005, 0.01);
             pidController PID_phi(0.12, 0.0005, 0.001);
 
