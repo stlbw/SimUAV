@@ -97,7 +97,8 @@ int main() {
 
         try {
             // TRIM SECTION:
-            double V_ref, h_ref;
+            double V_ref = 13.5;
+            double h_ref = 100;
             double gamma_0 = 0;
             double delta_rpm = 100;
             double flagStartSimulation = 1;
@@ -116,67 +117,244 @@ int main() {
 
             double Vmax = 25;
             double Vmin = 0;
+            Path psi0;
+            double Tsim = 0;
+            int nStep = 0;
+            double dt = 0.01; //DEFAULT
+            int wantPID = 0;
+            while (flagStartSimulation != 0) {
+                // while this loop does not complete, restart the simulation parameters with the standard values
+                V_ref = 13.5;
+                h_ref = 100;
+                gamma_0 = 0;
+                delta_rpm = 100;
+                dt = 0.01;
 
-            while(flagStartSimulation != 0) {
-                if (input == 3){
+                if (input == 3) {
                     h_ref = hb.altitude;
                 }
-                else {
-                    cout << "Insert altitude [m]: ";
-                    cin >> h_ref;
-                    cout << "" << endl;
+
+                double flagbutterfly = 0;
+                double flagsquare = 0;
+                char letterCheckSwitch;
+                int flagPath = 1;
+                int standardSim = 1;
+
+                while (flagPath != 0) {
+                    cout << '\n'
+                         << "Choose the desired simulation:Trim (T), Butterfly(B), Diamond(D), Snake(K), Square(Q), Other (O)"
+                         << endl;
+                    cin >> letterCheckSwitch; // get user input
+                    flagPath = 0; // assume it is the correct one
+                    standardSim = 1;
+                    switch (letterCheckSwitch) {
+                        case 'T':
+                            standardSim = 0;
+                            wantPID = 0;
+                            cout << "Insert altitude [m]: ";
+                            cin >> h_ref;
+                            cout << "" << endl;
+
+                            cout << "Insert velocity [m/s]: ";
+                            cin >> V_ref;
+                            cout << "" << endl;
+
+                            cout << "Insert the simulation Time [s]:  ";
+                            cin >> Tsim;
+                            nStep = floor(Tsim / dt);
+
+                            break;
+                        case 'B':
+                            wantPID = 1;
+                            cout << "Choose the butterfly path 1/2: ";
+                            cin >> flagbutterfly;
+                            if (flagbutterfly == 1) {
+                                psi0 = read_psiref("BUTTERFLY_psiref.txt");
+                                Tsim = (psi0.sizePsi - 1) * dt;
+                                nStep = floor(Tsim / dt);
+                                cout << " Waypoints:" << endl;
+                                cout << " E =  {0 -250  250  -250  250}" << endl;
+                                cout << " N =  {0  250  250  -250 -250}" << endl;
+
+                            } else if (flagbutterfly == 2) {
+                                psi0 = read_psiref("BUTTERFLY_psiref.txt");
+                                Tsim = (psi0.sizePsi - 1) * dt;
+                                nStep = floor(Tsim / dt);
+                                cout << " Waypoints:" << endl;
+                                cout << " E =  {0 -320  320 -320  320}" << endl;
+                                cout << " N =  {0  320 320 -320 -320}" << endl;
+
+                            } else {
+                                cerr
+                                        << "Could not read the input. Please make sure to add the correct number and press ENTER."
+                                        << endl;
+                            }
+                            break;
+                        case 'D':
+                            wantPID = 1;
+                            psi0 = read_psiref("DIAMOND_psiref.txt");
+                            Tsim = (psi0.sizePsi - 1) * dt;
+                            nStep = floor(Tsim / dt);
+                            cout << " Waypoints:" << endl;
+                            cout << " E =  {0 -300  0   300   0 }" << endl;
+                            cout << " N =  {0  0   300   0  -300}" << endl;
+
+                            break;
+                        case 'K':
+                            wantPID = 1;
+                            psi0 = read_psiref("SNAKE_psiref.txt");
+                            Tsim = (psi0.sizePsi - 1) * dt;
+                            nStep = floor(Tsim / dt);
+                            cout << " Waypoints:" << endl;
+                            cout << " E =  {0 -250  0    0   250  250  500  500 -250}" << endl;
+                            cout << " N =  {0  250 250 -250 -250  250  250 -250 -250}" << endl;
+
+                            break;
+                        case 'Q':
+                            wantPID = 1;
+                            cout << "Choose the square path 1/2: ";
+                            cin >> flagsquare;
+                            if (flagsquare == 1) {
+                                psi0 = read_psiref("SQUARE_psiref.txt");
+                                Tsim = (psi0.sizePsi - 1) * dt;
+                                nStep = floor(Tsim / dt);
+                                cout << " Waypoints:" << endl;
+                                cout << " E =  {0  -300  0  300   0 }" << endl;
+                                cout << " N =  {0    0  300  0  -300}" << endl;
+
+                            } else if (flagsquare == 2) {
+                                psi0 = read_psiref("SQUARE2_psiref.txt");
+                                Tsim = (psi0.sizePsi - 1) * dt;
+                                nStep = floor(Tsim / dt);
+                                cout << " Waypoints:" << endl;
+                                cout << " E =  {0 -250 250  250  -250 }" << endl;
+                                cout << " N =  {0  250 250 -250  -250 }" << endl;
+
+                            } else {
+                                cerr
+                                        << "Could not read the input. Please make sure to add the correct number and press ENTER."
+                                        << endl;
+                                flagPath = 1;
+                            }
+                            break;
+                            /*case 'O':
+                                cout << "Please upload the txt file of the psi angle values in the correct folder";
+
+                                //psi0 = read_psiref("DIAMOND_psiref.txt");
+                                //Tsim = (sizeof(psi0) - 1) / dt;
+                                //int nStep = static_cast<int>(Tsim / dt)-2000;*/
+
+                        default:
+                            cerr
+                                    << "Could not read the input. Please make sure to add the correct letter and press ENTER."
+                                    << endl;
+                            flagPath = 1;
+                            break;
+                    }
                 }
-                cout << "Insert velocity [m/s]: ";
-                cin >> V_ref;
-                cout << "" << endl;
+
+                int changeParamFlag = 1;
+
+                while (changeParamFlag != 0) {
+                    printSimulationData(V_ref, h_ref, Tsim, dt, gamma_0, delta_rpm);
+
+                    cout << "Press: " << endl;
+                    cout << " 0 - CONTINUE with the simulation" << endl;
+                    cout << " 1 - CHANGE one or more parameters" << endl;
+                    cin >> changeParamFlag;
+
+                    if (changeParamFlag != 0) {
+                        char switchChange;
+                        cout << "Press: " << endl;
+                        cout << " 1 - Change the ALTITUDE [m]" << endl;
+                        cout << " 2 - Change the VELOCITY [m/s]" << endl;
+                        cout << " 3 - Change the SIMULATION TIME [s]" << endl;
+                        cout << " 4 - Change the INTEGRATION STEP [s]" << endl;
+                        cout << " 5 - Change the GAMMA_0 [deg]" << endl;
+                        cout << " 6 - Change the DELTA_RPM [rad/s]" << endl;
+                        cin >> switchChange;
+                        if (standardSim == 1) {
+                            cout << "WARNING: the desired simulation (" << letterCheckSwitch << ") was built considering "
+                                                                                                "the default parameters." << endl;
+                            cout << "Changes to these values DO NOT guarantee the convergence of the simulation" << endl;
+                            cout << " " << endl;
+                        }
+                        switch (switchChange) {
+                            case '1':
+                                cout << "Insert altitude [m]: ";
+                                cin >> h_ref;
+                                cout << "" << endl;
+                                break;
+                            case '2':
+                                cout << "Insert velocity [m/s]: ";
+                                cin >> V_ref;
+                                cout << "" << endl;
+                                break;
+                            case '3':
+                                if (standardSim == 1) {
+                                    cout << "STANDARD SIMULATION BASED ON FIXED STEP - Cannot change the simulation time" << endl;
+                                }
+                                else {
+                                    cout << "Insert simulation time [s]: ";
+                                    cin >> Tsim;
+                                    cout << "" << endl;
+                                }
+                                break;
+                            case '4':
+                                if (standardSim == 1) {
+                                    cout << "STANDARD SIMULATION BASED ON FIXED STEP - Cannot change the integration step" << endl;
+                                }
+                                else {
+                                    cout << "Insert integration step (recommended step dt = 0.01 [s]: ";
+                                    cin >> dt;
+                                    cout << "" << endl;
+                                }
+
+                                break;
+                            case '5':
+                                cout << "Insert gamma_0 [DEG]: ";
+                                cin >> gamma_0;
+                                cout << "" << endl;
+                                break;
+                            case '6':
+                                cout << "Insert delta_rpm [rad/s]: ";
+                                cin >> delta_rpm;
+                                cout << "" << endl;
+                                break;
+                            default:
+                                cout << "The selected option is not available."<< endl;
+
+                        }
+                    }
+
+                }
 
                 getAerodynamicDbWithAltitude(h_ref, DB1, DB2, dba0, dba100, dba1000, dba2000);
 
                 double rho = AtmosphereCalc(input, hb, h_ref);
 
-                Vmin = computeVmin(DB1,DB2,h_ref, rho);
+                Vmin = computeVmin(DB1, DB2, h_ref, rho);
 
-                if (V_ref > Vmax){
+                if (V_ref > Vmax) {
                     cout << "The entered velocity exceeds the maximum value " << endl;
                     cout << "velocity is set to the maximum one 25 m/s" << endl;
                     V_ref = Vmax;
-                } else if (V_ref < Vmin){
+                } else if (V_ref < Vmin) {
                     cout << "The entered velocity is lower than the minimum value " << endl;
                     cout << "Velocity is set to the minimum one " << Vmin << endl;
                     V_ref = Vmin;
                 }
 
-                // ask user gamma_0
-                int flag_gamma, flag_rpm;
-                cout << "" << endl;
-                cout << "Simulation will be executed with gamma_0 = 0 [deg]. \nPress 0 to continue or 1 to enter a specific value: ";
-                cin >> flag_gamma;
-                if (flag_gamma == 1) {
-                    cout << "Please enter the new value for gamma_0 in DEGREES [deg]: ";
-                    cin >> gamma_0;
-                }
-                cout << "" << endl;
-
-                cout
-                        << "Simulation will be executed with delta_rpm = 100. \nPress 0 to continue or 1 to enter a specific value: ";
-                cin >> flag_rpm;
-                if (flag_rpm == 1) {
-                    cout << "Please enter the new value for delta_rpm: ";
-                    cin >> delta_rpm;
-                }
                 cout << "" << endl;
                 cout << "---------------------------------------------------------------" << endl;
                 cout << "" << endl;
-                cout << "The simulation will run with the following parameters: ";
-                cout << "" << endl;
-                cout << "V_ref = " << V_ref << " [m/s]" << endl;
-                cout << "h_ref = " << h_ref << " [m]" << endl;
-                cout << "gamma_0 = " << gamma_0 << " [deg]" << endl;
-                cout << "" << endl;
-                cout << "Press 0 to start the simulation, 1 to change the parameters.";
+                cout << "Press: " << endl;
+                cout << "0 - START THE SIMULATION the simulation" <<endl;
+                cout << "1 - RESTART the definition of the chosen simulation" << endl;
                 cout << "" << endl;
                 cin >> flagStartSimulation;
             }
+
 
             cout << "" << endl;
             cout << "---------------------------------------------------------------" << endl;
@@ -252,126 +430,33 @@ int main() {
                 // simulation starts at the last trim state (i=0) and before that we assume infinite trim states take place
             }
 
-            Path psi0;
-            int Tsim = 0;
-            int nStep = 0;
-            double dt = 0;
-            cout << "Choose the integration step (recommended 0.01): ";
-            cin >> dt;
+
+
 
 
             double wantPrint = 0;
             double runningflag = 0;
 
-            cout <<'\n'<< "Choose the desired path:Trim (T), Butterfly(B), Diamond(D), Snake(K), Square(Q), Other (O)"<< endl;
 
-                int wantPID = 0;
-                double flagbutterfly = 0;
-                double flagsquare = 0;
-                char letterCheckSwitch;
-                cin >> letterCheckSwitch; // get user input
-                switch (letterCheckSwitch) {
-                    case 'T':
-                        wantPID = 0;
-                        cout << "Insert the simulation Time :  ";
-                        cin >> Tsim;
-                        nStep = Tsim / dt;
-                        break;
-                    case 'B':
-                        wantPID = 1;
-                        cout << "Choose the butterfly path 1/2: ";
-                        cin >> flagbutterfly;
-                        if (flagbutterfly == 1) {
-                            psi0 = read_psiref("BUTTERFLY_psiref.txt");
-                            Tsim = (psi0.sizePsi - 1) * dt;
-                            nStep = (Tsim / dt) - 2000;
-                            cout << "Simulation Time :  " << Tsim << endl;
-                            cout << " Waypoints:" << endl;
-                            cout << " E =  {0 -250  250  -250  250}" << endl;
-                            cout << " N =  {0  250  250  -250 -250}" << endl;
-                        } else if (flagbutterfly == 2) {
-                            psi0 = read_psiref("BUTTERFLY_psiref.txt");
-                            Tsim = (psi0.sizePsi - 1) * dt;
-                            nStep = (Tsim / dt) - 2000;
-                            cout << "Simulation Time :  " << Tsim << endl;
-                            cout << " Waypoints:" << endl;
-                            cout << " E =  {0 -320  320 -320  320}" << endl;
-                            cout << " N =  {0  320 -320 -320 -320}" << endl;
-                        } else {
-                            cerr
-                                    << "Could not read the input. Please make sure to add the correct number and press ENTER."
-                                    << endl;
-                        }
-                        break;
-                    case 'D':
-                        wantPID = 1;
-                        psi0 = read_psiref("DIAMOND_psiref.txt");
-                        Tsim = (psi0.sizePsi - 1) * dt;
-                        nStep = (Tsim / dt) - 2000;
-                        cout << " Waypoints:" << endl;
-                        cout << " E =  {0 -300  0   300   0 }" << endl;
-                        cout << " N =  {0  0   300   0  -300}" << endl;
-                        break;
-                    case 'K':
-                        wantPID = 1;
-                        psi0 = read_psiref("SNAKE_psiref.txt");
-                        Tsim = (psi0.sizePsi - 1) * dt;
-                        nStep = (Tsim / dt) - 2000;
-                        cout << "Simulation Time :  " << Tsim << endl;
-                        cout << " Waypoints:" << endl;
-                        cout << " E =  {0 -250  0    0   250  250  500  500 -250}" << endl;
-                        cout << " N =  {0  250 250 -250 -250  250  250 -250 -250}" << endl;
-                        break;
-                    case 'Q':
-                        wantPID = 1;
-                        cout << "Choose the square path 1/2: ";
-                        cin >> flagsquare;
-                        if (flagsquare == 1) {
-                            psi0 = read_psiref("SQUARE_psiref.txt");
-                            Tsim = (psi0.sizePsi - 1) * dt;
-                            nStep = (Tsim / dt) - 2000;
-                            cout << "Simulation Time :  " << Tsim << endl;
-                            cout << " Waypoints:" << endl;
-                            cout << " E =  {0  -300  0  300   0 }" << endl;
-                            cout << " N =  {0    0  300  0  -300}" << endl;
-                        } else if (flagsquare == 2) {
-                            psi0 = read_psiref("SQUARE2_psiref.txt");
-                            Tsim = (psi0.sizePsi - 1) * dt;
-                            nStep = (Tsim / dt) - 2000;
-                            cout << "Simulation Time :  " << Tsim << endl;
-                            cout << " Waypoints:" << endl;
-                            cout << " E =  {0 -250 250  250  -250 }" << endl;
-                            cout << " N =  {0  250 250 -250  -250 }" << endl;
-                        } else {
-                            cerr
-                                    << "Could not read the input. Please make sure to add the correct number and press ENTER."
-                                    << endl;
-                        }
-                        break;
-                    /*case 'O':
-                        cout << "Please upload the txt file of the psi angle values in the correct folder";
 
-                        //psi0 = read_psiref("DIAMOND_psiref.txt");
-                        //Tsim = (sizeof(psi0) - 1) / dt;
-                        //int nStep = static_cast<int>(Tsim / dt)-2000;*/
 
-                    default:
-                        cerr << "Could not read the input. Please make sure to add the correct letter and press ENTER."
-                             << endl;
-                        break;
-                }
+            cout <<'\n' << "The results are gonna be printed on the 'simulationData.txt' file" << endl;
+            cout << '\n' << "Do you want to print the results also on this screen? (Y/1 N/0):" << endl;
+            cin >> wantPrint;
 
             // create state matrix to allocate the states at each step
             double** fullStateMatrix = new double* [nStep + 1];
             for (int i = 0; i < nStep + 1; i++) {fullStateMatrix[i] = new double[12];}
 
             // assign the header to simulation
-            cout << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
-                 << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
-                 << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
-            //  assign first column as the trim condition
-            cout << left << setw(15) << 0.0;
-            cout << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
+            if (wantPrint == 1) {
+                cout << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
+                     << left << setw(15) << "q" << left << setw(15) << "r" << left << setw(15) << "phi" << left << setw(15) << "theta"
+                     << left << setw(15) << "psi" << left << setw(15) << "h" << left << setw(15) << "x" << left << setw(15) << "y" << endl;
+                //  assign first column as the trim condition
+                cout << left << setw(15) << 0.0;
+                cout << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
+            }
 
             // print to logger the trim step
             outputSim << left << setw(15) << "Time" << left << setw(15) << "alpha [deg]"  << left << setw(15) << "u" << left << setw(15) << "v" << left << setw(15) << "w" << left << setw(15) << "p"
@@ -385,15 +470,12 @@ int main() {
             // assign fullStateMatrix first column to trim and print it
             for (int i = 0; i < 12; i++) {
                 fullStateMatrix[0][i] = vecCI[i];
-                cout << left << setw(15) << fullStateMatrix[0][i]; // print to screen
+                if (wantPrint == 1) {cout << left << setw(15) << fullStateMatrix[0][i];} // print to screen
                 outputSim << left << setw(15) << fullStateMatrix[0][i]; //print to logger
             }
-            cout << " " << endl;
+            if (wantPrint == 1) {cout << " " << endl;}
             outputSim << " " << endl;
 
-            cout <<'\n' << "The results are gonna be printed on the 'simulationData.txt' file" << endl;
-            cout << '\n' << "Do you want to print the results also on this screen? (Y/1 N/0):" << endl;
-            cin >> wantPrint;
 
             pidController PID_v(-0.0021, -0.00087, -0.0015);
             pidController PID_theta(-0.3, -3.25,-0.01);
@@ -523,6 +605,11 @@ int main() {
         cerr<<"Runtime error: "<<e.what()<<endl; //print error
         return 1; // return from main
     }
-
+    cout << "" << endl;
+    cout << "--------------------------------------END OF SIMULATION--------------------------------------" << endl;
+    cout << "" << endl;
+    cout << "Press anything + ENTER to exit the program" << endl;
+    char endSim;
+    cin >> endSim;
     return 0;
 };
