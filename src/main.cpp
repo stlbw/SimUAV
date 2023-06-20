@@ -305,7 +305,7 @@ int main() {
                                     cout << "STANDARD SIMULATION BASED ON FIXED STEP - Cannot change the integration step" << endl;
                                 }
                                 else {
-                                    cout << "Insert integration step (recommended step dt = 0.01 [s]: ";
+                                    cout << "Insert integration step (recommended step dt = 0.01 s) [s]: ";
                                     cin >> dt;
                                     cout << "" << endl;
                                 }
