@@ -17,6 +17,7 @@ struct TrimCondition {
     double h = 0;
     double rho = 0;
 };
+
 double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditions[12], const double command[4], TrimCondition ss) {
     // unpack initial conditions vector
     double u     = initialConditions[0];
@@ -43,7 +44,7 @@ double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditi
     double alpha_deg = alpha * 180.0 / M_PI;
     double beta      = asin(v / V);     // v(i)/V(i) [rad]
 
-    double rho  = computeDensity(h);
+    double rho  = ss.rho;
     double S    = db1.Ad.Wing_area;  //[m2] wing area
     double b    = db1.Ad.Wing_spann; // [m] wing span
     double c    = db1.Ad.Chord;      // [m] mean chord
@@ -316,7 +317,8 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
     delete[] aeroPointer; // delete pointer to avoid memory leak
 
     //propeller forces
-    propellerData = getPropellerPerformance(db1, db2, endb, pdb, alpha_deg, delta_e_deg, V, h, rpm);
+    double rho = ss.rho;
+    propellerData = getPropellerPerformance(db1, db2, endb, pdb, alpha_deg, delta_e_deg, V, h, rpm, rho);
 
     // initialize velocity vectors
     double previousVelocity[6] = {0};
@@ -377,11 +379,10 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 /** Here is th function to comput the minimum Velocity
  * */
 
-double computeVmin (AeroDB db1, AeroDB db2, double h) {
+double computeVmin (AeroDB db1, AeroDB db2, double h, double rho) {
 
     double S        = db1.Ad.Wing_area;
     double m        = db1.Ad.Mass;
-    double rho      = computeDensity(h);
     double AlphaMax = db1.alpha.back();
     double g        = 9.81;
 

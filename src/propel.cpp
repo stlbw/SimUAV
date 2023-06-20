@@ -24,7 +24,7 @@ struct Propel {
  * @param rpm
  * @return
  */
-Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double alpha, double delta_e, double V, double h, double rpm) {
+Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double alpha, double delta_e, double V, double h, double rpm, double rho) {
     Propel result;
     int lenVec = pdb.Pg.nstation; // [-] 100
     double diam = pdb.Pg.diameter; // [m] 0.125
@@ -43,8 +43,6 @@ Propel getPropellerPerformance(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb
     double xt = radius; // [m]
     vector<double> CSI = pdb.Ps.CSI; // [-]
     double xs = CSI[0] * radius; // [m]
-
-    double rho = computeDensity(h); // [kg/m^3]
 
     double coef1 = (pitch_tip - pitch_hub) / (xt - xs); // [deg/m]
     double coef2 = pitch_hub - coef1 * xs + pitch_propeller; // [deg]

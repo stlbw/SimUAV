@@ -96,30 +96,45 @@ int main() {
         cout << "" << endl;
 
         try {
-
             // TRIM SECTION:
             double V_ref, h_ref;
             double gamma_0 = 0;
             double delta_rpm = 100;
             double flagStartSimulation = 1;
+
             // declared db for interpolation
             AeroDB DB1;
             AeroDB DB2;
+
+            // atmosphere choice
+            aero_condition hb;
+            hb = AtmosphereChoice(hb);
+
+            int input = hb.input;
+
+            cout << "" << endl;
 
             double Vmax = 25;
             double Vmin = 0;
 
             while(flagStartSimulation != 0) {
-                cout << "Insert altitude [m]: ";
-                cin >> h_ref;
-                cout << "" << endl;
+                if (input == 3){
+                    h_ref = hb.altitude;
+                }
+                else {
+                    cout << "Insert altitude [m]: ";
+                    cin >> h_ref;
+                    cout << "" << endl;
+                }
                 cout << "Insert velocity [m/s]: ";
                 cin >> V_ref;
                 cout << "" << endl;
 
                 getAerodynamicDbWithAltitude(h_ref, DB1, DB2, dba0, dba100, dba1000, dba2000);
 
-                Vmin = computeVmin(DB1,DB2,h_ref);
+                double rho = AtmosphereCalc(input, hb, h_ref);
+
+                Vmin = computeVmin(DB1,DB2,h_ref, rho);
 
                 if (V_ref > Vmax){
                     cout << "The entered velocity exceeds the maximum value " << endl;
@@ -171,8 +186,10 @@ int main() {
             cout << "TRIM PARAMETERS: " << endl;
             cout <<""<<endl;
 
+            double rho = AtmosphereCalc(input, hb, h_ref);
+
             // trim angles
-            Trim_Angles a = trimAngles(DB1, DB2, V_ref, h_ref, gamma_0);
+            Trim_Angles a = trimAngles(DB1, DB2, V_ref, h_ref, gamma_0, rho);
             cout << "Alpha trim [deg]: " << a.alpha_trim << endl;
             cout << "Elevator delta trim [deg]: " << a.deltae_trim << endl;
             cout << "Velocity component u [m/s]: " << a.u << endl;
@@ -180,7 +197,7 @@ int main() {
 
             //trim rpm, T and Throttle
             cout << "" << endl;
-            Trim_Engine_Propeller y = trimEnginePropeller(DB1, DB2, en0, prop0, a, V_ref, h_ref, gamma_0,delta_rpm);
+            Trim_Engine_Propeller y = trimEnginePropeller(DB1, DB2, en0, prop0, a, V_ref, h_ref, gamma_0, delta_rpm, rho);
             cout << "RPM trim: " << y.rpm  << endl;
             cout << "Thrust trim: " << y.T  << endl;
             cout << "Torque trim: " << y.Torque << endl;
@@ -190,13 +207,13 @@ int main() {
             ss.alphaDeg = a.alpha_trim;
             ss.V = sqrt(a.u * a.u + a.w * a.w);
             ss.h = h_ref;
-            ss.rho = computeDensity(h_ref);
+            ss.rho = rho;
 
             cout << "" << endl;
             cout << "---------------------------------------------------------------" << endl;
             cout << "" << endl;
 
-            longitudinalStability(DB1, DB2,prop0,a,V_ref,h_ref); // this function computes the Routh criteria
+            longitudinalStability(DB1, DB2,prop0,a,V_ref,h_ref, rho); // this function computes the Routh criteria
             // for the aircraft and computes the longitudinal modes in case the criteria is respected
 
             cout << "" << endl;
@@ -399,8 +416,10 @@ int main() {
                     k = 2050;
                 }
 
+                double V_current = 0;
+
                 if (wantPID == 1) {
-                    double V_current = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
+                    V_current = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
 
                     double theta_ref = PID_v.compute(V_ref, V_current, dt);
                     double delta_e = PID_theta.compute(theta_ref, vecCI[7], dt);
@@ -462,8 +481,6 @@ int main() {
 
                 delete[] newStatesPointer; // delete pointer to avoid memory leak
 
-                double current_V = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
-
 
                 if (wantPrint == 1) {
                     cout << left << setw(15) << time << left << setw(15) << atan2(newStates[2], newStates[0]) * 180.0 / M_PI;
@@ -484,8 +501,9 @@ int main() {
                if (wantPrint == 1) {cout << " " << endl;}
                outputSim << " " << endl;
 
-                if (current_V > Vmax || current_V < Vmin) {
-                    string error = "Out of range: velocity is out of bounds. V = " + to_string(current_V) + " m/s";
+               V_current = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
+                if (V_current > Vmax || V_current < Vmin) {
+                    string error = "Out of range: velocity is out of bounds. V = " + to_string(V_current) + " m/s";
                     throw range_error(error);
                 }
             }

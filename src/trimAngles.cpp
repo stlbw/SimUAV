@@ -9,7 +9,7 @@ struct Trim_Angles{
 };
 
 
-Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_0) {
+Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_0, double rho) {
     double alpha_min;
     double alpha_max;
     alpha_min = db1.alpha.front();
@@ -22,8 +22,6 @@ Trim_Angles trimAngles(AeroDB db1, AeroDB db2, double V, double h, double gamma_
 
     double beta = 0, delta_a = 0, p = 0, q = 0, r = 0;
     double g = 9.81;
-
-    double rho = computeDensity(h);
 
     double alpha_int;
     double deltae_int;

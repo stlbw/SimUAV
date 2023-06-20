@@ -75,10 +75,9 @@ bool routhCriteria(double Iy, double rho, double mu, double V, double chord, dou
 
 }
 
-Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles angles, double V, double h) {
+Modes longitudinalStability (AeroDB db1, AeroDB db2, PropDB pdb, Trim_Angles angles, double V, double h, double rho) {
     double C_Du = 0, C_mu = 0, C_Lu = 0; // these derivatives are 0 because it is a subsonic vehicle
     double g = 9.81;
-    double rho = computeDensity(h);
     double C_We = (db1.Ad.Mass * g) / (0.5 * rho * V * V * db1.Ad.Wing_area); // MASS and WING AREA constant
     double C_Le = C_We;
     double C_Xe = linearInterpolation(db1.alpha, db1.ss.cx, db2.ss.cx, angles.alpha_trim, h); // CX coef in steady-state for the trim condition
