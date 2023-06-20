@@ -46,13 +46,20 @@ Trim_Engine_Propeller trimEnginePropeller(AeroDB db1, AeroDB db2, EngineDB endb,
     double Cx_tot = cx_ss+cx_alpha*alpha_trim/180*M_PI+ cx_de * deltae_trim / 180*M_PI;
     enginePerformanceTrim.T = db1.Ad.Mass * g * sin(alpha_trim / 180 * M_PI+gamma_0 / 180 * M_PI) - 0.5 * Cx_tot * rho * S * V * V;
 
+    bool foundRpmTrim = false;
     for (rpm = rpm_min; rpm <= rpm_max; rpm += delta_rpm){
 
         propelResult = getPropellerPerformance(db1, db2, endb, pdb, angles.alpha_trim, angles.deltae_trim, V, h, rpm, rho);
 
         if (abs(enginePerformanceTrim.T - propelResult.T) < res){
             enginePerformanceTrim.rpm = rpm;
+            foundRpmTrim = true;
         }
+    }
+
+    if (!foundRpmTrim) {
+        cout << "WARNING: Could not find thr RPM in TRIM conditions below RPM MAX. Applying the average between RPM MIN and RPM MAX to RPM TRIM" << endl;
+        enginePerformanceTrim.rpm = (rpm_min + rpm_max) / 2;
     }
 
 
