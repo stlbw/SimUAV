@@ -503,7 +503,7 @@ int main() {
                 if (wantPID == 1) {
                     V_current = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
 
-                    double theta_ref = PID_v.compute(V_ref, V_current, dt);
+                    double theta_ref = PID_v.compute(V_ref, vecCI[0], dt);
                     double delta_e = PID_theta.compute(theta_ref, vecCI[7], dt);
                     double delta_th = PID_h.compute(h_ref, vecCI[9], dt);
                     double phi = PID_psi.compute(psi0.Psi[k],vecCI[8],dt);
