@@ -101,11 +101,11 @@ TEST(IntegrateMotion, CanMaintainTrim) {
         stateMinusOne[j] = vecTrim[j]; // during trim the (i-1)th state is the same as the trim. We assume the
         // simulation starts at the last trim state (i=0) and before that we assume infinite trim states take place
     }
-    getAerodynamicDbWithAltitude(h, DB1, DB2, db1, db2, db3, db4);
-
+    TrimCondition ss;
     for (int i = 1; i < 100000; i++) {
         h = vecTrim[9];
-        double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, rpm, vecTrim, vecComTrim, stateMinusOne, 0.01, loggerRemainders, loggerAcceleration);
+        getAerodynamicDbWithAltitude(h, DB1, DB2, db1, db2, db3, db4);
+        double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, rpm, vecTrim, vecComTrim, stateMinusOne, 0.01, loggerRemainders, loggerAcceleration, ss);
         double newStates[12] = {0};
         for (int j = 0; j < 12; j++) {
             newStates[j] = newStatesPointer[j]; // save the recently calculated state vector in newStates
@@ -113,8 +113,8 @@ TEST(IntegrateMotion, CanMaintainTrim) {
             vecTrim[j] = newStates[j]; // update the initial condition vector with the new states for the next loop iteration
         } // assign values to variable
         delete[] newStatesPointer; // delete pointer to avoid memory leak
-        EXPECT_NEAR(vecTrim[0], vecRef[0], 1);
-        EXPECT_NEAR(vecTrim[9], vecRef[9], 10);
+        EXPECT_NEAR(vecTrim[0], vecRef[0], 1); // u
+        EXPECT_NEAR(atan2(vecTrim[2], vecTrim[0]), -2.16 * M_PI / 180, 0.1); // alpha //TODO: check if tolleranc can be narrower
 
     }
 
