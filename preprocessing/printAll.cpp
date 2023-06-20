@@ -414,3 +414,22 @@ void printHeaderLogger(std::ofstream& loggerRemainder, std::ofstream& loggerAcce
         << left << setw(15) << "p_dot" << left << setw(15) << "q_dot" << left << setw(15) << "r_dot" << endl;
 }
 
+void printSimulationData(double V, double h, double T, double dt, double gamma_0, double rpm) {
+    cout << " " << endl;
+    cout << "The simulation will run with the following parameters:" << endl;
+    cout << "------------- SIMULATION PARAMETERS -------------" << endl;
+    cout << "V = " << V << " [m/s]" << endl;
+    cout << "h = " << h << " [m]" << endl;
+    cout << "Simulation time T = " << T << " [s]" << endl;
+    cout << "Integration step dt =  " << dt << " [s]";
+    if (dt == 0.01) { cout << " (recommended integration step)" << endl;}
+    else { cout << endl;}
+    cout << "gamma_0 = " << gamma_0 << " [deg]" << endl;
+    cout << "------------- TRIM PARAMETERS  -------------" << endl;
+    cout << "delta_rpm = " << rpm << " [rad/s]" << endl;
+    cout << " " << endl;
+
+
+
+}
+
