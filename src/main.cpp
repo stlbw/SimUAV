@@ -490,13 +490,10 @@ int main() {
             PID_psi.setErrorCheck(true);
 
             // LOOP INTEGRATE EQUATIONS OF MOTION
-            int k = 2000 - 1;
+            int k = 0;//2000 - 1;
             for (int i = 1; i <= nStep; i++) {
                 double time = i * dt;
                 k ++;
-                if (k > 15000) {
-                    k = 2050;
-                }
 
                 double V_current = 0;
 
