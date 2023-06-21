@@ -820,7 +820,7 @@ void saveData(AeroDB *db, Flags *f, string filePath) {
  If the file is contained in database, print its content to the screen.
  */
 AeroDB readData(string fileName, bool t = false) {
-    string filePath = string(DATABASE_DIR) + "/" + fileName;
+    string filePath = "../database/" + fileName;
     AeroDB db; // create db object
     Flags check; // create check object from struct Flag
     int length = getAoALength(filePath); // get vector size to initiate struct

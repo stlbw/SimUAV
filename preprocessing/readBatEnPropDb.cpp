@@ -191,7 +191,7 @@ void save_propeller(PropDB *db, string filePath) {
 
 // Function for reading the file: battery
 BatteryDB readBat(string fileName) {
-    string filePath = string(DATABASE_DIR) + "/" + fileName;
+    string filePath = "../database/" + fileName;
     BatteryDB db; // create db object
     save_battery(&db, filePath);
     return db;
@@ -200,7 +200,7 @@ BatteryDB readBat(string fileName) {
 
 // Function for reading the file: engine
 EngineDB readEn(string fileName) {
-    string filePath = string(DATABASE_DIR) + "/" + fileName;
+    string filePath = "../database/" + fileName;
     EngineDB db; // create db object
     save_engine(&db, filePath);
     return db;
@@ -208,7 +208,7 @@ EngineDB readEn(string fileName) {
 
 // Function for reading the file: propeller
 PropDB readProp(string fileName) {
-    string filePath = string(DATABASE_DIR) + "/" + fileName;
+    string filePath = "../database/" + fileName;
     PropDB db; // create db object
     save_propeller(&db, filePath);
     return db;
