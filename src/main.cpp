@@ -11,6 +11,17 @@ int main() {
     cout << "---------------------------------------------------------------" << endl;
     cout << "Created by: " << endl;
     cout << "---------------------------------------------------------------" << endl;
+    cout << "" << endl;
+    cout << "\t\t\t |____________________________|" << endl;
+    cout << "\t\t\t |               __   __  __  |" << endl;
+    cout << "\t\t\t | |\\/| |__| __ |__| |__ |  | |" << endl;
+    cout << "\t\t\t | |  | |  |    |__|  __||__| |" << endl;
+    cout << "\t\t\t  \\                          /" << endl;
+    cout << "\t\t\t   \\__________   ___________/" << endl;
+    cout << "\t\t\t             |   |" << endl;
+    cout << "\t\t\t              \\_/" << endl;
+    cout << "\t\t\t             __|__" << endl;
+    cout << "---------------------------------------------------------------" << endl;
 
     cout << ">> Reading databases" << endl;
     // getDba("dba.ini"); // function implemented by Mario

@@ -36,7 +36,7 @@ aero_condition AtmosphereChoice (aero_condition hb) {
         cout << "\nPress:\n";
         cout << "\t1 - if you wish to proceed with the above values\n";
         cout << "\t2 - if you wish to change the initial values to h = 0\n";
-        cout << "\t3 - if you wish to enter values manually at a specific altitude (required later)\n";
+        cout << "\t3 - if you wish to enter values manually at a specific altitude (altitude is computed automatically from these values)\n";
 
         cin >> input;
 
