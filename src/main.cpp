@@ -159,6 +159,7 @@ int main() {
                     cin >> letterCheckSwitch; // get user input
                     flagPath = 0; // assume it is the correct one
                     standardSim = 1;
+                    std::string newFile;
                     switch (letterCheckSwitch) {
                         case 'T':
                             standardSim = 0;
@@ -251,13 +252,16 @@ int main() {
                                 flagPath = 1;
                             }
                             break;
-                            /*case 'O':
-                                cout << "Please upload the txt file of the psi angle values in the correct folder";
-
-                                //psi0 = read_psiref("DIAMOND_psiref.txt");
-                                //Tsim = (sizeof(psi0) - 1) / dt;
-                                //int nStep = static_cast<int>(Tsim / dt)-2000;*/
-
+                        case 'O':
+                            cout << "Please enter the file name (e.g. myfile.txt). Make sure it is contained in the <<path>> folder: ";
+                            cin >> newFile;
+                            psi0 = read_psiref(newFile);
+                            cout << "Please enter the desired integration step for this simulation [s]: ";
+                            cin >> dt;
+                            Tsim = (psi0.sizePsi - 1) * dt;
+                            nStep = floor(Tsim / dt);
+                            standardSim = 0;
+                            break;
                         default:
                             cerr
                                     << "Could not read the input. Please make sure to add the correct letter and press ENTER."
@@ -295,9 +299,14 @@ int main() {
                         }
                         switch (switchChange) {
                             case '1':
-                                cout << "Insert altitude [m]: ";
-                                cin >> h_ref;
-                                cout << "" << endl;
+                                if (input == 3) {
+                                    cout << "CANNOT change reference altitude since it was already declared in the atmosphere model" << endl;
+                                }
+                                else{
+                                    cout << "Insert altitude [m]: ";
+                                    cin >> h_ref;
+                                    cout << "" << endl;
+                                }
                                 break;
                             case '2':
                                 cout << "Insert velocity [m/s]: ";
@@ -444,17 +453,10 @@ int main() {
                 // simulation starts at the last trim state (i=0) and before that we assume infinite trim states take place
             }
 
-
-
-
-
             double wantPrint = 0;
             double runningflag = 0;
 
-
-
-
-            cout <<'\n' << "The results are gonna be printed on the 'simulationData.txt' file" << endl;
+            cout <<'\n' << "The results are gonna be printed to  'output/simulationData.txt' file" << endl;
             cout << '\n' << "Do you want to print the results also on this screen? (Y/1 N/0):" << endl;
             cin >> wantPrint;
 
