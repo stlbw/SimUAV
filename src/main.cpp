@@ -29,7 +29,8 @@ int main() {
 
         // read not aerodynamic database
         bat0 = readBat("battery.ini"); // Open database, read it and save data to struct of type Not_Aerodb
-        en0 = readEn("engine.ini"); // Open database, read it and save data to struct of type Not_Aerodb
+        en0 = readEn("engine.ini"); // Open database, read it and save
+        // ata to struct of type Not_Aerodb
         prop0 = readProp("propeller.ini"); // Open database, read it and save data to struct of type PropDB
 
 
@@ -151,9 +152,11 @@ int main() {
                         case 'T':
                             standardSim = 0;
                             wantPID = 0;
-                            cout << "Insert altitude [m]: ";
-                            cin >> h_ref;
-                            cout << "" << endl;
+                            if (input != 3) {
+                                cout << "Insert altitude [m]: ";
+                                cin >> h_ref;
+                                cout << "" << endl;
+                            }
 
                             cout << "Insert velocity [m/s]: ";
                             cin >> V_ref;
