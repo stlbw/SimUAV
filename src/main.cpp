@@ -425,6 +425,8 @@ int main() {
             std::ofstream outputSim("../output/simulationData.txt");
             std::ofstream loggerRemainders("../output/logRemainders.txt");
             std::ofstream loggerAcceleration("../output/logAcceleration.txt");
+            std::ofstream loggerCommand("../output/logCommand.txt");
+
             if (!outputSim) {
                 string error = "Could not open file simulationData.txt";
                 throw runtime_error(error);
@@ -435,6 +437,10 @@ int main() {
             }
             if (!loggerAcceleration) {
                 string error = "Could not open file logAcceleration.txt";
+                throw runtime_error(error);
+            }
+            if (!loggerCommand) {
+                string error = "Could not open file logCommand.txt";
                 throw runtime_error(error);
             }
             printHeaderLogger(loggerRemainders, loggerAcceleration); // prints header for both loggers
@@ -482,6 +488,14 @@ int main() {
             outputSim << left << setw(15) << 0.0;
             outputSim << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
 
+            // print to loggerCommand the trim step
+            cout << left << setw(15) << 0.0;
+            loggerCommand << left << setw(15) << "Time" << left << setw(15) << "delta_a"  << left << setw(15) << "delta_e" << left << setw(15) << "delta_r" << left << setw(15) << "delta_th" << left << setw(15) << "RPM" << endl;
+            for (int i = 0; i < 4; i++) {
+                loggerCommand << left << setw(15) << vecComm[i]; //print to logger
+            }
+            loggerCommand << left << setw(15) << y.rpm;
+            loggerCommand << " " << endl;
 
             // assign fullStateMatrix first column to trim and print it
             for (int i = 0; i < 12; i++) {
@@ -595,6 +609,13 @@ int main() {
                }
                if (wantPrint == 1) {cout << " " << endl;}
                outputSim << " " << endl;
+
+                loggerCommand << left << setw(15) << time;
+                for (int m = 0; m < 4; m++) {
+                    loggerCommand << left << setw(15) << vecComm[m]; //print to logger
+                }
+                loggerCommand << left << setw(15) << rpm;
+                loggerCommand << " " << endl;
 
                V_current = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
                 if (V_current > Vmax || V_current < Vmin) {
