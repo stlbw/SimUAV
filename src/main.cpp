@@ -545,32 +545,32 @@ int main() {
                 // Saturations
                 if(vecComm[3] <= 0.1){
                     vecComm[3] = 0.1;
-                    cout << "saturation on delta throttle -> delta throttle = 0.1" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta throttle -> delta throttle = 0.1" << endl;}
                     PID_h.resetIntegrativeError();
                 }
                 else if (vecComm[3] >= 1.0) {
                     vecComm[3] = 1.0;
-                    cout << "saturation on delta throttle -> delta throttle = 1.0" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta throttle -> delta throttle = 1.0" << endl;}
                     PID_h.resetIntegrativeError();
                 }
                 if(vecComm[1] <= -10 * M_PI / 180){
                     vecComm[1] = -10 * M_PI / 180;
-                    cout << "saturation on delta elevator -> delta elevator min" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta elevator -> delta elevator min" << endl;}
                     PID_theta.resetIntegrativeError();
                 }
                 else if (vecComm[1] >= 10 * M_PI / 180) {
                     vecComm[1] = 10 * M_PI / 180;
-                    cout << "saturation on delta elevator -> delta elevator max" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta elevator -> delta elevator max" << endl;}
                     PID_theta.resetIntegrativeError();
                 }
                 if(vecComm[0] <= -10 * M_PI / 180){
                     vecComm[0] = -10 * M_PI / 180;
-                    cout << "saturation on delta aileron -> delta aileron min" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta aileron -> delta aileron min" << endl;}
                     PID_phi.resetIntegrativeError();
                 }
                 else if (vecComm[0] >= 10 * M_PI / 180) {
                     vecComm[0] = 10 * M_PI / 180;
-                    cout << "saturation on delta aileron -> delta aileron max" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta aileron -> delta aileron max" << endl;}
                     PID_phi.resetIntegrativeError();
                 }
 
