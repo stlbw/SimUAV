@@ -18,7 +18,7 @@ struct TrimCondition {
     double rho = 0;
 };
 
-double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditions[12], const double command[4], TrimCondition ss, aero_condition hb) {
+double* getAerodynamicForces(AeroDB db1, AeroDB db2, const double initialConditions[12], const double command[4], aero_condition hb) {
     // unpack initial conditions vector
     double u     = initialConditions[0];
     double v     = initialConditions[1];
@@ -283,7 +283,7 @@ double* getAcceleration(double currentState[6], double previousState[6], double 
  * @returns the (i+1)-th integration step
  */
 
-double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt, std::ofstream& loggerReminder, std::ofstream& loggerAcceleration, TrimCondition ss, aero_condition hb) { //double dt = 0.02
+double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB pdb, double rpm, double initialConditions[12], double command[4], double previousState[6], double dt, std::ofstream& loggerReminder, std::ofstream& loggerAcceleration, aero_condition hb) { //double dt = 0.02
     // compute forces -> initialize vector to 0 + external function to compute it
     // get initial conditions [i-th step]
     // compute remaining -> initialize vector to 0
@@ -310,7 +310,7 @@ double* integrateEquationsOfMotion(AeroDB db1, AeroDB db2, EngineDB endb, PropDB
 
     //Aerodynamic forces
 
-    double *aeroPointer = getAerodynamicForces(db1, db2, initialConditions, command, ss, hb); // get aerodynamic forces and return it to aeroForces
+    double *aeroPointer = getAerodynamicForces(db1, db2, initialConditions, command, hb); // get aerodynamic forces and return it to aeroForces
     for (int i = 0; i < 6; i++) { aeroForces[i] = aeroPointer[i]; }
     delete[] aeroPointer; // delete pointer to avoid memory leak
 
