@@ -426,6 +426,8 @@ int main() {
             std::ofstream outputSim("../output/simulationData.txt");
             std::ofstream loggerRemainders("../output/logRemainders.txt");
             std::ofstream loggerAcceleration("../output/logAcceleration.txt");
+            std::ofstream loggerCommand("../output/logCommand.txt");
+
             if (!outputSim) {
                 string error = "Could not open file simulationData.txt";
                 throw runtime_error(error);
@@ -436,6 +438,10 @@ int main() {
             }
             if (!loggerAcceleration) {
                 string error = "Could not open file logAcceleration.txt";
+                throw runtime_error(error);
+            }
+            if (!loggerCommand) {
+                string error = "Could not open file logCommand.txt";
                 throw runtime_error(error);
             }
             printHeaderLogger(loggerRemainders, loggerAcceleration); // prints header for both loggers
@@ -483,6 +489,14 @@ int main() {
             outputSim << left << setw(15) << 0.0;
             outputSim << left << setw(15) << atan2(vecCI[2], vecCI[0]) * 180.0 / M_PI;
 
+            // print to loggerCommand the trim step
+            cout << left << setw(15) << 0.0;
+            loggerCommand << left << setw(15) << "Time" << left << setw(15) << "delta_a"  << left << setw(15) << "delta_e" << left << setw(15) << "delta_r" << left << setw(15) << "delta_th" << left << setw(15) << "RPM" << endl;
+            for (int i = 0; i < 4; i++) {
+                loggerCommand << left << setw(15) << vecComm[i]; //print to logger
+            }
+            loggerCommand << left << setw(15) << y.rpm;
+            loggerCommand << " " << endl;
 
             // assign fullStateMatrix first column to trim and print it
             for (int i = 0; i < 12; i++) {
@@ -532,32 +546,32 @@ int main() {
                 // Saturations
                 if(vecComm[3] <= 0.1){
                     vecComm[3] = 0.1;
-                    cout << "saturation on delta throttle -> delta throttle = 0.1" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta throttle -> delta throttle = 0.1" << endl;}
                     PID_h.resetIntegrativeError();
                 }
                 else if (vecComm[3] >= 1.0) {
                     vecComm[3] = 1.0;
-                    cout << "saturation on delta throttle -> delta throttle = 1.0" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta throttle -> delta throttle = 1.0" << endl;}
                     PID_h.resetIntegrativeError();
                 }
                 if(vecComm[1] <= -10 * M_PI / 180){
                     vecComm[1] = -10 * M_PI / 180;
-                    cout << "saturation on delta elevator -> delta elevator min" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta elevator -> delta elevator min" << endl;}
                     PID_theta.resetIntegrativeError();
                 }
                 else if (vecComm[1] >= 10 * M_PI / 180) {
                     vecComm[1] = 10 * M_PI / 180;
-                    cout << "saturation on delta elevator -> delta elevator max" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta elevator -> delta elevator max" << endl;}
                     PID_theta.resetIntegrativeError();
                 }
                 if(vecComm[0] <= -10 * M_PI / 180){
                     vecComm[0] = -10 * M_PI / 180;
-                    cout << "saturation on delta aileron -> delta aileron min" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta aileron -> delta aileron min" << endl;}
                     PID_phi.resetIntegrativeError();
                 }
                 else if (vecComm[0] >= 10 * M_PI / 180) {
                     vecComm[0] = 10 * M_PI / 180;
-                    cout << "saturation on delta aileron -> delta aileron max" << endl;
+                    if (wantPrint ==1) {cout << "saturation on delta aileron -> delta aileron max" << endl;}
                     PID_phi.resetIntegrativeError();
                 }
 
@@ -566,7 +580,7 @@ int main() {
                 // get correct dba with altitude
                 double h = vecCI[9]; // update altitude
                 getAerodynamicDbWithAltitude(h, DB1, DB2, dba0, dba100, dba1000, dba2000); // returns the correct DB1 and DB2 to use for the interpolation
-                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, rpm, vecCI, vecComm, stateMinusOne, dt, loggerRemainders, loggerAcceleration, ss, hb);
+                double* newStatesPointer = integrateEquationsOfMotion(DB1, DB2, en0, prop0, rpm, vecCI, vecComm, stateMinusOne, dt, loggerRemainders, loggerAcceleration, hb);
 
                 double newStates[12] = {0};
                 for (int j = 0; j < 12; j++) {
@@ -596,6 +610,13 @@ int main() {
                }
                if (wantPrint == 1) {cout << " " << endl;}
                outputSim << " " << endl;
+
+                loggerCommand << left << setw(15) << time;
+                for (int m = 0; m < 4; m++) {
+                    loggerCommand << left << setw(15) << vecComm[m]; //print to logger
+                }
+                loggerCommand << left << setw(15) << rpm;
+                loggerCommand << " " << endl;
 
                V_current = sqrt(vecCI[0] * vecCI[0] + vecCI[1] * vecCI[1] + vecCI[2] * vecCI[2]);
                 if (V_current > Vmax || V_current < Vmin) {

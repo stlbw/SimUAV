@@ -831,4 +831,16 @@ AeroDB readData(string fileName, bool t = false) {
 
 }
 
+AeroDB readDataTest(string fileName, bool t = false) {
+    string filePath = "../../database/" + fileName;
+    AeroDB db; // create db object
+    Flags check; // create check object from struct Flag
+    int length = getAoALength(filePath); // get vector size to initiate struct
+    db.length = length;
+    saveData(&db, &check, filePath);
+    return db;
+
+
+}
+
 

@@ -206,9 +206,23 @@ EngineDB readEn(string fileName) {
     return db;
 }
 
+EngineDB readEnTest(string fileName) {
+    string filePath = "../../database/" + fileName;
+    EngineDB db; // create db object
+    save_engine(&db, filePath);
+    return db;
+}
+
 // Function for reading the file: propeller
 PropDB readProp(string fileName) {
     string filePath = "../database/" + fileName;
+    PropDB db; // create db object
+    save_propeller(&db, filePath);
+    return db;
+}
+
+PropDB readPropTest(string fileName) {
+    string filePath = "../../database/" + fileName;
     PropDB db; // create db object
     save_propeller(&db, filePath);
     return db;
