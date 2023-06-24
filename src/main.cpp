@@ -253,6 +253,7 @@ int main() {
                             }
                             break;
                         case 'O':
+                            wantPID = 1;
                             cout << "Please enter the file name (e.g. myfile.txt). Make sure it is contained in the <<path>> folder: ";
                             cin >> newFile;
                             psi0 = read_psiref(newFile);
