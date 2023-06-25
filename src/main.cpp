@@ -10,6 +10,13 @@ int main() {
     cout << "\t\t\t Flight Simulation - June 2023" << endl;
     cout << "---------------------------------------------------------------" << endl;
     cout << "Created by: " << endl;
+    cout << "   Ginevra Cianci" << endl;
+    cout << "   Giorgia Giacalone" << endl;
+    cout << "   Mario Albert" << endl;
+    cout << "   Matheus Henrique Padilha" << endl;
+    cout << "   Noemi Delfino" << endl;
+    cout << "   Stefano Cecchi" << endl;
+
     cout << "---------------------------------------------------------------" << endl;
     cout << "" << endl;
     cout << "\t\t\t |____________________________|" << endl;
